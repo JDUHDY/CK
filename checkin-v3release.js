@@ -9,9 +9,9 @@ const filestorebackendtypes = {
     default: 0, cf_kv: 1, fdindex: 2, google_drive: 3, cf_r2: 4,
 };
 
-let top_level_path = "/tree"; // 首页路径
+let top_level_path = "/"; // 首页路径
 const title = "Checkin"; // 网站标题
-const administrator_password = "5rYNPnrITggdgYRR11l5KYWTRIl0sGKZOnTERyHI"; // 服务管理员密码
+const administrator_password = ""; // 服务管理员密码
 
 const all_people_notice = "📢全体通知：\n注意看消息，有事请留言。"; //全体通知
 
