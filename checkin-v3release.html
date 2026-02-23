@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -2331,7 +2331,7 @@
             font-size: 14px;
             font-weight: 600;
             text-align: center;
-            line-height: 32px;
+            // line-height: 32px;
             vertical-align: middle;
             white-space: nowrap;
             overflow: hidden;
@@ -12121,19 +12121,20 @@
 
                 // 从后端获取候选词
                 const fetchCandidates = async (filter = "") => {
-                    // 如果关闭了自动显示，不请求API
-                    if (!autoShowSmallCandidatesPanel && filter === "") {
-                        return [];
-                    }
                     try {
                         const url = filter === ""
                             ? `/chat/api/candidates`
                             : `/chat/api/candidates?filter=${encodeURIComponent(filter)}`;
                         const response = await fetch(url, { credentials: 'include' });
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`获取候选词失败 (${response.status}): ${errorText}`);
+                        }
                         const result = await response.json();
                         return result.success ? result.data : [];
                     } catch (error) {
                         console.error("获取候选词失败:", error);
+                        MessageMark.report(`获取候选词失败: ${error.message}`);
                         return [];
                     }
                 };
@@ -12145,6 +12146,8 @@
                     if (autoShowSmallCandidatesPanel) {
                         renderCandidates(commonPhrases);
                     }
+                }).catch(error => {
+                    console.error("初始化候选词失败:", error);
                 });
 
                 // 添加关闭按钮到小候选词面板
@@ -14829,7 +14832,10 @@
                                         if (response.status === 200) {
                                             return response.json();
                                         }
-                                        throw new Error(isReplied ? "取消回应失败" : "回应失败");
+                                        // 尝试读取错误信息
+                                        return response.text().then(text => {
+                                            throw new Error(isReplied ? `取消回应失败: ${text}` : `回应失败: ${text}`);
+                                        });
                                     })
                                     .then(result => {
 
@@ -14842,7 +14848,7 @@
                                     })
                                     .catch(error => {
                                         console.error("回应操作失败:", error);
-                                        MessageMark.report(isReplied ? "取消回应失败" : "回应失败");
+                                        MessageMark.report(error.message || (isReplied ? "取消回应失败" : "回应失败"));
                                     });
                             }
                         });
@@ -16427,7 +16433,14 @@
             // 获取群公告
             fetch_announcement(gid) {
                 fetch(`/chat/api/get_announcement?gid=${gid}`, { credentials: 'include' })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`获取群公告失败 (${response.status}): ${text}`);
+                            });
+                        }
+                        return response.json();
+                    })
                     .then(result => {
                         if (this.closed) return;
                         if (result.announcement) {
@@ -16442,6 +16455,7 @@
                     }).catch(error => {
                     if (this.closed) return;
                     console.error("获取群公告失败:", error);
+                    MessageMark.report(`获取群公告失败: ${error.message}`);
                 });
             }
 
