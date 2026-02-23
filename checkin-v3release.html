@@ -12123,8 +12123,8 @@
                 const fetchCandidates = async (filter = "") => {
                     try {
                         const url = filter === ""
-                            ? `/chat/api/candidates`
-                            : `/chat/api/candidates?filter=${encodeURIComponent(filter)}`;
+                            ? `${top_level_path}/chat/api/candidates`
+                            : `${top_level_path}/chat/api/candidates?filter=${encodeURIComponent(filter)}`;
                         const response = await fetch(url, { credentials: 'include' });
                         if (!response.ok) {
                             const errorText = await response.text();
@@ -13156,7 +13156,7 @@
                 
 
                 try {
-                    const response = await net_fetcher.nf_post_json("/chat/api/get_message_replies", body);
+                    const response = await net_fetcher.nf_post_json(`${top_level_path}/chat/api/get_message_replies`, body);
                     if (response.status === 200) {
                         const result = await response.json();
                         
@@ -14810,7 +14810,7 @@
                             type: "button",
                             text: isReplied ? "取消回应" : "回应",
                             callback: () => {
-                                const apiUrl = isReplied ? "/chat/api/unreply_message" : "/chat/api/reply_message";
+                                const apiUrl = isReplied ? `${top_level_path}/chat/api/unreply_message` : `${top_level_path}/chat/api/reply_message`;
 
                                 // 构造请求参数
                                 const { xxid, contact_type, ceid } = this.contentpage.current_contact_xxid();
@@ -15456,7 +15456,7 @@
                                     }
                     
                                     try {
-                                        const response = await net_fetcher.nf_post_json("/chat/api/get_message_replies", body);
+                                        const response = await net_fetcher.nf_post_json(`${top_level_path}/chat/api/get_message_replies`, body);
                                         if (response.status === 200) {
                                             const result = await response.json();
                                             this.contentpage.update_message_reply_tags(this, result.replies || []);
@@ -16432,7 +16432,7 @@
 
             // 获取群公告
             fetch_announcement(gid) {
-                fetch(`/chat/api/get_announcement?gid=${gid}`, { credentials: 'include' })
+                fetch(`${top_level_path}/chat/api/get_announcement?gid=${gid}`, { credentials: 'include' })
                     .then(response => {
                         if (!response.ok) {
                             return response.text().then(text => {
@@ -16684,7 +16684,7 @@
                         const encryptedContent = await encryptors.encrypt2base64(content);
                         
                         // 保存公告
-                        const response = await fetch("/chat/api/set_announcement", {
+                        const response = await fetch(`${top_level_path}/chat/api/set_announcement`, {
                             method: "POST",
                             headers: {"Content-Type": "application/json"},
                             body: JSON.stringify({
@@ -17675,7 +17675,7 @@
                         isReplied = myReplyTag !== null;
                     }
 
-                    const apiUrl = isReplied ? "/chat/api/unreply_message" : "/chat/api/reply_message";
+                    const apiUrl = isReplied ? `${top_level_path}/chat/api/unreply_message` : `${top_level_path}/chat/api/reply_message`;
 
                     // 构造请求参数
                     const { xxid, contact_type, ceid } = this.current_contact_xxid();
