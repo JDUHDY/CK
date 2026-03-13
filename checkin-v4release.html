@@ -857,7 +857,7 @@
 
         .theme-dark .vote-create-header,
         .theme-dark .vote-create-footer {
-            background: #1f1f1f;
+            background: #34393e;
             border-color: #444;
         }
 
@@ -1761,7 +1761,7 @@
 			font-weight: bold;
 			line-height: 36px;      /* 文字垂直居中 */
 			text-align: center;
-			background-color: #3399ff;
+			background-color: #5899db;
 			color: #fff;
 			border: none;
 			border-radius: 6px;
@@ -1900,6 +1900,17 @@
 			background: #2d2d2d;
 		}
 
+		.theme-dark .chat-candidate-panel-category {
+			background-color: #3d3d3d;
+			border-color: #555;
+			color: #e0e0e0;
+		}
+
+		.theme-dark .chat-candidate-panel-category:focus {
+			border-color: #63b3ed;
+			background-color: #4d4d4d;
+		}
+
 		.theme-dark .chat-candidate-panel-body::-webkit-scrollbar-track {
 			background: #1f1f1f;
 		}
@@ -1954,11 +1965,20 @@
 			gap: 6px;
 		}
 
+		.theme-dark .fmic-forward-all-wrap {
+			background: linear-gradient(135deg, #3d3d3d, #4d4d4d);
+			border-color: #555;
+		}
+
+		.theme-dark .fmic-forward-all-text {
+			color: #63b3ed;
+		}
+
 		.fmic-forward-all-desc {
 			margin-left: 28px;
 			margin-top: 6px;
 			font-size: 12px;
-			color: #6b7a99;
+			// color: #6b7a99;
 			line-height: 1.4;
 		}
 
@@ -2358,7 +2378,7 @@
 
         /* 暗 */
         .theme-dark {
-            --bg-body: rgb(63, 63, 63);
+            --bg-body: rgb(44, 49, 57);
             --fc-body: rgb(240, 240, 240);
             --fc-less: rgb(220, 220, 220);
             --fc-least: rgb(180, 180, 180);
@@ -2368,7 +2388,7 @@
         }
 
         .theme-dark button {
-            background-color: rgb(53, 53, 53);
+            background-color: transparent;
             color: rgb(240, 240, 240);
             border: 1px solid #555;
         }
@@ -2404,6 +2424,18 @@
             background-color: rgb(53, 53, 53);
             color: rgb(240, 240, 240);
             border: 1px solid #555;
+        }
+
+        .theme-dark span#form-mark-input-title {
+            color: #e0e0e0;
+        }
+
+        .theme-dark span.form-mark-input-multiselectbutton-value {
+            color: #999;
+        }
+
+        .theme-dark span.form-mark-input-noticing {
+            color: rgba(255, 100, 100, 0.9);
         }
 
         .theme-dark {
@@ -3056,7 +3088,7 @@
         }
 
         .theme-dark .aside-left > nav {
-            background-color: rgb(63, 63, 63);
+            background-color: rgb(52, 57, 66);
         }
 
         /* ol 去掉默认序号和 padding */
@@ -3607,9 +3639,6 @@
             background: rgba(255, 255, 255, 0.59);
             /* backdrop-filter: blur(2px); */
             /* -webkit-backdrop-filter: blur(2px); */
-
-            /* 添加 will-change 优化渲染性能 */
-            will-change: opacity;
         }
 
     </style>
@@ -3669,9 +3698,6 @@
             flex-direction: column;
             justify-content: left;
             gap: 12px;
-
-            /* 添加 will-change 优化渲染性能 */
-            will-change: transform, opacity;
 
             /*position: absolute;*/
             /*flex-wrap: wrap;*/
@@ -4912,6 +4938,14 @@
             margin-left: 0;
         }
 
+        .theme-dark .fmic-item-forwardmsgto {
+            background: #3d3d3d;
+        }
+
+        .theme-dark .fmic-item-forwardmsgto:hover {
+            background: #4d4d4d;
+        }
+
     </style>
 
     <!--聊天页面 联系人-->
@@ -5236,7 +5270,7 @@
             align-items: center;
             padding: 10px 20px;
             border-bottom: 1px solid #eee;
-            background: #f8f9fa;
+            background: #e4f1ff;
             position: relative;
         }
 
@@ -5385,6 +5419,14 @@
 
         .theme-dark .chat-session-inputarea {
             background: rgba(70, 84, 105, 0.53);
+        }
+
+        .theme-dark .chat-session-inputarea-textarea-row {
+            background-color: #3d3d3d;
+        }
+
+        .theme-dark .chat-session-inputarea-cite-content {
+            color: #e0e0e0;
         }
 
         .chat-session-inputarea-othertypes {
@@ -6566,11 +6608,11 @@
         }
 
         .chat-message-content-mark.noticing {
-            color: #0650b0;
+            color: #ff3535;
         }
 
         .theme-dark .chat-message-content-mark.noticing {
-            color: #2d85ff;
+            color: #4aa2ff;
         }
 
         .chat-mcm-send-status-text {
@@ -6862,7 +6904,6 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             transform: translateY(-100%);
             transition: transform 0.3s ease-in-out;
-            will-change: transform;
         }
 
         #network-notification-bar.show {
@@ -7381,11 +7422,11 @@
         }
         if (titleTimer) return; // 防止重复启动
 
-        // 提取基础应用名称 (去掉已有的消息计数)
-        const baseTitle = originalTitle.replace(/^\(\d+\)\s*/, '');
+        // 使用从后端获取的基础应用名称
+        const appBaseTitle = baseTitle || "checkin";
         
         // 设置带消息计数的标题,不闪烁
-        document.title = `(${count})${baseTitle}`;
+        document.title = `(${count})${appBaseTitle}`;
         titleTimer = true; // 标记为已启动,但不实际启动定时器
     }
 
@@ -7446,6 +7487,7 @@
     const checkin_version_number = null;
     const checkin_version_is_beta = null;
     const enable_ai_consult = null; // 被服务端文本替换
+    const baseTitle = null; // 被服务端文本替换为网站标题
     const top_level_path = null;
     const appnames = null;
     const jumpto = null;
@@ -12934,12 +12976,12 @@
                 }
 
                 this.timer__fetch_unread_msgs = null;
-                this.interval__fetch_unread_msgs = 8000;
-                this.interval__fetch_unread_msgs__ws = 6000;
+                this.interval__fetch_unread_msgs = 7500;
+                this.interval__fetch_unread_msgs__ws = 4500;
                 this.is_processing__fetch_unread_msgs = false;
 
                 this.timer__update_read_progress = null;
-                this.interval__update_read_progress = 5000;
+                this.interval__update_read_progress = 2000;
 
                 this.is_processing__load_history = false;
 
@@ -15077,7 +15119,8 @@
                         msg.cite_message_id = citeMessage.message_id;
                         // 将引用信息格式化为 Markdown blockquote 格式（以 > 开头）
                         const citeText = citeMessage.text.replace(/\n/g, "\n> ");
-                        msg.plain_text = `> **${citeMessage.user_name}：**${citeText}\n\n${text}`;
+                        // 在用户回复的内容前面自动附带@对方（在引用块之后，用户内容之前），以便通知对方
+                        msg.plain_text = `> **${citeMessage.user_name}：**${citeText}\n\n@${citeMessage.user_id} ${text}`;
                     }
 
                     this.msgflow_manage.append_sending_msg(msg);
@@ -16541,7 +16584,7 @@
                                 items.push({
                                     type: "button",
                                     text: "引用",
-                                    callback: () => this.contentpage.add_textarea_element__cite(this.msgattr.id, this.msgattr.plain_data_text, this.msgattr.sender)
+                                    callback: () => this.contentpage.add_textarea_element__cite(this.msgattr.id, this.msgattr.plain_data_text, this.msgattr.sender, this.msgattr.sender)
                                 });
                             }
                         }
@@ -17011,6 +17054,7 @@
                                 this.contentpage.add_textarea_element__cite(
                                     this.msgattr.id,
                                     this.msgattr.plain_data_text,
+                                    this.msgattr.sender,
                                     this.msgattr.sender
                                 );
                                 break;
@@ -18623,7 +18667,7 @@
             fetch_online_users() {
                 this.e_group_settings_content = this.panel.querySelector(":scope .aside-right div.chat-session-group-settings-content");
                 this.remove_online_users();
-                
+
                 // 初始化 e_online_members_wrapper
                 if (!this.e_online_members_wrapper) {
                     this.e_online_members_wrapper = this.e_group_settings_content;
@@ -18637,7 +18681,7 @@
                     this.e_online_members_wrapper.style.maxHeight = "100%";
                     this.e_online_members_wrapper.style.overflow = "hidden";
                 }
-                
+
                 if (!this.e_group_settings_content.simple_loading_mark) {
                     this.e_group_settings_content.simple_loading_mark = new LoadingMark(this.e_group_settings_content);
                 }
@@ -18645,24 +18689,57 @@
                     this.e_group_settings_content.simple_loading_mark.show();
 
                     const {xxid, contact_type} = this.current_contact_xxid();
-                    
+                    const cacheKey = `users_${contact_type}_${xxid}`;
+                    const now = Date.now();
+                    const cacheExpireTime = 1 * 60 * 1000; // 1分钟缓存过期时间
+
                     // 先渲染群公告（默认显示，无论是否有内容）
                     if (contact_type === subviews.Chat.receiver_type.group) {
                         this.render_sidebar_announcement("", null, null, xxid);
                     }
-                    
-                    checkin.subviews.chat.members(contact_type, xxid,)
-                        .then(result => {
+
+                    // 检查缓存
+                    if (this._usersCache && this._usersCache[cacheKey]) {
+                        const cache = this._usersCache[cacheKey];
+                        if (now - cache.timestamp < cacheExpireTime) {
+                            // 缓存未过期,直接使用缓存
                             if (this.closed) return;
-                            this.load_online_users(result.users);
-                            this.li.bindmap.status_attr.online_count = result.online_count;
+                            this.load_online_users(cache.users);
+                            this.li.bindmap.status_attr.online_count = cache.online_count;
                             this.client.dashboard_chat.wrapper._update_contact_item_status(this.li.bindmap, this.li.bindmap.status_attr, true);
-                            
+
                             // 重新加载群公告（获取实际内容）
                             if (contact_type === subviews.Chat.receiver_type.group) {
                                 this.fetch_announcement(xxid);
                             }
-                            
+
+                            this.e_group_settings_content.simple_loading_mark.hide();
+                            return;
+                        }
+                    }
+
+                    // 缓存不存在或已过期,重新获取
+                    checkin.subviews.chat.members(contact_type, xxid,)
+                        .then(result => {
+                            if (this.closed) return;
+
+                            // 更新缓存
+                            if (!this._usersCache) this._usersCache = {};
+                            this._usersCache[cacheKey] = {
+                                users: result.users,
+                                online_count: result.online_count,
+                                timestamp: now
+                            };
+
+                            this.load_online_users(result.users);
+                            this.li.bindmap.status_attr.online_count = result.online_count;
+                            this.client.dashboard_chat.wrapper._update_contact_item_status(this.li.bindmap, this.li.bindmap.status_attr, true);
+
+                            // 重新加载群公告（获取实际内容）
+                            if (contact_type === subviews.Chat.receiver_type.group) {
+                                this.fetch_announcement(xxid);
+                            }
+
                             this.e_group_settings_content.simple_loading_mark.hide();
                         }).catch(error => {
                         if (this.closed) return;
@@ -19035,18 +19112,37 @@
 
                     // 成员列表容器
                     const memberListContainer = document.createElement("div");
-                    memberListContainer.style.maxHeight = "300px";
+                    memberListContainer.style.maxHeight = "250px";
                     memberListContainer.style.overflowY = "auto";
                     memberListContainer.style.padding = "4px 8px";
                     this.e_online_members_wrapper.appendChild(memberListContainer);
                     this.e_member_list_container = memberListContainer;
 
+                    // 添加"所有人"选项
+                    const allMemberHtml = `
+                    <div class="chat-session-onlineusers-item chat-session-onlineusers-item-all">
+                        <span class="chat-session-onlineusers-item-online-status">★</span>
+                        <span class="chat-session-onlineusers-item-name">所有人</span>
+                    </div>
+                    `;
+                    memberListContainer.insertAdjacentHTML("beforeend", allMemberHtml);
+                    const allMemberItem = memberListContainer.querySelector(":scope .chat-session-onlineusers-item-all");
+                    allMemberItem.addEventListener("click", event => {
+                        this.add_textarea_element__at("all");
+                    });
+
                     // 成员搜索逻辑
                     memberSearch.addEventListener("input", e => {
                         const keyword = e.target.value.trim().toLowerCase();
                         memberListContainer.querySelectorAll(".chat-session-onlineusers-item").forEach(item => {
-                            const name = item.attr.uid.toLowerCase();
-                            item.style.display = name.includes(keyword) ? "" : "none";
+                            // "@所有人"选项没有attr属性,需要特殊处理
+                            if (item.classList.contains("chat-session-onlineusers-item-all")) {
+                                // "@所有人"始终显示
+                                item.style.display = "";
+                            } else if (item.attr) {
+                                const name = item.attr.uid.toLowerCase();
+                                item.style.display = name.includes(keyword) ? "" : "none";
+                            }
                         });
                     });
 
@@ -19099,7 +19195,8 @@
                     // 附件列表容器
                     const attachContainer = document.createElement("div");
                     attachContainer.className = "online-users-attachments";
-                    attachContainer.style.maxHeight = "300px";
+                    attachContainer.style.minHeight = "0";
+                    attachContainer.style.flex = "1";
                     attachContainer.style.overflowY = "auto";
                     attachContainer.style.padding = "4px 8px";
                     this.e_online_members_wrapper.appendChild(attachContainer);
@@ -19178,7 +19275,7 @@
             }
 
 
-            add_textarea_element__cite(message_id, text, user_name) {
+            add_textarea_element__cite(message_id, text, user_name, user_id) {
                 if (!text) return;
 
                 // 显示引用消息在输入框上方
@@ -19192,7 +19289,8 @@
                 this.current_cite_message = {
                     message_id: message_id,
                     text: text,
-                    user_name: user_name
+                    user_name: user_name,
+                    user_id: user_id
                 };
 
                 // 聚焦到输入框
@@ -22745,8 +22843,8 @@
                 super(dashboard_element);
 
                 this.timer__sync = null;
-                this.interval__sync = 12000;
-                this.interval__sync__ws = 9000;
+                this.interval__sync = 10000;
+                this.interval__sync__ws = 7000;
                 this.is_processing__sync = false;
 
                 // 同步状态改为控制台日志
@@ -23496,8 +23594,8 @@
 
                 // 更新浏览器标题，显示未读数量
                 if (this.is_active()) {
-                    const baseTitle = "checkin";
-                    const newTitle = totalUnreadCount > 0 ? `(${totalUnreadCount})${baseTitle}` : baseTitle;
+                    const appBaseTitle = baseTitle || "checkin";
+                    const newTitle = totalUnreadCount > 0 ? `(${totalUnreadCount})${appBaseTitle}` : appBaseTitle;
                     document.title = newTitle;
                     // 同步更新originalTitle，避免闪烁时显示错误
                     originalTitle = newTitle;
