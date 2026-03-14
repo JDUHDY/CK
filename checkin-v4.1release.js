@@ -5813,7 +5813,8 @@ contact_any: ${user_attr.contact_any},
             await this.server.databasebackend.session__renew_by_id(this.server.session_attr.id);
             const session_attrs = await this.server.databasebackend.session__get_attrs_by_user_id__recent([...user_ids, ...ug_user_ids,], 30);
 
-            const msgs = await this.server.databasebackend.chat_message__get_msgs_to_me(user_attr, user_ids, group_ids, true, 50, 0);
+            // FIX: Changed limit from 50 to 999999 to load all historical messages instead of being capped at 50
+            const msgs = await this.server.databasebackend.chat_message__get_msgs_to_me(user_attr, user_ids, group_ids, true, 999999, 0);
             msgs.forEach(msg => {
                 if (msg.receiver_type === databasebackends._.chat_message__receiver_type.user) {
                     if (msg.sender === user_attr.id) {
