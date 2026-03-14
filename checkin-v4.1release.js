@@ -3425,7 +3425,7 @@ ORDER BY depth;
         //     return r;
         // }
 
-        async chat_read_progress__get_records_mine(user_attr, user_ids, group_ids) {
+        async chat_read_progress__get_records_mine(user_attr, user_ids, group_ids, limit = 50, offset = 0) {
             const user_ids_string = user_ids.map(i => `${i}`).join(',');
             const group_ids_string = group_ids.map(i => `${i}`).join(',');
             sql = `SELECT `;
@@ -3437,6 +3437,8 @@ ORDER BY depth;
             sql += `(receiver_type = ${_.chat_message__receiver_type.group} AND receiver_group_id IN (${group_ids_string}))`;
 
             sql += `) ORDER BY crpid ASC`;
+            sql += ` LIMIT ${limit}`;
+            sql += ` OFFSET ${offset}`;
             sql += `;`;
             let r = await this.exec_sql(sql);
             return r;
@@ -5846,9 +5848,7 @@ contact_any: ${user_attr.contact_any},
             if (typeof globalThis.__chatLoadingMutex === 'undefined') {
                 globalThis.__chatLoadingMutex = {
                     isLoadingHistory: false,
-                    isSyncing: false,
-                    loadingQueue: [],
-                    isProcessing: false
+                    isSyncing: false
                 };
             }
             const mutex = globalThis.__chatLoadingMutex;
@@ -5856,25 +5856,17 @@ contact_any: ${user_attr.contact_any},
             // Wait helper function
             const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-            // Acquire lock for loading (with timeout)
-            const acquireLoadingLock = async () => {
-                let attempts = 0;
-                while (mutex.isLoadingHistory && attempts < 20) {
-                    console.log('[消息加载] 等待前一个加载任务完成...');
-                    await wait(250);
-                    attempts++;
-                }
+            // Set loading flag (with error handling - always release in finally)
+            const setLoadingFlag = () => {
                 if (mutex.isLoadingHistory) {
-                    throw new Error('前一个加载任务超时');
+                    console.warn('[消息加载] 检测到已有加载任务在进行中，跳过锁获取');
                 }
                 mutex.isLoadingHistory = true;
-                console.log('[消息加载] 已获取加载锁');
             };
 
-            // Release lock for loading
-            const releaseLoadingLock = () => {
+            // Clear loading flag
+            const clearLoadingFlag = () => {
                 mutex.isLoadingHistory = false;
-                console.log('[消息加载] 已释放加载锁');
             };
 
             // Wait if sync is in progress (mutex between loading and sync)
@@ -5939,7 +5931,7 @@ contact_any: ${user_attr.contact_any},
             // ============================================================================
             
             // Acquire loading lock first
-            await acquireLoadingLock();
+            setLoadingFlag();
             
             // Ensure we wait for any in-progress sync to complete
             await waitForSyncComplete();
@@ -6028,9 +6020,9 @@ contact_any: ${user_attr.contact_any},
                                     batch_load_successful = true; // Graceful exit
                                 }
                             } else {
-                                // Non-retryable error - re-throw
+                                // Non-retryable error - 只打印不抛出，避免前端弹窗
                                 console.error('[消息加载] 不可恢复错误: ' + error.message);
-                                throw error;
+                                // 不抛出错误，继续执行
                             }
                         }
                     }
@@ -6043,7 +6035,7 @@ contact_any: ${user_attr.contact_any},
                     }
                 }
             } finally {
-                releaseLoadingLock();
+                clearLoadingFlag();
             }
             
             // ============================================================================
@@ -6176,8 +6168,29 @@ contact_any: ${user_attr.contact_any},
 
 
         static async _action__sync(r) {
-            const {sync_results,} = await Chat._get_status.call(this, r);
-            return sync_results;
+            // 同步操作互斥锁 - 防止与历史消息加载并发
+            const mutex = globalThis.__chatLoadingMutex || { isLoadingHistory: false, isSyncing: false };
+            
+            // 等待历史消息加载完成
+            let waitAttempts = 0;
+            while (mutex.isLoadingHistory && waitAttempts < 10) {
+                console.log('[同步] 等待历史消息加载完成...');
+                await new Promise(resolve => setTimeout(resolve, 300));
+                waitAttempts++;
+            }
+            
+            // 设置同步中标志
+            if (!mutex.isSyncing) {
+                mutex.isSyncing = true;
+            }
+            
+            try {
+                const {sync_results,} = await Chat._get_status.call(this, r);
+                return sync_results;
+            } finally {
+                mutex.isSyncing = false;
+                console.log('[同步] 同步完成');
+            }
         }
 
         static async sync(args) {
