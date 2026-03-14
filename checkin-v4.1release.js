@@ -5813,8 +5813,61 @@ contact_any: ${user_attr.contact_any},
             await this.server.databasebackend.session__renew_by_id(this.server.session_attr.id);
             const session_attrs = await this.server.databasebackend.session__get_attrs_by_user_id__recent([...user_ids, ...ug_user_ids,], 30);
 
-            // FIX: Changed limit from 50 to 999999 to load all historical messages instead of being capped at 50
-            const msgs = await this.server.databasebackend.chat_message__get_msgs_to_me(user_attr, user_ids, group_ids, true, 999999, 0);
+            // FIX: Implement batch loading with retry mechanism to avoid D1 API limit errors
+            // Default batch size is 50 messages per request
+            // If "Too many API requests" error occurs, retry up to 5 times with increasing delay
+            const BATCH_SIZE = 50;
+            const MAX_RETRIES = 5;
+            const BASE_DELAY_MS = 100;
+            
+            let all_msgs = [];
+            let current_offset = 0;
+            let retry_count = 0;
+            let batch_success = false;
+            
+            // Helper function to check if error is D1 API limit error
+            const isD1APILimitError = (error) => {
+                return error && error.message && error.message.includes("Too many API requests");
+            };
+            
+            // Batch loading loop - load messages in batches of BATCH_SIZE
+            while (!batch_success && retry_count < MAX_RETRIES) {
+                try {
+                    const batch_msgs = await this.server.databasebackend.chat_message__get_msgs_to_me(
+                        user_attr, user_ids, group_ids, true, BATCH_SIZE, current_offset
+                    );
+                    
+                    if (batch_msgs.length > 0) {
+                        all_msgs = all_msgs.concat(batch_msgs);
+                        current_offset += batch_msgs.length;
+                        
+                        // If we got less than BATCH_SIZE, we've loaded all messages
+                        if (batch_msgs.length < BATCH_SIZE) {
+                            batch_success = true;
+                        }
+                    } else {
+                        // No more messages
+                        batch_success = true;
+                    }
+                } catch (error) {
+                    // Check if it's a D1 API limit error
+                    if (isD1APILimitError(error)) {
+                        retry_count++;
+                        if (retry_count < MAX_RETRIES) {
+                            // Exponential backoff: wait before retrying
+                            // First retry: 100ms, second: 200ms, third: 300ms, etc.
+                            const delay = BASE_DELAY_MS * retry_count;
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                        }
+                    } else {
+                        // Re-throw non-D1 errors
+                        throw error;
+                    }
+                }
+            }
+            
+            // Assign loaded messages to the result
+            const msgs = all_msgs;
             msgs.forEach(msg => {
                 if (msg.receiver_type === databasebackends._.chat_message__receiver_type.user) {
                     if (msg.sender === user_attr.id) {
