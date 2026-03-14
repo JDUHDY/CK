@@ -6195,9 +6195,34 @@ contact_any: ${user_attr.contact_any},
 
         static async sync(args) {
             if (this.server.req.method === requestmethodtypes.POST) {
-                const r = await this.server.req.json();
-                const result = await Chat._action__sync.call(this, r);
-                return responsetypes.code_200(this.server, JSON.stringify(result));
+                // HTTP 轮询同步也需要互斥锁，防止与 WebSocket sync 并发
+                const mutex = globalThis.__chatLoadingMutex || { isLoadingHistory: false, isSyncing: false };
+                
+                // 等待历史消息加载完成
+                let waitAttempts = 0;
+                while (mutex.isLoadingHistory && waitAttempts < 10) {
+                    console.log('[HTTP同步] 等待历史消息加载完成...');
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    waitAttempts++;
+                }
+                
+                // 如果已有同步在进行，等待
+                while (mutex.isSyncing && waitAttempts < 10) {
+                    console.log('[HTTP同步] 等待其他同步完成...');
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    waitAttempts++;
+                }
+                
+                mutex.isSyncing = true;
+                
+                try {
+                    const r = await this.server.req.json();
+                    const result = await Chat._action__sync.call(this, r);
+                    return responsetypes.code_200(this.server, JSON.stringify(result));
+                } finally {
+                    mutex.isSyncing = false;
+                    console.log('[HTTP同步] 完成');
+                }
             }
         }
 
@@ -6277,9 +6302,31 @@ contact_any: ${user_attr.contact_any},
 
         static async sync_one(args) {
             if (this.server.req.method === requestmethodtypes.POST) {
-                const r = await this.server.req.json();
-                const result = await Chat._action__sync_one.call(this, r);
-                return responsetypes.code_200(this.server, JSON.stringify(result));
+                // HTTP 轮询同步也需要互斥锁
+                const mutex = globalThis.__chatLoadingMutex || { isLoadingHistory: false, isSyncing: false };
+                
+                let waitAttempts = 0;
+                while (mutex.isLoadingHistory && waitAttempts < 10) {
+                    console.log('[HTTP同步_one] 等待历史消息加载完成...');
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    waitAttempts++;
+                }
+                while (mutex.isSyncing && waitAttempts < 10) {
+                    console.log('[HTTP同步_one] 等待其他同步完成...');
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    waitAttempts++;
+                }
+                
+                mutex.isSyncing = true;
+                
+                try {
+                    const r = await this.server.req.json();
+                    const result = await Chat._action__sync_one.call(this, r);
+                    return responsetypes.code_200(this.server, JSON.stringify(result));
+                } finally {
+                    mutex.isSyncing = false;
+                    console.log('[HTTP同步_one] 完成');
+                }
             }
         }
 
