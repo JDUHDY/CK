@@ -14799,6 +14799,12 @@
             * 定期获取新消息
             * */
             start_timer__fetch_unread_msgs(is_background = true) {
+                // 如果 WebSocket 可用，跳过 HTTP 轮询，避免重复请求
+                if (this.ws_isopen()) {
+                    console.log('[获取未读] WebSocket 已连接，跳过 HTTP 轮询');
+                    return;
+                }
+                
                 if (!is_background) {
                     this.remove_loading_mark();
                     this.loading_mark.show();
@@ -23944,6 +23950,12 @@
             * 定期同步
             * */
             start_timer__sync(is_background = true) {
+                // 如果 WebSocket 可用，跳过 HTTP 轮询，避免重复请求导致 D1 API 限制
+                if (this.ws_isopen()) {
+                    console.log('[Sync] WebSocket 已连接，跳过 HTTP 轮询');
+                    return;
+                }
+                
                 if (!is_background) {
                     // this.remove_loading_mark();
                     // this.loading_mark.show();
@@ -23962,6 +23974,13 @@
 
             sync() {
                 if (!this.is_active()) return;
+                
+                // 如果 WebSocket 可用，跳过 HTTP 请求
+                if (this.ws_isopen()) {
+                    console.log('[Sync] WebSocket 已连接，跳过 HTTP sync');
+                    return;
+                }
+                
                 const items = this.contact_items();
                 if (items.length === 0) {
                     if (this.is_active()) this.timer__sync = setTimeout(() => {

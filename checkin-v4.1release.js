@@ -6861,7 +6861,24 @@ contact_any: ${user_attr.contact_any},
         }
 
         static async _action__load_history(r) {
-            const {receiver_attr, user_attr,} = await subviews.Chat._get_receiver_and_user_attr.call(this, r);
+            // 互斥锁 - 防止与同步操作并发
+            const mutex = globalThis.__chatLoadingMutex || { isLoadingHistory: false, isSyncing: false };
+            
+            // 等待任何同步完成
+            let waitAttempts = 0;
+            while (mutex.isSyncing && waitAttempts < 10) {
+                console.log('[加载历史] 等待同步完成...');
+                await new Promise(resolve => setTimeout(resolve, 300));
+                waitAttempts++;
+            }
+            
+            // 设置加载标志
+            if (!mutex.isLoadingHistory) {
+                mutex.isLoadingHistory = true;
+            }
+            
+            try {
+                const {receiver_attr, user_attr,} = await subviews.Chat._get_receiver_and_user_attr.call(this, r);
 
             const result = {
                 messages: [], // msgattr
@@ -6915,13 +6932,41 @@ contact_any: ${user_attr.contact_any},
             await Chat._get_attached_attrs.call(this, result.messages,);
 
             return result;
+            } finally {
+                mutex.isLoadingHistory = false;
+                console.log('[加载历史] 完成');
+            }
         }
 
         static async load_history(args) {
             if (this.server.req.method === requestmethodtypes.POST) {
-                const r = await this.server.req.json();
-                const result = await Chat._action__load_history.call(this, r);
-                return responsetypes.code_200(this.server, JSON.stringify(result));
+                // HTTP 加载历史也需要互斥锁
+                const mutex = globalThis.__chatLoadingMutex || { isLoadingHistory: false, isSyncing: false };
+                
+                // 等待其他加载完成
+                let waitAttempts = 0;
+                while (mutex.isLoadingHistory && waitAttempts < 10) {
+                    console.log('[HTTP加载历史] 等待其他加载完成...');
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    waitAttempts++;
+                }
+                
+                while (mutex.isSyncing && waitAttempts < 10) {
+                    console.log('[HTTP加载历史] 等待同步完成...');
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    waitAttempts++;
+                }
+                
+                mutex.isLoadingHistory = true;
+                
+                try {
+                    const r = await this.server.req.json();
+                    const result = await Chat._action__load_history.call(this, r);
+                    return responsetypes.code_200(this.server, JSON.stringify(result));
+                } finally {
+                    mutex.isLoadingHistory = false;
+                    console.log('[HTTP加载历史] 完成');
+                }
             }
         }
 
