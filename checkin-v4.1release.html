@@ -3468,6 +3468,51 @@
             color: #718096;
         }
 
+        /* 编辑按钮样式 */
+        .settings-btn-edit {
+            display: inline-block;
+            padding: 8px 12px;
+            background: transparent !important;
+            transition: all 0.1s ease-in-out;
+            border: 1px solid #007bff !important;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #007bff;
+            margin-right: 8px;
+        }
+
+        .settings-btn-edit:hover:not(:disabled) {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+
+        .settings-btn-edit:active:not(:disabled) {
+            background-color: #0056b3 !important;
+        }
+
+        .settings-btn-edit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #ccc !important;
+            color: #ccc;
+        }
+
+        .theme-dark .settings-btn-edit {
+            border-color: #63b3ed !important;
+            color: #63b3ed;
+        }
+
+        .theme-dark .settings-btn-edit:hover:not(:disabled) {
+            background: #63b3ed !important;
+            color: white !important;
+        }
+
+        .theme-dark .settings-btn-edit:disabled {
+            border-color: #718096 !important;
+            color: #718096;
+        }
+
         /* 删除状态提示 */
         .settings-delete-status {
             font-size: 13px;
@@ -3756,13 +3801,13 @@
 
         div#form-mark-rect {
             background: white;
-            padding: 24px;
+            padding: 14px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             justify-content: left;
-            gap: 12px;
+            gap: 4px;
             min-width: 320px;
             max-width: 90vw;
         }
@@ -7386,7 +7431,7 @@
             return;
         }
 
-        text.textContent = message;
+        text.innerHTML = message;
         modal.classList.remove("hidden");
         modal.classList.add("show");
 
@@ -8520,6 +8565,10 @@
             this.rect = this.mark.querySelector(":scope div#message-mark-rect");
             this.rect.style.background = MessageMark.get_background_color.call(this);
 
+            // 使用 innerHTML 而不是 textContent，以支持 HTML 换行
+            this.text_element = this.mark.querySelector(":scope p#message-mark-text");
+            this.text_element.innerHTML = this.message;
+
             this.btn_group = this.mark.querySelector(":scope div#message-mark-btn-group");
             if (this.btn_flags & MessageMark.btnFlags.confirm) {
                 this.btn_group.insertAdjacentHTML("beforeend", `<button class="message-mark-btn">确定</button>`);
@@ -8579,7 +8628,18 @@
             }
 
             // 非网络错误，正常显示弹窗
-            const mm = new MessageMark(!element ? document.body : element, error instanceof Error ? `报错：${error}` : error, MessageMark.btnFlags.close, color, close_callback, confirm_callback);
+            // 对错误消息进行 HTML 转义，防止 XSS
+            let errorMessage = error instanceof Error ? `报错：${error}` : error;
+            if (typeof errorMessage === 'string') {
+                // 转义 HTML 特殊字符
+                errorMessage = errorMessage
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+            const mm = new MessageMark(!element ? document.body : element, errorMessage, MessageMark.btnFlags.close, color, close_callback, confirm_callback);
             mm.show();
             return mm;
         }
@@ -10469,6 +10529,16 @@
             async fetch_user_attr(uid) {
                 let url = join_path(this.api_url(), "user", uid);
                 let r = await net_fetcher.nf_get(url,);
+                if (r.status === 200) {
+                    let d = await r.json();
+                    return d;
+                }
+                throw new Error(await format_error_response(r));
+            }
+
+            async fetch_user_attrs(uids) {
+                let url = join_path(this.api_url(), "users");
+                let r = await net_fetcher.nf_post_json(url, {uids});
                 if (r.status === 200) {
                     let d = await r.json();
                     return d;
@@ -13158,7 +13228,8 @@
         </button>
         <button
             class="chat-session-inputarea-othertypes-ai"
-            title="让 AI 用通俗的方式一步一步教你解决问题，快捷键ctrl+shift+回车">
+            title="让 AI 用通俗的方式一步一步教你解决问题，快捷键ctrl+shift+回车"
+            style="display: none;">
             <i class="bi bi-robot"></i> AI咨询
         </button>
         <!-- 发送按钮 -->
@@ -13488,6 +13559,13 @@
                     ".chat-session-inputarea-othertypes-ai"
                 );
 
+                // 根据 enable_ai_consult 控制按钮显示
+                if (enable_ai_consult) {
+                    this.e_ai_teacher_btn.style.display = "";
+                } else {
+                    this.e_ai_teacher_btn.style.display = "none";
+                }
+
 
                // 先绑定快捷键，独立于点击事件
                 this.e_inputarea_textarea.addEventListener("keydown", (e) => {
@@ -13510,8 +13588,8 @@
 
                                     }
 
-                                    // 添加确认弹窗
-                                    MessageMark.confirm("确定要跳转到 AI 咨询页面吗？", null, null, () => {
+                                    // 添加确认弹窗，包含隐私提醒
+                                    MessageMark.confirm("确定要跳转到 AI 咨询页面吗？<br><br><span style='font-size: 16px;'>⚠️ 隐私提醒：请不要发送隐私和敏感信息给 AI。</span>", null, null, () => {
                                         const prompt = build_ai_teacher_prompt(userText);
                                         const encodedPrompt = encodeURIComponent(prompt);
 
@@ -16723,8 +16801,8 @@
                                 disabled: !this.msgattr.plain_data_text,
                                 callback: () => {
                                     if (!this.msgattr.plain_data_text) return;
-                                    // 添加确认弹窗
-                                    MessageMark.confirm("确定要跳转到 AI 咨询页面吗？", null, null, () => {
+                                    // 添加确认弹窗，包含隐私提醒
+                                    MessageMark.confirm("确定要跳转到 AI 咨询页面吗？<br><br><span style='font-size: 16px;'>⚠️ 隐私提醒：请不要发送隐私和敏感信息给 AI。</span>", null, null, () => {
                                         const prompt = build_ai_teacher_prompt(this.msgattr.plain_data_text);
                                         window.open(`https://chatgpt.com/?q=${encodeURIComponent(prompt)}`, "_blank");
                                     });
@@ -19592,7 +19670,7 @@
             async exportChatWithImages(mdFileName, mdContent, imageFiles) {
                 try {
                     // 动态加载 JSZip 库
-                    const jsZipUrl = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+                    const jsZipUrl = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
 
                     if (typeof JSZip === 'undefined') {
                         await new Promise((resolve, reject) => {
@@ -20669,13 +20747,18 @@
                     this.selected_user_ids = new Set();
                     let html = `
 <div class="settings-toolbar">
+    <button class="settings-btn-edit" disabled>编辑</button>
     <button class="settings-btn-delete" disabled>删除</button>
     <span class="settings-delete-status"></span>
 </div>
 `;
                     this.container.insertAdjacentHTML("beforeend", html);
+                    this.e_btn_edit = this.container.querySelector(":scope button.settings-btn-edit");
                     this.e_btn_delete = this.container.querySelector(":scope button.settings-btn-delete");
                     this.e_delete_status = this.container.querySelector(":scope span.settings-delete-status");
+                    this.e_btn_edit.addEventListener("click", (event) => {
+                        this.batch_edit_users();
+                    });
                     this.e_btn_delete.addEventListener("click", (event) => {
                         this.batch_delete_users();
                     });
@@ -20764,6 +20847,7 @@
                     let tree_item = {
                         clickable: false,
                         columns: this._attrs2columns(attr),
+                        user_attr: attr, // 保存完整的用户属性，用于批量编辑
                     };
                     this.tree1.add_item(tree_item);
 
@@ -21143,8 +21227,10 @@
                 // 更新删除按钮状态
                 _update_delete_button() {
                     if (this.selected_user_ids.size > 0) {
+                        this.e_btn_edit.disabled = false;
                         this.e_btn_delete.disabled = false;
                     } else {
+                        this.e_btn_edit.disabled = true;
                         this.e_btn_delete.disabled = true;
                     }
                 }
@@ -21156,6 +21242,154 @@
 
                     MessageMark.confirm(`确定删除选中的 ${count} 个用户吗？`, null, null, () => {
                         this._batch_delete_users();
+                    });
+                }
+
+                // 批量编辑用户
+                batch_edit_users() {
+                    const count = this.selected_user_ids.size;
+                    if (count === 0) return;
+
+                    // 按照列表中的原始顺序收集选中的用户名
+                    const selected_uids = [];
+                    
+                    for (const tree_item of this.tree1.tree_items) {
+                        // 检查该用户是否被选中
+                        const checkbox = tree_item.querySelector(":scope > :first-child input.tree-item-checkbox");
+                        if (!checkbox || !checkbox.checked) {
+                            continue;
+                        }
+                        
+                        // 获取用户名
+                        const uid = tree_item.attr.columns[3].text;
+                        selected_uids.push(uid);
+                    }
+
+                    if (selected_uids.length === 0) {
+                        MessageMark.report(new Error("未找到选中的用户"));
+                        return;
+                    }
+
+                    // 批量获取用户完整数据
+                    this.loading_mark.show();
+                    this.e_delete_status.textContent = "加载用户数据...";
+
+                    this.client.subviews.admin.fetch_user_attrs(selected_uids)
+                        .then(user_attrs => {
+                            if (this.closed) return;
+                            
+                            const users_templates = [];
+                            
+                            // 按照选中的顺序填充用户数据
+                            for (const uid of selected_uids) {
+                                const attr = user_attrs.find(user => user.uid === uid);
+                                if (attr) {
+                                    const _template = {...this.#_template}
+                                    
+                                    _template["停用"] = Boolean(attr.disabled);
+                                    _template["名称"] = attr.uid;
+                                    _template["密码"] = "不变";
+                                    _template["储存空间"] = `${attr.free_space}mb`;
+                                    _template["所属组"] = attr.groups;
+                                    _template["允许主动与所有用户通信"] = Boolean(attr.contact_any);
+                                    _template["允许主动与这些组通信"] = attr.contact_groups;
+                                    _template["允许主动与这些用户通信"] = attr.contact_users;
+                                    _template["允许管理所有用户的网盘"] = Boolean(attr.manage_drive);
+                                    
+                                    users_templates.push(_template);
+                                }
+                            }
+
+                            this.remove_loading_mark();
+
+                            if (users_templates.length === 0) {
+                                MessageMark.report(new Error("未找到用户数据"));
+                                return;
+                            }
+
+                            // 显示批量编辑弹窗
+                            this._show_batch_edit_modal(users_templates);
+                        })
+                        .catch(error => {
+                            if (this.closed) return;
+                            this.remove_loading_mark();
+                            MessageMark.report(error);
+                        });
+                }
+
+                // 显示批量编辑弹窗
+                _show_batch_edit_modal(users_templates) {
+                    // 将用户模板数据转换为格式化的 JSON 字符串
+                    const json_text = JSON.stringify(users_templates, null, 2);
+
+                    let form = [
+                        {type: "title", label: `批量编辑用户（${users_templates.length}个）：`},
+                        {type: "textarea", label: "", value: json_text, style: "min-height: 400px; font-family: monospace; font-size: 12px;"},
+                    ];
+
+                    const confirm_callback = (fm,) => {
+                        fm.collect_data();
+
+                        try {
+                            let edited_templates = JSON.parse(form[1].value)
+
+                            if (!form_field_checker.ffc_array(edited_templates)) throw new Error("用户数据必须是数组格式");
+                            
+                            for (const template of edited_templates) {
+                                this._check_form(template, true);
+                            }
+
+                            // fm.remove();
+                            this._batch_edit_users_submit(fm, edited_templates);
+
+                        } catch (e) {
+                            MessageMark.report(e, fm.rect)
+                        }
+
+                    }
+
+                    FormMark.get_global_input(form, confirm_callback);
+                }
+
+                // 执行批量编辑提交
+                _batch_edit_users_submit(fm, edited_templates) {
+                    fm.loading_mark = new LoadingMark(fm.rect);
+                    fm.loading_mark.show();
+                    this.e_delete_status.textContent = "编辑中...";
+
+                    let success_count = 0;
+                    let fail_count = 0;
+
+                    const promises = edited_templates.map(async (template) => {
+                        try {
+                            const old_uid = template["名称"];
+                            await this.client.subviews.admin.edit_user(template, old_uid);
+                            success_count++;
+                        } catch (error) {
+                            fail_count++;
+                            console.error(`编辑用户 ${template["名称"]} 失败:`, error);
+                        }
+                    });
+
+                    Promise.all(promises).then(() => {
+                        // 刷新列表
+                        this.tree1.remove_all_items();
+                        this.selected_user_ids.clear();
+                        this.fetch_list();
+
+                        fm.loading_mark.remove();
+                        fm.remove();
+
+                        if (fail_count > 0) {
+                            this.e_delete_status.textContent = `编辑完成：成功 ${success_count} 个，失败 ${fail_count} 个`;
+                        } else {
+                            this.e_delete_status.textContent = `编辑成功！共编辑 ${success_count} 个用户`;
+                        }
+                        setTimeout(() => {
+                            if (!this.closed) {
+                                this.e_delete_status.textContent = "";
+                            }
+                        }, 3000);
                     });
                 }
 
