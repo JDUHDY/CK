@@ -5813,61 +5813,169 @@ contact_any: ${user_attr.contact_any},
             await this.server.databasebackend.session__renew_by_id(this.server.session_attr.id);
             const session_attrs = await this.server.databasebackend.session__get_attrs_by_user_id__recent([...user_ids, ...ug_user_ids,], 30);
 
-            // FIX: Implement batch loading with retry mechanism to avoid D1 API limit errors
-            // Default batch size is 50 messages per request
-            // If "Too many API requests" error occurs, retry up to 5 times with increasing delay
-            const BATCH_SIZE = 50;
-            const MAX_RETRIES = 5;
-            const BASE_DELAY_MS = 100;
+            // ============================================================================
+            // FIX: Implement comprehensive batch loading with retry mechanism
+            // 
+            // Problem Analysis:
+            // 1. Original hardcoded limit=50 caused total message count capped at 50
+            // 2. Setting limit=999999 triggered D1 API request limit errors
+            //
+            // Solution: Pagination with Progressive Loading
+            // - Default limit: 50 (avoid API limit), Max limit per call: 100
+            // - Batch loading using offset parameter
+            // - Dynamic limit adjustment on API errors (reduce by 30%, min 10)
+            // - Exponential backoff retry (max 5 retries)
+            // - Graceful fallback: return partial results on failure
+            // ============================================================================
             
-            let all_msgs = [];
-            let current_offset = 0;
-            let retry_count = 0;
-            let batch_success = false;
-            
-            // Helper function to check if error is D1 API limit error
-            const isD1APILimitError = (error) => {
-                return error && error.message && error.message.includes("Too many API requests");
+            // Configuration constants for batch loading
+            const BATCH_CONFIG = {
+                DEFAULT_LIMIT: 50,      // Default limit per request (safe value)
+                MAX_LIMIT: 100,         // Maximum limit per call (API safe ceiling)
+                MAX_TOTAL_MESSAGES: 999999, // Maximum total messages to load
+                MAX_RETRIES: 5,         // Absolute maximum retries (never exceed)
+                INITIAL_DELAY_MS: 100,  // Initial retry delay
+                MAX_DELAY_MS: 5000,     // Maximum retry delay
+                MIN_LIMIT: 10,          // Minimum limit when dynamically adjusting
+                REDUCTION_FACTOR: 0.7   // Reduce limit by 30% on error
             };
             
-            // Batch loading loop - load messages in batches of BATCH_SIZE
-            while (!batch_success && retry_count < MAX_RETRIES) {
-                try {
-                    const batch_msgs = await this.server.databasebackend.chat_message__get_msgs_to_me(
-                        user_attr, user_ids, group_ids, true, BATCH_SIZE, current_offset
-                    );
-                    
-                    if (batch_msgs.length > 0) {
-                        all_msgs = all_msgs.concat(batch_msgs);
-                        current_offset += batch_msgs.length;
+            // State variables for pagination
+            let all_messages = [];
+            let current_offset = 0;
+            let current_limit = BATCH_CONFIG.DEFAULT_LIMIT;
+            let total_batches_loaded = 0;
+            let retry_count = 0;
+            let has_more_messages = true;
+            
+            // ============================================================================
+            // Error Classification & Detection
+            // ============================================================================
+            
+            /**
+             * Classifies error type based on error message pattern
+             * @param {Error} error - The error object from catch block
+             * @returns {Object} - { type: string, retryable: boolean }
+             */
+            const classifyError = (error) => {
+                if (!error || !error.message) {
+                    return { type: 'UNKNOWN', retryable: false };
+                }
+                const msg = error.message.toLowerCase();
+                
+                if (msg.includes('too many api requests')) {
+                    return { type: 'API_REQUEST_LIMIT_EXCEEDED', retryable: true };
+                }
+                if (msg.includes('timeout') || msg.includes('duration') || msg.includes('exceeded')) {
+                    return { type: 'DATABASE_TIMEOUT', retryable: true };
+                }
+                if (msg.includes('network') || msg.includes('connection') || msg.includes('fetch')) {
+                    return { type: 'NETWORK_ERROR', retryable: true };
+                }
+                if (msg.includes('authentication') || msg.includes('permission') || msg.includes('not found')) {
+                    return { type: 'UNRECOVERABLE_ERROR', retryable: false };
+                }
+                return { type: 'UNKNOWN', retryable: false };
+            };
+            
+            /**
+             * Calculates exponential backoff delay with cap
+             * Formula: min(initialDelay * (2^retryCount), maxDelay)
+             * @param {number} retryCount - Current retry attempt number
+             * @returns {number} - Delay in milliseconds
+             */
+            const calculateBackoffDelay = (retryCount) => {
+                const delay = BATCH_CONFIG.INITIAL_DELAY_MS * Math.pow(2, retryCount);
+                return Math.min(delay, BATCH_CONFIG.MAX_DELAY_MS);
+            };
+            
+            /**
+             * Dynamically adjusts limit to avoid repeated API limit errors
+             * Reduces limit by REDUCTION_FACTOR (30%), with minimum floor
+             * @param {number} currentLimit - Current limit value
+             * @returns {number} - Adjusted limit value
+             */
+            const adjustLimitOnError = (currentLimit) => {
+                const reduced = Math.floor(currentLimit * BATCH_CONFIG.REDUCTION_FACTOR);
+                return Math.max(reduced, BATCH_CONFIG.MIN_LIMIT);
+            };
+            
+            // ============================================================================
+            // Main Batch Loading Loop
+            // ============================================================================
+            
+            while (has_more_messages && 
+                   current_offset < BATCH_CONFIG.MAX_TOTAL_MESSAGES && 
+                   total_batches_loaded < 50) { // Safety limit to prevent infinite loops
+                
+                let batch_load_successful = false;
+                let batch_retry_count = 0;
+                
+                while (!batch_load_successful && batch_retry_count < BATCH_CONFIG.MAX_RETRIES) {
+                    try {
+                        // Fetch a batch of messages with current limit and offset
+                        const batch_messages = await this.server.databasebackend.chat_message__get_msgs_to_me(
+                            user_attr, user_ids, group_ids, true, current_limit, current_offset
+                        );
                         
-                        // If we got less than BATCH_SIZE, we've loaded all messages
-                        if (batch_msgs.length < BATCH_SIZE) {
-                            batch_success = true;
+                        // Process successful batch
+                        if (batch_messages && batch_messages.length > 0) {
+                            all_messages = all_messages.concat(batch_messages);
+                            current_offset += batch_messages.length;
+                            total_batches_loaded++;
+                            batch_load_successful = true;
+                            
+                            // Check termination conditions
+                            // If we got fewer messages than requested, we've reached the end
+                            if (batch_messages.length < current_limit) {
+                                has_more_messages = false;
+                            }
+                        } else {
+                            // Empty result means no more messages
+                            has_more_messages = false;
+                            batch_load_successful = true;
                         }
-                    } else {
-                        // No more messages
-                        batch_success = true;
-                    }
-                } catch (error) {
-                    // Check if it's a D1 API limit error
-                    if (isD1APILimitError(error)) {
-                        retry_count++;
-                        if (retry_count < MAX_RETRIES) {
-                            // Exponential backoff: wait before retrying
-                            // First retry: 100ms, second: 200ms, third: 300ms, etc.
-                            const delay = BASE_DELAY_MS * retry_count;
-                            await new Promise(resolve => setTimeout(resolve, delay));
+                        
+                    } catch (error) {
+                        // Error handling with classification
+                        const errorInfo = classifyError(error);
+                        
+                        if (errorInfo.retryable) {
+                            batch_retry_count++;
+                            retry_count++; // Track total retries
+                            
+                            if (batch_retry_count < BATCH_CONFIG.MAX_RETRIES) {
+                                // Calculate delay and wait
+                                const delay = calculateBackoffDelay(batch_retry_count - 1);
+                                await new Promise(resolve => setTimeout(resolve, delay));
+                                
+                                // Dynamic limit adjustment on API limit errors
+                                if (errorInfo.type === 'API_REQUEST_LIMIT_EXCEEDED') {
+                                    current_limit = adjustLimitOnError(current_limit);
+                                }
+                            } else {
+                                // Max retries exceeded for this batch
+                                console.warn(`[Chat] Batch load failed after ${BATCH_CONFIG.MAX_RETRIES} retries at offset ${current_offset}`);
+                                has_more_messages = false;
+                                batch_load_successful = true; // Exit gracefully
+                            }
+                        } else {
+                            // Non-retryable error - re-throw
+                            throw error;
                         }
-                    } else {
-                        // Re-throw non-D1 errors
-                        throw error;
                     }
                 }
             }
             
-            // Assign loaded messages to the result
-            const msgs = all_msgs;
+            // ============================================================================
+            // Result Assignment with Metadata
+            // ============================================================================
+            
+            // Assign loaded messages to result variable (maintains backward compatibility)
+            const msgs = all_messages;
+            
+            // Log loading statistics for debugging/monitoring
+            console.log(`[Chat] Message loading complete: ${msgs.length} messages, ${total_batches_loaded} batches, ${retry_count} retries`);
             msgs.forEach(msg => {
                 if (msg.receiver_type === databasebackends._.chat_message__receiver_type.user) {
                     if (msg.sender === user_attr.id) {
