@@ -5814,48 +5814,94 @@ contact_any: ${user_attr.contact_any},
             const session_attrs = await this.server.databasebackend.session__get_attrs_by_user_id__recent([...user_ids, ...ug_user_ids,], 30);
 
             // ============================================================================
-            // FIX: Implement comprehensive batch loading with retry mechanism
+            // FIX: Implement STRICTLY SERIAL batch loading to prevent concurrent API calls
             // 
-            // Problem Analysis:
-            // 1. Original hardcoded limit=50 caused total message count capped at 50
-            // 2. Setting limit=999999 triggered D1 API request limit errors
-            //
-            // Solution: Pagination with Progressive Loading
-            // - Default limit: 50 (avoid API limit), Max limit per call: 100
-            // - Batch loading using offset parameter
-            // - Dynamic limit adjustment on API errors (reduce by 30%, min 10)
-            // - Exponential backoff retry (max 5 retries)
-            // - Graceful fallback: return partial results on failure
+            // Problem: "Too many API requests" errors caused by concurrent API calls
+            // - The previous implementation allowed multiple batches to load in parallel
+            // - History loading and auto-sync were running concurrently
+            // 
+            // Solution: Strictly serial execution with proper delays
+            // - maxConcurrent = 1 (strictly serial, only 1 request at a time)
+            // - Batch delay between requests (150ms) to let D1 API recover
+            // - Mutex between loading and sync operations
+            // - Optimized config parameters
             // ============================================================================
             
-            // Configuration constants for batch loading
-            const BATCH_CONFIG = {
-                DEFAULT_LIMIT: 50,      // Default limit per request (safe value)
-                MAX_LIMIT: 100,         // Maximum limit per call (API safe ceiling)
-                MAX_TOTAL_MESSAGES: 999999, // Maximum total messages to load
-                MAX_RETRIES: 5,         // Absolute maximum retries (never exceed)
-                INITIAL_DELAY_MS: 100,  // Initial retry delay
-                MAX_DELAY_MS: 5000,     // Maximum retry delay
-                MIN_LIMIT: 10,          // Minimum limit when dynamically adjusting
-                REDUCTION_FACTOR: 0.7   // Reduce limit by 30% on error
+            // Configuration - OPTIMIZED to prevent API limit errors
+            const MESSAGE_LOAD_CONFIG = {
+                INITIAL_LIMIT: 30,          // Reduced from 50 to 30 for safety
+                MAX_LIMIT: 50,             // Reduced from 100 to 50
+                MIN_LIMIT: 10,             // Minimum limit when dynamically adjusting
+                MAX_TOTAL_MESSAGES: 2000,  // Cap at 2000 messages
+                MAX_RETRIES: 3,           // Reduced from 5 to 3
+                RETRY_DELAY: 500,          // Delay between retries
+                BATCH_DELAY: 150,          // Delay between batches (CRITICAL!)
+                MAX_BATCHES: 100,         // Safety limit
+                REDUCTION_FACTOR: 0.7,     // Reduce by 30% on error
+                CONSECUTIVE_EMPTY_LIMIT: 2 // Stop after 2 consecutive empty results
             };
+
+            // Global flags for mutex between loading and sync operations
+            // Note: These are module-level, shared across requests in same worker
+            if (typeof globalThis.__chatLoadingMutex === 'undefined') {
+                globalThis.__chatLoadingMutex = {
+                    isLoadingHistory: false,
+                    isSyncing: false,
+                    loadingQueue: [],
+                    isProcessing: false
+                };
+            }
+            const mutex = globalThis.__chatLoadingMutex;
             
-            // State variables for pagination
+            // Wait helper function
+            const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+            // Acquire lock for loading (with timeout)
+            const acquireLoadingLock = async () => {
+                let attempts = 0;
+                while (mutex.isLoadingHistory && attempts < 20) {
+                    console.log('[消息加载] 等待前一个加载任务完成...');
+                    await wait(250);
+                    attempts++;
+                }
+                if (mutex.isLoadingHistory) {
+                    throw new Error('前一个加载任务超时');
+                }
+                mutex.isLoadingHistory = true;
+                console.log('[消息加载] 已获取加载锁');
+            };
+
+            // Release lock for loading
+            const releaseLoadingLock = () => {
+                mutex.isLoadingHistory = false;
+                console.log('[消息加载] 已释放加载锁');
+            };
+
+            // Wait if sync is in progress (mutex between loading and sync)
+            const waitForSyncComplete = async () => {
+                let attempts = 0;
+                while (mutex.isSyncing && attempts < 10) {
+                    console.log('[消息加载] 等待同步完成...');
+                    await wait(300);
+                    attempts++;
+                }
+            };
+
+            // State variables for STRICTLY SERIAL pagination
             let all_messages = [];
             let current_offset = 0;
-            let current_limit = BATCH_CONFIG.DEFAULT_LIMIT;
+            let current_limit = MESSAGE_LOAD_CONFIG.INITIAL_LIMIT;
             let total_batches_loaded = 0;
             let retry_count = 0;
+            let consecutive_empty_results = 0;
             let has_more_messages = true;
-            
+
             // ============================================================================
             // Error Classification & Detection
             // ============================================================================
             
             /**
              * Classifies error type based on error message pattern
-             * @param {Error} error - The error object from catch block
-             * @returns {Object} - { type: string, retryable: boolean }
              */
             const classifyError = (error) => {
                 if (!error || !error.message) {
@@ -5879,103 +5925,134 @@ contact_any: ${user_attr.contact_any},
             };
             
             /**
-             * Calculates exponential backoff delay with cap
-             * Formula: min(initialDelay * (2^retryCount), maxDelay)
-             * @param {number} retryCount - Current retry attempt number
-             * @returns {number} - Delay in milliseconds
-             */
-            const calculateBackoffDelay = (retryCount) => {
-                const delay = BATCH_CONFIG.INITIAL_DELAY_MS * Math.pow(2, retryCount);
-                return Math.min(delay, BATCH_CONFIG.MAX_DELAY_MS);
-            };
-            
-            /**
              * Dynamically adjusts limit to avoid repeated API limit errors
-             * Reduces limit by REDUCTION_FACTOR (30%), with minimum floor
-             * @param {number} currentLimit - Current limit value
-             * @returns {number} - Adjusted limit value
+             * Reduces limit by 30%, with minimum floor of 10
              */
             const adjustLimitOnError = (currentLimit) => {
-                const reduced = Math.floor(currentLimit * BATCH_CONFIG.REDUCTION_FACTOR);
-                return Math.max(reduced, BATCH_CONFIG.MIN_LIMIT);
+                const reduced = Math.floor(currentLimit * MESSAGE_LOAD_CONFIG.REDUCTION_FACTOR);
+                return Math.max(reduced, MESSAGE_LOAD_CONFIG.MIN_LIMIT);
             };
-            
+
             // ============================================================================
-            // Main Batch Loading Loop
+            // Main STRICTLY SERIAL Batch Loading Loop
+            // Key: Only ONE request at a time, with delays between batches
             // ============================================================================
             
-            while (has_more_messages && 
-                   current_offset < BATCH_CONFIG.MAX_TOTAL_MESSAGES && 
-                   total_batches_loaded < 50) { // Safety limit to prevent infinite loops
-                
-                let batch_load_successful = false;
-                let batch_retry_count = 0;
-                
-                while (!batch_load_successful && batch_retry_count < BATCH_CONFIG.MAX_RETRIES) {
-                    try {
-                        // Fetch a batch of messages with current limit and offset
-                        const batch_messages = await this.server.databasebackend.chat_message__get_msgs_to_me(
-                            user_attr, user_ids, group_ids, true, current_limit, current_offset
-                        );
-                        
-                        // Process successful batch
-                        if (batch_messages && batch_messages.length > 0) {
-                            all_messages = all_messages.concat(batch_messages);
-                            current_offset += batch_messages.length;
-                            total_batches_loaded++;
-                            batch_load_successful = true;
+            // Acquire loading lock first
+            await acquireLoadingLock();
+            
+            // Ensure we wait for any in-progress sync to complete
+            await waitForSyncComplete();
+            
+            console.log('[消息加载] 开始加载，初始limit=' + current_limit + ', max=' + MESSAGE_LOAD_CONFIG.MAX_TOTAL_MESSAGES);
+
+            try {
+                while (has_more_messages && 
+                       current_offset < MESSAGE_LOAD_CONFIG.MAX_TOTAL_MESSAGES && 
+                       total_batches_loaded < MESSAGE_LOAD_CONFIG.MAX_BATCHES) {
+                    
+                    // Check consecutive empty results limit
+                    if (consecutive_empty_results >= MESSAGE_LOAD_CONFIG.CONSECUTIVE_EMPTY_LIMIT) {
+                        console.log('[消息加载] 连续' + consecutive_empty_results + '次空结果，停止加载');
+                        break;
+                    }
+
+                    let batch_load_successful = false;
+                    let batch_retry_count = 0;
+
+                    // STRICTLY SERIAL: Each batch waits for previous to complete
+                    while (!batch_load_successful && batch_retry_count < MESSAGE_LOAD_CONFIG.MAX_RETRIES) {
+                        try {
+                            console.log('[消息加载] 请求批次 ' + (total_batches_loaded + 1) + 
+                                        ', offset=' + current_offset + 
+                                        ', limit=' + current_limit);
                             
-                            // Check termination conditions
-                            // If we got fewer messages than requested, we've reached the end
-                            if (batch_messages.length < current_limit) {
-                                has_more_messages = false;
-                            }
-                        } else {
-                            // Empty result means no more messages
-                            has_more_messages = false;
-                            batch_load_successful = true;
-                        }
-                        
-                    } catch (error) {
-                        // Error handling with classification
-                        const errorInfo = classifyError(error);
-                        
-                        if (errorInfo.retryable) {
-                            batch_retry_count++;
-                            retry_count++; // Track total retries
+                            // CRITICAL: Only ONE request at a time - NO Promise.all!
+                            const batch_messages = await this.server.databasebackend.chat_message__get_msgs_to_me(
+                                user_attr, user_ids, group_ids, true, current_limit, current_offset
+                            );
                             
-                            if (batch_retry_count < BATCH_CONFIG.MAX_RETRIES) {
-                                // Calculate delay and wait
-                                const delay = calculateBackoffDelay(batch_retry_count - 1);
-                                await new Promise(resolve => setTimeout(resolve, delay));
+                            // Process successful batch
+                            if (batch_messages && batch_messages.length > 0) {
+                                all_messages = all_messages.concat(batch_messages);
+                                current_offset += batch_messages.length;
+                                total_batches_loaded++;
+                                batch_load_successful = true;
+                                consecutive_empty_results = 0; // Reset counter
                                 
-                                // Dynamic limit adjustment on API limit errors
-                                if (errorInfo.type === 'API_REQUEST_LIMIT_EXCEEDED') {
-                                    current_limit = adjustLimitOnError(current_limit);
+                                console.log('[消息加载] 批次成功，获取 ' + batch_messages.length + 
+                                            ' 条消息，累计 ' + all_messages.length + ' 条');
+                                
+                                // Check termination: if we got fewer than requested, we're done
+                                if (batch_messages.length < current_limit) {
+                                    has_more_messages = false;
+                                    console.log('[消息加载] 已到达消息末尾');
                                 }
                             } else {
-                                // Max retries exceeded for this batch
-                                console.warn(`[Chat] Batch load failed after ${BATCH_CONFIG.MAX_RETRIES} retries at offset ${current_offset}`);
+                                // Empty result
+                                consecutive_empty_results++;
+                                console.log('[消息加载] 空结果 #' + consecutive_empty_results);
                                 has_more_messages = false;
-                                batch_load_successful = true; // Exit gracefully
+                                batch_load_successful = true;
                             }
-                        } else {
-                            // Non-retryable error - re-throw
-                            throw error;
+                            
+                        } catch (error) {
+                            // Error handling with classification
+                            const errorInfo = classifyError(error);
+                            
+                            if (errorInfo.retryable) {
+                                batch_retry_count++;
+                                retry_count++;
+                                
+                                console.warn('[消息加载] 错误: ' + errorInfo.type + 
+                                            ', 重试 ' + batch_retry_count + '/' + MESSAGE_LOAD_CONFIG.MAX_RETRIES);
+                                
+                                if (batch_retry_count < MESSAGE_LOAD_CONFIG.MAX_RETRIES) {
+                                    // Dynamic limit adjustment on API limit errors
+                                    if (errorInfo.type === 'API_REQUEST_LIMIT_EXCEEDED') {
+                                        const oldLimit = current_limit;
+                                        current_limit = adjustLimitOnError(current_limit);
+                                        console.warn('[消息加载] API限制: limit从' + oldLimit + '降至' + current_limit);
+                                    }
+                                    
+                                    // Wait before retry - exponential backoff
+                                    const delay = Math.min(
+                                        MESSAGE_LOAD_CONFIG.RETRY_DELAY * batch_retry_count,
+                                        2000
+                                    );
+                                    console.log('[消息加载] 等待 ' + delay + 'ms 后重试...');
+                                    await wait(delay);
+                                } else {
+                                    console.error('[消息加载] 批次加载失败，已达最大重试次数');
+                                    has_more_messages = false;
+                                    batch_load_successful = true; // Graceful exit
+                                }
+                            } else {
+                                // Non-retryable error - re-throw
+                                console.error('[消息加载] 不可恢复错误: ' + error.message);
+                                throw error;
+                            }
                         }
                     }
+
+                    // CRITICAL: Delay between batches to let D1 API recover
+                    // This is essential to prevent "Too many API requests" errors
+                    if (has_more_messages) {
+                        console.log('[消息加载] 批次间隔等待 ' + MESSAGE_LOAD_CONFIG.BATCH_DELAY + 'ms...');
+                        await wait(MESSAGE_LOAD_CONFIG.BATCH_DELAY);
+                    }
                 }
+            } finally {
+                releaseLoadingLock();
             }
             
             // ============================================================================
-            // Result Assignment with Metadata
+            // Result Assignment
             // ============================================================================
             
-            // Assign loaded messages to result variable (maintains backward compatibility)
             const msgs = all_messages;
-            
-            // Log loading statistics for debugging/monitoring
-            console.log(`[Chat] Message loading complete: ${msgs.length} messages, ${total_batches_loaded} batches, ${retry_count} retries`);
+            console.log('[消息加载] 完成! 共 ' + msgs.length + ' 条消息, ' + 
+                        total_batches_loaded + ' 批次, ' + retry_count + ' 次重试');
             msgs.forEach(msg => {
                 if (msg.receiver_type === databasebackends._.chat_message__receiver_type.user) {
                     if (msg.sender === user_attr.id) {
