@@ -7531,7 +7531,8 @@
     const checkin_version = null; // 被服务端文本替换
     const checkin_version_number = null;
     const checkin_version_is_beta = null;
-    const enable_ai_consult = null; // 被服务端文本替换
+    const enable_ai_consult = null; // 被服务端文本替换，控制输入区域的 AI 咨询按钮
+    const enable_ai_consult_menu = null; // 被服务端文本替换，控制消息右键菜单中的 AI 咨询选项
     const baseTitle = null; // 被服务端文本替换为网站标题
     const top_level_path = null;
     const appnames = null;
@@ -13118,7 +13119,6 @@
         <div class="chat-session-header-info">
             <span class="chat-session-header-info-name">${this.li.bindmap.text}</span>
             <span class="chat-session-header-info-status">正在加载...</span>
-            <div class="chat-session-header-info-clickmark"></div>
         </div>
     </div>
     <div class="chat-session-header-actions">
@@ -13351,7 +13351,6 @@
 
                 this.chat_rect = this.container.querySelector(":scope div.chat-rect");
                 this.e_header_info = this.container.querySelector(":scope div.chat-session-header-info");
-                this.e_header_info_clickmark = this.container.querySelector(":scope div.chat-session-header-info-clickmark");
                 this.e_header_info_name = this.container.querySelector(":scope span.chat-session-header-info-name");
                 this.e_header_info_status = this.container.querySelector(":scope span.chat-session-header-info-status");
 
@@ -13361,11 +13360,6 @@
                 this.e_msgflow_wrap = this.container.querySelector(":scope div.chat-session-msgflow-wrap");
                 this.e_announcement = this.container.querySelector(":scope div.chat-session-announcement");
                 this.e_pinned_messages = this.container.querySelector(":scope div.chat-session-pinned-messages");
-
-                // 查看在线成员
-                if (this.is_group()) {
-                    this.e_header_info_clickmark.classList.add("hidden");
-                }
 
                 // header右侧按钮
                 this.e_header_action_more = this.e_header_actions.querySelector(":scope button.chat-session-header-action-more");
@@ -16794,7 +16788,7 @@
                         });
 
                         // AI 咨询
-                        if (enable_ai_consult && dashboardwrappers.ChatDashboardWrapper.message_type_checker.is_text(this.msgattr.type)) {
+                        if (enable_ai_consult_menu && dashboardwrappers.ChatDashboardWrapper.message_type_checker.is_text(this.msgattr.type)) {
                             items.push({
                                 type: "button",
                                 text: 'AI 咨询',
@@ -18891,7 +18885,7 @@
                                 <i class="bi bi-megaphone" style="color: #4a90e2; font-size: 16px; flex-shrink: 0;"></i>
                                 <span class="pinned-sender-name" style="font-weight: 600; font-size: 13px; color: #4a90e2; flex-shrink: 0;background: rgba(31, 98, 131, 0.15);">${editor_uid || '未知'}</span>
                                 <span class="pinned-separator">|</span>
-                                <div class="chat-message-content-text chat-announcement-message-text"></div>
+                                <div class="chat-message-content-text chat-announcement-message-text" data-raw-content="${MarkdownResolver.escapeHTML(plainAnnouncement)}"></div>
                                 <span style="font-size: 11px; color: #999; flex-shrink: 0;">${formattedTime || ''}</span>
                                 <button class="chat-session-announcement-edit-btn" title="编辑公告" style="background: transparent; border: none; font-size: 13px; color: #4a90e2; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: all 0.2s; flex-shrink: 0; margin-left: 4px;">
                                     <i class="bi bi-pencil"></i>
@@ -18899,9 +18893,10 @@
                             </div>
                         `;
                         
-                        // 安全地设置内容
+                        // 使用 MarkdownResolver 解析 Markdown 和 HTML 语法，移除多余换行
                         const contentEl = this.e_announcement.querySelector(".chat-message-content-text");
-                        contentEl.textContent = plainAnnouncement;
+                        const renderedHtml = MarkdownResolver.to_html(plainAnnouncement).replace(/\n/g, ' ');
+                        contentEl.innerHTML = renderedHtml;
                         
                         this.e_announcement.classList.remove("hidden");
 
@@ -19024,8 +19019,9 @@
                     this.e_group_settings_panel.classList.add("hidden");
                 }
 
-                // 获取当前公告内容
-                const currentContent = this.e_announcement.querySelector(".chat-message-content-text")?.textContent || "";
+                // 获取当前公告原始内容（从 data-raw-content 属性获取，避免渲染后的 HTML）
+                const contentEl = this.e_announcement.querySelector(".chat-message-content-text");
+                const currentContent = contentEl?.dataset?.rawContent || "";
 
                 // 创建弹窗
                 const modal = document.createElement("div");
@@ -23090,6 +23086,11 @@
                 this.ws_counter = 0;
                 this.ws_callbacks = {};
                 this.ws_lasttime_connecting = 0;
+                
+                // WebSocket 请求队列控制
+                this.ws_pending_count = 0;
+                this.ws_max_pending = 5; // 最大等待响应数
+                this.ws_send_queue = [];
 
                 // 初始化左侧边栏搜索（搜索群聊和私聊）
                 this.init_aside_search();
@@ -24180,6 +24181,9 @@
                         delete this.ws_callbacks[key];
                     }
                 }
+                // 清理请求队列
+                this.ws_send_queue = [];
+                this.ws_pending_count = 0;
                 this.ws_client = null;
             }
 
@@ -24193,6 +24197,9 @@
                         delete this.ws_callbacks[key];
                     }
                 }
+                // 清理请求队列
+                this.ws_send_queue = [];
+                this.ws_pending_count = 0;
             }
 
             ws_isopen() {
@@ -24200,9 +24207,17 @@
             }
 
             ws_send(json, callback) {
+                // 如果等待响应数超限，加入队列
+                if (this.ws_pending_count >= this.ws_max_pending) {
+                    console.log("[WebSocket] 请求队列已满，等待中...");
+                    this.ws_send_queue.push({ json, callback });
+                    return;
+                }
+                
                 json.counter = this.ws_counter;
                 this.ws_callbacks[json.counter.toString()] = callback;
                 this.ws_counter++;
+                this.ws_pending_count++;
                 // console.log("websocket 发送消息", json);
                 this.ws_client.send(JSON.stringify(json));
             }
@@ -24212,9 +24227,18 @@
                 if (Object.keys(this.ws_callbacks).includes(counter)) {
                     const callback = this.ws_callbacks[counter];
                     delete this.ws_callbacks[counter];
+                    this.ws_pending_count = Math.max(0, this.ws_pending_count - 1);
+                    
+                    // 处理队列中的下一个请求
+                    if (this.ws_send_queue.length > 0 && this.ws_pending_count < this.ws_max_pending) {
+                        const next = this.ws_send_queue.shift();
+                        this.ws_send(next.json, next.callback);
+                    }
+                    
                     if (json.error) {
                         const error = new Error(JSON.stringify(json));
-                        if (json.error.message.includes("Too many API requests by single worker invocation")) {
+                        if (json.error.message.includes("Too many API requests by single Worker invocation")) {
+                            console.log("[WebSocket] 检测到 API 请求限制错误，将自动重试");
                             this.ws_close();
                             error.auto_retry = true;
                         }
