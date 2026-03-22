@@ -3157,7 +3157,6 @@
         }
 
         .plugin-detail-content-info,
-        .plugin-detail-content-config,
         .plugin-detail-content-permissions,
         .plugin-detail-content-version {
             display: none !important;
@@ -3171,7 +3170,6 @@
         }
 
         .plugin-detail-content-info.active,
-        .plugin-detail-content-config.active,
         .plugin-detail-content-permissions.active,
         .plugin-detail-content-version.active {
             display: flex !important;
@@ -3242,7 +3240,6 @@
         }
 
         .theme-dark .plugin-detail-content-info,
-        .theme-dark .plugin-detail-content-config,
         .theme-dark .plugin-detail-content-permissions,
         .theme-dark .plugin-detail-content-version {
             background: #2a2a2a !important;
@@ -3896,9 +3893,9 @@
             display: flex;
             flex-direction: column;
 
-            padding-top: 10px;
+            padding-top: 5px;
             padding-bottom: 16px;
-            gap: 10px;
+            gap: 5px;
 
         }
 
@@ -4852,165 +4849,6 @@
             font-weight: 600;
         }
 
-        /* 插件配置表单样式 */
-        .plugin-config-form {
-            margin-top: 10px;
-        }
-
-        .plugin-config-row {
-            display: flex;
-            align-items: center;
-            margin: 12px 0;
-            gap: 10px;
-        }
-
-        .plugin-config-row label {
-            min-width: 100px;
-            color: #555;
-            font-size: 14px;
-        }
-
-        .plugin-config-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            max-width: 300px;
-        }
-
-        .plugin-config-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-        }
-
-        .plugin-config-hint {
-            color: #888;
-            font-style: italic;
-            margin-bottom: 15px;
-        }
-
-        .plugin-config-actions {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .plugin-config-save-btn {
-            padding: 10px 24px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .plugin-config-save-btn:hover {
-            background: #2563eb;
-        }
-
-        .plugin-config-save-btn:disabled {
-            background: #10b981;
-            cursor: default;
-        }
-
-        .plugin-config-add-btn {
-            padding: 6px 12px;
-            background: #f3f4f6;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .plugin-config-add-btn:hover {
-            background: #e5e7eb;
-        }
-
-        .plugin-config-remove-btn {
-            padding: 4px 8px;
-            background: #fee2e2;
-            color: #dc2626;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .plugin-config-remove-btn:hover {
-            background: #fecaca;
-        }
-
-        .plugin-config-new-key,
-        .plugin-config-new-value {
-            padding: 6px 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 13px;
-            width: 100px;
-        }
-
-        .plugin-config-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 8px 0;
-            padding: 8px;
-            background: #f9fafb;
-            border-radius: 4px;
-        }
-
-        /* 暗色主题适配 */
-        .theme-dark .plugin-config-row label {
-            color: #cbd5e0;
-        }
-
-        .theme-dark .plugin-config-input {
-            background: #1a202c;
-            border-color: #4a5568;
-            color: #e2e8f0;
-        }
-
-        .theme-dark .plugin-config-input:focus {
-            border-color: #63b3ed;
-            box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.2);
-        }
-
-        .theme-dark .plugin-config-actions {
-            border-top-color: #4a5568;
-        }
-
-        .theme-dark .plugin-config-save-btn {
-            background: #3b82f6;
-        }
-
-        .theme-dark .plugin-config-save-btn:hover {
-            background: #2563eb;
-        }
-
-        .theme-dark .plugin-config-add-btn {
-            background: #374151;
-            border-color: #4a5568;
-            color: #e2e8f0;
-        }
-
-        .theme-dark .plugin-config-add-btn:hover {
-            background: #4b5563;
-        }
-
-        .theme-dark .plugin-config-item {
-            background: #1a202c;
-        }
-
-        .theme-dark .plugin-config-new-key,
-        .theme-dark .plugin-config-new-value {
-            background: #1a202c;
-            border-color: #4a5568;
-            color: #e2e8f0;
-        }
         .theme-dark #plugin-detail-container {
             background: #2d3748;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -5519,6 +5357,7 @@
             border: 1px solid #ddd;
             border-radius: 2px;
             font-size: 14px;
+            max-width: 250px;
         }
 
         .plugin-mark-search input:focus {
@@ -9300,7 +9139,7 @@
                     </button>
                 </div>
                 <!-- 搜索框 -->
-                <nav style="flex: none; max-height: 300px;">
+                <nav id="chat-nav-groups" style="flex: none; max-height: 220px; min-height: 80px;">
                     <div class="chat-contact-type chat-contact-type-private">
                         <p class="chat-contact-title">群聊：</p>
                         <input type="text" class="chat-contact-search chat-contact-search-group" placeholder="搜索群聊...">
@@ -9308,14 +9147,15 @@
                     <ol class="nav-buttons">
                     </ol>
                 </nav>
-               <nav>
-                <div class="chat-contact-type chat-contact-type-private">
-                    <p class="chat-contact-title">私聊：</p>
-                    <input type="text" class="chat-contact-search chat-contact-search-private" placeholder="搜索私聊...">
-                </div>
-                <ol class="nav-buttons chat-private-list">
-                </ol>
-            </nav>
+                <div id="chat-nav-divider" style="height: 3px; background: rgb(138 138 138 / 30%); cursor: row-resize; margin: 0px 6px; border-radius: 3px; flex-shrink: 0;"></div>
+                <nav id="chat-nav-users">
+                    <div class="chat-contact-type chat-contact-type-private">
+                        <p class="chat-contact-title">私聊：</p>
+                        <input type="text" class="chat-contact-search chat-contact-search-private" placeholder="搜索私聊...">
+                    </div>
+                    <ol class="nav-buttons chat-private-list">
+                    </ol>
+                </nav>
             </aside>
         </div>
         <div class="aside-divider"></div>
@@ -9399,15 +9239,12 @@
             <div id="plugin-detail-rect">
                 <div class="plugin-manager-tabbar">
                     <button id="plugin-detail-tab-info" class="active">插件介绍</button>
-                    <button id="plugin-detail-tab-config">配置设置</button>
                     <button id="plugin-detail-tab-permissions">权限说明</button>
                     <button id="plugin-detail-tab-version">版本信息</button>
                 </div>
                 <div class="plugin-manager-tabcontent">
                     <!-- 插件介绍 -->
                     <div id="plugin-detail-content-info" class="plugin-detail-content-info active"></div>
-                    <!-- 配置设置 -->
-                    <div id="plugin-detail-content-config" class="plugin-detail-content-config hidden"></div>
                     <!-- 权限说明 -->
                     <div id="plugin-detail-content-permissions" class="plugin-detail-content-permissions hidden"></div>
                     <!-- 版本信息 -->
@@ -10991,6 +10828,9 @@
         }
 
         async encrypt(plain) {
+            if (this.ors.length === 0) {
+                throw new Error("加密器未初始化，请刷新页面重试");
+            }
             if (form_field_checker.ffc_string(plain, true)) plain = Encryptors.Encryptor.str2bytes(plain);
             const encryptor = this.ors[0];
             return await encryptor.encrypt(plain);
@@ -11398,69 +11238,6 @@
             this.closeCallback = closeCallback;
             this.confirmCallback = confirmCallback;
             this.activeTab = 'intro';
-            this.pluginConfig = null; // 存储插件配置
-        }
-
-        // 加载插件配置
-        async loadPluginConfig() {
-            try {
-                const response = await fetch(`${top_level_path}/api/plugins/${this.pluginData.plugin_id}/config`, {
-                    credentials: 'same-origin'
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    this.pluginConfig = data || {};
-                    return this.pluginConfig;
-                }
-            } catch (error) {
-                console.error('加载插件配置失败:', error);
-            }
-            this.pluginConfig = {};
-            return this.pluginConfig;
-        }
-
-        // 保存插件配置
-        async savePluginConfig() {
-            try {
-                const config = {};
-                // 从表单中收集配置值
-                const panel = this.mark.querySelector("#plugin-detail-panel");
-                const inputs = panel.querySelectorAll('.plugin-config-input');
-                inputs.forEach(input => {
-                    const key = input.dataset.configKey;
-                    if (input.type === 'checkbox') {
-                        config[key] = input.checked;
-                    } else if (input.type === 'number') {
-                        config[key] = parseFloat(input.value) || 0;
-                    } else {
-                        config[key] = input.value;
-                    }
-                });
-
-                const response = await fetch(`${top_level_path}/api/plugins/${this.pluginData.plugin_id}/config`, {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(config)
-                });
-
-                if (response.ok) {
-                    this.pluginConfig = config;
-                    // 显示保存成功提示
-                    const saveBtn = panel.querySelector('.plugin-config-save-btn');
-                    const originalText = saveBtn.textContent;
-                    saveBtn.textContent = '已保存 ✓';
-                    saveBtn.disabled = true;
-                    setTimeout(() => {
-                        saveBtn.textContent = originalText;
-                        saveBtn.disabled = false;
-                    }, 1500);
-                    return true;
-                }
-            } catch (error) {
-                console.error('保存插件配置失败:', error);
-            }
-            return false;
         }
 
         fill() {
@@ -11498,7 +11275,6 @@
         addPluginLabels() {
             const labels = [
                 { id: 'intro', text: '插件介绍', active: true },
-                { id: 'config', text: '配置设置', active: false },
                 { id: 'permissions', text: '权限说明', active: false },
                 { id: 'version', text: '版本信息', active: false }
             ];
@@ -11543,128 +11319,6 @@
                         </div>
                     `;
                     panel.innerHTML = contentHtml;
-                    break;
-                case 'config':
-                    // 显示加载中
-                    panel.innerHTML = `
-                        <div class="plugin-detail-panel">
-                            <h3>配置设置</h3>
-                            <p style="color: #888;">加载中...</p>
-                        </div>
-                    `;
-                    
-                    // 加载配置
-                    const config = await this.loadPluginConfig();
-                    
-                    // 检查插件是否已安装
-                    if (!this.pluginData.installed) {
-                        panel.innerHTML = `
-                            <div class="plugin-detail-panel">
-                                <h3>配置设置</h3>
-                                <p style="color: #888;">请先安装插件后再进行配置</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    // 检查是否有 storage 权限
-                    const permissions = this.pluginData.permissions || [];
-                    const permissionList = typeof permissions === 'string' ? JSON.parse(permissions) : permissions;
-                    if (!permissionList.includes('storage')) {
-                        panel.innerHTML = `
-                            <div class="plugin-detail-panel">
-                                <h3>配置设置</h3>
-                                <p style="color: #888;">此插件无需配置</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    // 显示配置表单
-                    const configKeys = Object.keys(config);
-                    if (configKeys.length === 0 && Object.keys(config).length === 0) {
-                        // 显示默认配置表单
-                        panel.innerHTML = `
-                            <div class="plugin-detail-panel">
-                                <h3>配置设置</h3>
-                                <div class="plugin-config-form">
-                                    <p class="plugin-config-hint">插件暂无预定义配置项，您可以添加自定义配置：</p>
-                                    <div class="plugin-config-row">
-                                        <label>配置键名：</label>
-                                        <input type="text" class="plugin-config-input plugin-config-key-input" placeholder="例如：theme">
-                                    </div>
-                                    <div class="plugin-config-row">
-                                        <label>配置值：</label>
-                                        <input type="text" class="plugin-config-input plugin-config-value-input" placeholder="例如：dark">
-                                    </div>
-                                    <div class="plugin-config-row">
-                                        <button class="plugin-config-add-btn" onclick="this.closest('.plugin-detail-panel').querySelector('.plugin-config-list').appendChild(this.closest('.plugin-detail-panel').querySelector('.plugin-config-template').cloneNode(true))">添加配置项</button>
-                                    </div>
-                                    <div class="plugin-config-list"></div>
-                                    <div class="plugin-config-template" style="display:none;">
-                                        <div class="plugin-config-item">
-                                            <input type="text" class="plugin-config-input" data-config-key="" placeholder="键">
-                                            <span>=</span>
-                                            <input type="text" class="plugin-config-input" data-config-value="" placeholder="值">
-                                            <button class="plugin-config-remove-btn" onclick="this.parentElement.remove()">×</button>
-                                        </div>
-                                    </div>
-                                    <div class="plugin-config-actions">
-                                        <button class="plugin-config-save-btn" onclick="this.closest('.plugin-detail-panel').dispatchEvent(new CustomEvent('save-config'))">保存配置</button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        // 显示已有配置
-                        let configItemsHtml = '';
-                        for (const [key, value] of Object.entries(config)) {
-                            const inputType = typeof value === 'boolean' ? 'checkbox' : 
-                                            typeof value === 'number' ? 'number' : 'text';
-                            const inputValue = inputType === 'checkbox' ? (value ? 'checked' : '') : `value="${value}"`;
-                            configItemsHtml += `
-                                <div class="plugin-config-row">
-                                    <label>${key}：</label>
-                                    <input type="${inputType}" class="plugin-config-input" data-config-key="${key}" ${inputValue}>
-                                </div>
-                            `;
-                        }
-                        
-                        panel.innerHTML = `
-                            <div class="plugin-detail-panel">
-                                <h3>配置设置</h3>
-                                <div class="plugin-config-form">
-                                    ${configItemsHtml}
-                                    <div class="plugin-config-row">
-                                        <label>新配置键名：</label>
-                                        <input type="text" class="plugin-config-new-key" placeholder="输入新键名">
-                                        <input type="text" class="plugin-config-new-value" placeholder="输入值">
-                                        <button class="plugin-config-add-btn" onclick="
-                                            const keyInput = this.previousElementSibling.previousElementSibling;
-                                            const valueInput = this.previousElementSibling;
-                                            if (keyInput.value.trim()) {
-                                                const row = document.createElement('div');
-                                                row.className = 'plugin-config-row';
-                                                row.innerHTML = \`<label>\${keyInput.value}：</label><input type='text' class='plugin-config-input' data-config-key='\${keyInput.value}' value='\${valueInput.value}'>\`;
-                                                this.parentElement.before(row);
-                                                keyInput.value = '';
-                                                valueInput.value = '';
-                                            }
-                                        ">添加</button>
-                                    </div>
-                                    <div class="plugin-config-actions">
-                                        <button class="plugin-config-save-btn">保存配置</button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-
-                    // 绑定保存按钮事件
-                    const saveBtn = panel.querySelector('.plugin-config-save-btn');
-                    if (saveBtn) {
-                        saveBtn.addEventListener('click', () => this.savePluginConfig());
-                    }
                     break;
                 case 'permissions':
                     const perms = this.pluginData.permissions || [];
@@ -13490,6 +13144,8 @@
                 }
                 this.e_settings_legacykeys.value = legacykeys.join("\n");
 
+                // 初始化加密器
+                encryptors.recreate_all([currentkey, ...legacykeys]);
             }
 
             saveSettings() {
@@ -14686,7 +14342,7 @@
                 link.id = `plugin-style-${pluginId}`;
                 link.rel = 'stylesheet';
                 link.href = url;
-                link.crossOrigin = 'anonymous';
+                // 本地开发环境不设置 crossOrigin，避免 CORS 问题
 
                 link.onload = () => resolve();
                 link.onerror = () => reject(new Error(`加载样式失败: ${url}`));
@@ -28397,6 +28053,55 @@
                         li.style.display = !keyword || name.includes(keyword) ? "" : "none";
                     });
                 });
+
+                // 分隔符拖动功能
+                this.init_nav_divider();
+            }
+
+            /*
+            初始化群聊/私聊分隔符拖动
+            */
+            init_nav_divider() {
+                const divider = document.getElementById("chat-nav-divider");
+                const groupsNav = document.getElementById("chat-nav-groups");
+                const usersNav = document.getElementById("chat-nav-users");
+                if (!divider || !groupsNav || !usersNav) {
+                    console.log("分隔符元素未找到", { divider, groupsNav, usersNav });
+                    return;
+                }
+
+                console.log("分隔符初始化成功");
+
+                let isDragging = false;
+                let startY = 0;
+                let startHeight = 0;
+
+                divider.addEventListener("mousedown", (e) => {
+                    e.preventDefault();
+                    isDragging = true;
+                    startY = e.clientY;
+                    // 获取当前实际高度作为起点
+                    startHeight = groupsNav.offsetHeight;
+                    document.body.style.cursor = "row-resize";
+                    document.body.style.userSelect = "none";
+                });
+
+                document.addEventListener("mousemove", (e) => {
+                    if (!isDragging) return;
+                    const deltaY = e.clientY - startY;
+                    const newHeight = Math.max(80, startHeight + deltaY);
+                    // 使用 height 覆盖 max-height
+                    groupsNav.style.height = newHeight + "px";
+                    groupsNav.style.maxHeight = "none";
+                });
+
+                document.addEventListener("mouseup", () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        document.body.style.cursor = "";
+                        document.body.style.userSelect = "";
+                    }
+                });
             }
 
             /*
@@ -30233,6 +29938,11 @@
                             });
                         }
 
+                        // 加载已启用的插件
+                        if (typeof autoLoadEnabledPlugins === 'function') {
+                            autoLoadEnabledPlugins();
+                        }
+
                         this.restore_selected_panel_id();
                     }).catch(error => {
                     lm.remove()
@@ -30815,6 +30525,11 @@
     }
 
     function initialize() {
+        // 初始化加密器（必须在任何加解密操作之前）
+        const currentkey = sessionStorage.getItem("currentkey") || "";
+        const legacykeys = JSON.parse(sessionStorage.getItem("legacykeys") || "[]");
+        encryptors.recreate_all([currentkey, ...legacykeys]);
+
         // 访问的是admin路径
         if (jumpto.backend_panel) {
             document.title = `${document.title} - 管理`;
