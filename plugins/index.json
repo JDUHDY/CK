@@ -6,7 +6,7 @@
       "version": "1.0.0",
       "description": "【管理员专用】一个简单的测试插件，在页面顶部显示欢迎横幅。",
       "author": "CC 团队",
-      "manifest_url": "./hello-world/manifest.json"
+      "manifest_url": "https://raw.githubusercontent.com/JDUHDY/CK/refs/heads/main/plugins/hello-world/manifest.json"
     },
     {
       "id": "quick-panel",
@@ -14,7 +14,7 @@
       "version": "1.0.0",
       "description": "在页面右下角添加一个悬浮快捷操作面板，包含回到顶部、主题切换、实时时钟等功能",
       "author": "CC 团队",
-      "manifest_url": "./quick-panel/manifest.json"
+      "manifest_url": "https://raw.githubusercontent.com/JDUHDY/CK/refs/heads/main/plugins/quick-panel/manifest.json"
     }
   ]
 }
