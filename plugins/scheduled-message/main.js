@@ -50,26 +50,35 @@ class ScheduledMessagePlugin {
      */
     async onActivate() {
         console.log('🚀 定时消息插件已激活');
-        
-        // 加载配置
-        await this.loadConfig();
-        
-        // 加载定时消息列表
-        await this.loadScheduledMessages();
-        
-        // 添加定时消息按钮到聊天输入区（延迟检测）
-        this.tryAddScheduleButton();
-        
+
+        // 标记为已激活
+        this.isActivated = true;
+
         // 启动定时检查（每分钟检查一次）
         this.startPeriodicCheck();
-        
+
         // 启动自动清理检查
         this.startCleanupCheck();
-        
+
         // 初始检查一次
         this.checkAndSendMessages();
-        
-        this.isActivated = true;
+
+        // 延迟执行耗时操作，避免阻塞插件注册
+        // 使用 setTimeout 将这些操作放到下一个事件循环
+        setTimeout(async () => {
+            try {
+                // 加载配置
+                await this.loadConfig();
+
+                // 加载定时消息列表
+                await this.loadScheduledMessages();
+
+                // 添加定时消息按钮到聊天输入区（延迟检测）
+                this.tryAddScheduleButton();
+            } catch (error) {
+                console.error('定时消息插件初始化失败:', error);
+            }
+        }, 0);
     }
     
     /**
