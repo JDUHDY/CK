@@ -14502,7 +14502,7 @@
          * 等待插件注册
          * @private
          */
-        async _waitForRegistration(pluginId, timeout = 30000) {
+        async _waitForRegistration(pluginId, timeout = 120000) {
             const startTime = Date.now();
 
             while (!this.pluginRegistry[pluginId] && !window.CheckinPluginRegistry?.[pluginId]) {
