@@ -94,6 +94,18 @@
             margin-bottom: 4px;
         }
 
+        /* 社交功能按钮暗色主题适配 */
+        .theme-dark .social-button,
+        body.dark-mode .social-button {
+            color: #fff !important;
+            border-color: #fff !important;
+        }
+        .theme-dark .social-button:hover,
+        body.dark-mode .social-button:hover {
+            background: #fff !important;
+            color: #3498db !important;
+        }
+
         .chat-contact-type-private .chat-contact-title {
             flex-shrink: 0;
         }
@@ -4917,6 +4929,56 @@
             background-color: rgba(255, 255, 0, 0.35) !important;
         }
 
+        .drive-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 4px;
+            margin-bottom: 4px;
+        }
+
+        .drive-search-input {
+            flex: 1;
+            padding: 6px 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .drive-search-input:focus {
+            border-color: #007bff;
+        }
+
+        .theme-dark .drive-search-input {
+            background: #3d3d3d;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .theme-dark .drive-search-input:focus {
+            border-color: #63b3ed;
+        }
+
+        .theme-dark .drive-search-input::placeholder {
+            color: #888;
+        }
+
+        .drive-search-count {
+            font-size: 12px;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .theme-dark .drive-search-count {
+            color: #aaa;
+        }
+
+        .drive-items .hidden {
+            display: none !important;
+        }
+
         .drive-actions {
             display: flex;
             flex-direction: row;
@@ -7579,13 +7641,13 @@
             <aside class="aside-left tiny-scrollbar">
                 <!-- 社交功能按钮 -->
                 <div id="social-buttons-container" style="display: none; gap: 8px; padding: 0 10px;">
-                    <button id="btn-add-friend" class="social-button" style="display: none; flex: 1; padding: 6px; font-size: 12px; background: transparent; border: 1px solid #3498db; border-radius: 4px; cursor: pointer; color: #3498db; transition: all 0.2s;" onmouseover="this.style.background='#3498db'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color='#3498db'" data-permission="can_add_friend">
+                    <button id="btn-add-friend" class="social-button" style="display: none; flex: 1; padding: 6px; font-size: 12px; background: transparent; border: 1px solid #3498db; border-radius: 4px; cursor: pointer; color: #3498db; transition: all 0.2s;" onmouseover="this.style.background='#3498db'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color=document.body.classList.contains('dark-mode')?'#fff':'#3498db'" data-permission="can_add_friend">
                         好友
                     </button>
-                    <button id="btn-create-group" class="social-button" style="display: none; flex: 1; padding: 6px; font-size: 12px; background: transparent; border: 1px solid #3498db; border-radius: 4px; cursor: pointer; color: #3498db; transition: all 0.2s;" onmouseover="this.style.background='#3498db'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color='#3498db'" data-permission="can_create_group">
+                    <button id="btn-create-group" class="social-button" style="display: none; flex: 1; padding: 6px; font-size: 12px; background: transparent; border: 1px solid #3498db; border-radius: 4px; cursor: pointer; color: #3498db; transition: all 0.2s;" onmouseover="this.style.background='#3498db'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color=document.body.classList.contains('dark-mode')?'#fff':'#3498db'" data-permission="can_create_group">
                         群组
                     </button>
-                    <button id="btn-invite-to-group" class="social-button" style="display: none; flex: 1; padding: 6px; font-size: 12px; background: transparent; border: 1px solid #3498db; border-radius: 4px; cursor: pointer; color: #3498db; transition: all 0.2s;" onmouseover="this.style.background='#3498db'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color='#3498db'" data-permission="can_invite_to_group">
+                    <button id="btn-invite-to-group" class="social-button" style="display: none; flex: 1; padding: 6px; font-size: 12px; background: transparent; border: 1px solid #3498db; border-radius: 4px; cursor: pointer; color: #3498db; transition: all 0.2s;" onmouseover="this.style.background='#3498db'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color=document.body.classList.contains('dark-mode')?'#fff':'#3498db'" data-permission="can_invite_to_group">
                         邀请
                     </button>
                 </div>
@@ -9197,6 +9259,9 @@
             }//
             else if (row.type === "noticing") {
                 this.#add_input_element_noticing(row, input_group);
+            } //
+            else if (row.type === "password") {
+                this.#add_input_element_password(row, input_group);
             }
         }
 
@@ -9341,6 +9406,19 @@
             row.input_element = row.label_element.querySelector(":scope > span");
         }
 
+        #add_input_element_password(row, input_group) {
+            let html = `
+<label>${row.label}<input type="text"></label>
+`;
+            input_group.insertAdjacentHTML("beforeend", html);
+            row.label_element = input_group.querySelector(":scope > label:last-of-type");
+            row.input_element = row.label_element.querySelector(":scope > input");
+
+            row.input_element.value = row.value || "";
+            row.input_element.placeholder = row.placeholder || "";
+            row.input_element.style.width = `50ch`;
+        }
+
         collect_data(form = undefined) {
             if (!form) form = this.form;
             for (const row of form) {
@@ -9364,6 +9442,8 @@
                     row.collect_data(this, row);
                 } else if (row.type === "number") {
                     row.value = parseInt(row.input_element.value);
+                } else if (row.type === "password") {
+                    row.value = row.input_element.value;
                 }
             }
 
@@ -12333,6 +12413,10 @@
                 let html = `
 <div class="drive-rect">
 <div class="drive-header"><button class="drive-header-btn-close">⮌</button><div class="drive-path"></div></div>
+<div class="drive-search">
+    <input type="text" class="drive-search-input" placeholder="搜索文件（支持正则）">
+    <span class="drive-search-count"></span>
+</div>
 <div class="drive-actions">
     <label class="checkbox"><input type="checkbox"></label>
     <button class="drive-action-btn no-width">${full_width_space}</button>
@@ -12369,24 +12453,25 @@
                 const cb = this.selecting_checkbox_input;
                 this.selecting_checkbox.state = 0; // 0 未选中, 1 已选中, 2 不确定
                 this.selecting_checkbox.addEventListener("click", (event) => {
+                    const visible_items = this.get_visible_items();
                     this.selecting_checkbox.state = (this.selecting_checkbox.state + 1) % 2;
                     cb.checked = this.selecting_checkbox.state === 1;
                     cb.indeterminate = this.selecting_checkbox.state === 2;
 
                     if (cb.checked) {
-                        for (const driveItem of this.drive_items) {
+                        for (const driveItem of visible_items) {
                             driveItem.raw_header.selecting_checkbox.state = 1;
                             driveItem.raw_header.selecting_checkbox_input.checked = true;
                             driveItem.raw_header.selecting_checkbox_input.indeterminate = false;
                         }
                     } else if (cb.indeterminate) {
-                        for (const driveItem of this.drive_items) {
+                        for (const driveItem of visible_items) {
                             driveItem.raw_header.selecting_checkbox.state = 2;
                             driveItem.raw_header.selecting_checkbox_input.checked = false;
                             driveItem.raw_header.selecting_checkbox_input.indeterminate = true;
                         }
                     } else {
-                        for (const driveItem of this.drive_items) {
+                        for (const driveItem of visible_items) {
                             driveItem.raw_header.selecting_checkbox.state = 0;
                             driveItem.raw_header.selecting_checkbox_input.checked = false;
                             driveItem.raw_header.selecting_checkbox_input.indeterminate = false;
@@ -12571,6 +12656,12 @@
 
                 this.add_top_level_path_item()
 
+                this.drive_search_input = this.drive_rect.querySelector(":scope input.drive-search-input");
+                this.drive_search_count = this.drive_rect.querySelector(":scope span.drive-search-count");
+                this.drive_search_input.addEventListener("input", (event) => {
+                    this.filter_items();
+                });
+
                 this.refresh();
             }
 
@@ -12665,6 +12756,7 @@
                         if (this.closed) return;
                         if (result.length === 0) this.element_drive_items_nothings_tip.classList.remove("hidden");
                         for (const resultElement of result) this.add_item(resultElement);
+                        this.filter_items();
                         this.remove_loading_mark();
                     }).catch(error => {
                     if (this.closed) return;
@@ -12906,6 +12998,16 @@
                 this._update_selecting_checkbox_state();
             }
 
+            get_visible_items() {
+                const items = [];
+                for (const driveItem of this.drive_items) {
+                    if (!driveItem.summary.classList.contains("hidden")) {
+                        items.push(driveItem);
+                    }
+                }
+                return items;
+            }
+
             get_selected_items() {
                 const items = [];
                 for (const driveItem of this.drive_items) {
@@ -12916,13 +13018,24 @@
                 return items;
             }
 
+            get_visible_selected_items() {
+                const items = [];
+                for (const driveItem of this.drive_items) {
+                    if (!driveItem.summary.classList.contains("hidden") && driveItem.raw_header.selecting_checkbox.state === 1) {
+                        items.push(driveItem);
+                    }
+                }
+                return items;
+            }
+
             _update_selecting_checkbox_state() {
-                let checked_count = this.get_selected_items().length;
-                if (checked_count === 0) {
+                const visible_items = this.get_visible_items();
+                const visible_selected_count = this.get_visible_selected_items().length;
+                if (visible_selected_count === 0) {
                     this.selecting_checkbox.state = 0;
                     this.selecting_checkbox_input.checked = false;
                     this.selecting_checkbox_input.indeterminate = false;
-                } else if (checked_count === this.drive_items.length) {
+                } else if (visible_selected_count === visible_items.length) {
                     this.selecting_checkbox.state = 1;
                     this.selecting_checkbox_input.checked = true;
                     this.selecting_checkbox_input.indeterminate = false;
@@ -13025,6 +13138,62 @@
                 this.fetch_list(path_item);
             }
 
+            filter_items() {
+                const keyword = this.drive_search_input.value.trim();
+                let visible_count = 0;
+                let has_regex_error = false;
+
+                if (keyword === "") {
+                    for (const item of this.drive_items) {
+                        item.summary.classList.remove("hidden");
+                        visible_count++;
+                    }
+                    this.drive_search_count.textContent = "";
+                    this.element_drive_items_nothings_tip.classList.add("hidden");
+                    return;
+                }
+
+                let regex = null;
+                try {
+                    regex = new RegExp(keyword, "i");
+                } catch (e) {
+                    has_regex_error = true;
+                }
+
+                for (const item of this.drive_items) {
+                    const name = this.get_item_display_name(item);
+                    if (has_regex_error) {
+                        if (name.includes(keyword)) {
+                            item.summary.classList.remove("hidden");
+                            visible_count++;
+                        } else {
+                            item.summary.classList.add("hidden");
+                        }
+                    } else {
+                        if (regex.test(name)) {
+                            item.summary.classList.remove("hidden");
+                            visible_count++;
+                        } else {
+                            item.summary.classList.add("hidden");
+                        }
+                    }
+                }
+
+                if (has_regex_error) {
+                    this.drive_search_count.textContent = `正则错误`;
+                    this.drive_search_count.style.color = "#dc3545";
+                } else {
+                    this.drive_search_count.textContent = `${visible_count}/${this.drive_items.length}`;
+                    this.drive_search_count.style.color = "";
+                }
+
+                if (visible_count === 0) {
+                    this.element_drive_items_nothings_tip.classList.remove("hidden");
+                } else {
+                    this.element_drive_items_nothings_tip.classList.add("hidden");
+                }
+            }
+
             switch_action_btns__root(path_item) {
                 if (path_item.attr.type === _drive.path_item_type.root && this.constructor.name !== "myspace") {
                     for (const string of ["hidden",]) {
@@ -13041,7 +13210,7 @@
 
             switch_action_btns__batch() {
                 const path_item = this.current_path_item();
-                const selected_items = this.get_selected_items();
+                const selected_items = this.get_visible_selected_items();
                 if (selected_items.length > 0) {
                     this.drive_action_btn_upload.classList.add("hidden-btn");
                     this.drive_action_btn_newfolder.classList.add("hidden-btn");
@@ -13551,9 +13720,9 @@
             }
 
             movetotrash_batch() {
-                const selected_items = this.get_selected_items();
+                const selected_items = this.get_visible_selected_items();
                 if (selected_items.length === 0) return;
-                MessageMark.confirm(`移到垃圾桶“${selected_items.length}”项？`, null, null, () => {
+                MessageMark.confirm(`移到垃圾桶"${selected_items.length}"项？`, null, null, () => {
                     this._movetotrash_batch(selected_items);
                 },)
             }
@@ -13597,9 +13766,9 @@
             }
 
             restore_batch() {
-                const selected_items = this.get_selected_items();
+                const selected_items = this.get_visible_selected_items();
                 if (selected_items.length === 0) return;
-                MessageMark.confirm(`移出垃圾桶“${selected_items.length}”项？`, null, null, () => {
+                MessageMark.confirm(`移出垃圾桶"${selected_items.length}"项？`, null, null, () => {
                     this._restore_batch(selected_items);
                 },)
             }
@@ -13643,9 +13812,9 @@
             }
 
             delete_batch() {
-                const selected_items = this.get_selected_items();
+                const selected_items = this.get_visible_selected_items();
                 if (selected_items.length === 0) return;
-                MessageMark.confirm(`永久删除“${selected_items.length}”项？`, null, null, () => {
+                MessageMark.confirm(`永久删除"${selected_items.length}"项？`, null, null, () => {
                     this._delete_batch(selected_items);
                 },)
             }
@@ -13668,7 +13837,7 @@
             }
 
             download_batch() {
-                const selected_items = this.get_selected_items();
+                const selected_items = this.get_visible_selected_items();
                 if (selected_items.length === 0) return;
                 
                 for (const item of selected_items) {
@@ -14747,6 +14916,22 @@
                     }
                 });
 
+                // 写字板（输入法）状态
+                this.e_inputarea_textarea.addEventListener('compositionstart', () => {
+                    this.update_activity(
+                        dashboardwrappers.ChatDashboardWrapper.activity_type.typing
+                    );
+                });
+
+                this.e_inputarea_textarea.addEventListener('compositionend', () => {
+                    const text = this.e_inputarea_textarea.value;
+                    if (text.length === 0) {
+                        this.update_activity(
+                            dashboardwrappers.ChatDashboardWrapper.activity_type.none
+                        );
+                    }
+                });
+
                 // =============================
                 // 新增：格式化悬浮工具条
                 // =============================
@@ -15330,6 +15515,14 @@
                 // 关闭按钮隐藏写字板并清空历史记录（在 init_writeboard 外部绑定，避免重复绑定）
                 this.e_writeboard_close.addEventListener("click", () => {
                     this.e_writeboard.classList.add("hidden");
+                    // 清除定时器
+                    if (this.writeboard_typing_timer) {
+                        clearInterval(this.writeboard_typing_timer);
+                        this.writeboard_typing_timer = null;
+                    }
+                    this.update_activity(
+                        dashboardwrappers.ChatDashboardWrapper.activity_type.none
+                    );
                     if (this.write_ctx) {
                         this.write_ctx.clearRect(0, 0, this.e_writeboard_canvas.width, this.e_writeboard_canvas.height);
                     }
@@ -15360,8 +15553,16 @@
                     // 从临时 canvas 生成 blob
                     tempCanvas.toBlob((blob) => {
                         const file = new File([blob], "手写的图片.jpg", { type: "image/jpg" });
+                        // 清除定时器
+                        if (this.writeboard_typing_timer) {
+                            clearInterval(this.writeboard_typing_timer);
+                            this.writeboard_typing_timer = null;
+                        }
                         this.start__send_msg_image(file); // 调用你现有发图片逻辑
                         this.e_writeboard.classList.add("hidden");
+                        this.update_activity(
+                            dashboardwrappers.ChatDashboardWrapper.activity_type.none
+                        );
 
                         // 清空画布，下一次打开是空白
                         this.write_ctx.fillStyle = "#fff";
@@ -15376,6 +15577,15 @@
                 // 点击按钮打开写字板
                 this.e_writeboard_btn.addEventListener("click", () => {
                     this.e_writeboard.classList.remove("hidden");
+                    this.update_activity(
+                        dashboardwrappers.ChatDashboardWrapper.activity_type.typing
+                    );
+                    // 启动定时器持续发送正在输入状态
+                    this.writeboard_typing_timer = setInterval(() => {
+                        this.update_activity(
+                            dashboardwrappers.ChatDashboardWrapper.activity_type.typing
+                        );
+                    }, 4000);
                     // 重置工具状态为画笔
                     this.write_tool_type = 'pen';
                     this.e_writeboard_tool_toggle.innerHTML = '<i class="bi bi-eraser"></i> 橡皮';
@@ -19816,7 +20026,7 @@
                         }
                     } catch (error) {
                         console.error("保存公告失败:", error);
-                        alert("保存公告失败，请重试");
+                        alert("保存公告失败：(您不是该群组的创建者，无权执行操作)");
                     } finally {
                         saveBtn.disabled = false;
                     }
@@ -24884,7 +25094,10 @@
                     // 计算总未读消息数量
                     totalUnreadCount += status_attr.unread_count;
 
-                    await this._update_contact_item_status(item, status_attr);
+                    // 只更新存在的联系人
+                    if (item) {
+                        await this._update_contact_item_status(item, status_attr);
+                    }
                 }
 
                 this.stop_timer__sync();
@@ -25225,9 +25438,14 @@
                                 },
                                 {
                                     type: "linetext",
-                                    label: "新名称",
+                                    label: "新名称：",
                                     placeholder: "请输入新的用户名",
                                     value: currentName,
+                                },
+                                {
+                                    type: "password",
+                                    label: "用户密码：",
+                                    placeholder: "请输入当前密码以确认身份",
                                 },
                                 {
                                     type: "noticing",
@@ -25240,9 +25458,15 @@
                                 // 收集表单数据
                                 form_mark.collect_data();
                                 const newName = form[1].value.trim();
+                                const password = form[2].value;
 
                                 if (!newName) {
                                     MessageMark.report("新名称不能为空", null, null, null, MessageMark.colors.red);
+                                    return;
+                                }
+
+                                if (!password) {
+                                    MessageMark.report("请输入当前密码以确认身份", null, null, null, MessageMark.colors.red);
                                     return;
                                 }
 
@@ -25255,11 +25479,13 @@
                                 // 调用后端API
                                 try {
                                     const response = await net_fetcher.nf_post_json(`${top_level_path}/chat/api/rename_me`, {
-                                        new_uid: newName
+                                        new_uid: newName,
+                                        password: password
                                     });
 
-                                    if (response.status === 200) {
-                                        const result = await response.json();
+                                    const result = await response.json();
+                                    
+                                    if (result.success) {
                                         MessageMark.report(result.message || "修改成功！", null, null, null, MessageMark.colors.green);
                                         form_mark.remove();
                                         // 延迟刷新页面，让用户看到成功消息
@@ -25267,8 +25493,7 @@
                                             location.reload();
                                         }, 1500);
                                     } else {
-                                        const errorData = await response.json();
-                                        MessageMark.report(errorData.message || "修改失败", null, null, null, MessageMark.colors.red);
+                                        MessageMark.report(result.message || "修改失败", null, null, null, MessageMark.colors.red);
                                     }
                                 } catch (error) {
                                     console.error("修改名称失败:", error);
@@ -25670,7 +25895,7 @@
                     const form = [
                         {type: "title", label: "群组管理",},
                         {type: "combobox", label: "操作：", options: {"create": "创建群组", "delete": "删除群组"},},
-                        {type: "linetext", label: "群组名称：", value: "", placeholder: "请输入要创建/移除的群组名称，多个请用英文逗号分隔",},
+                        {type: "linetext", label: "群名：", value: "", placeholder: "请输入要创建/移除的群组名称，多个请用英文逗号分隔",},
                         {type: "noticing", label: "", text: "批量操作说明：多个名称用英文逗号分隔，如：前端组,后端组"},
                     ];
                     
@@ -25711,8 +25936,8 @@
                             } else if (action === "delete") {
                                 // 确认删除
                                 const confirmMsg = gids.length > 1 
-                                    ? `确定要解散群组 ${gids.join(",")} 吗？\n此操作不可恢复！`
-                                    : `确定要解散群组【${gids[0]}】吗？\n此操作不可恢复！`;
+                                    ? `确定要删除群组 ${gids.join(",")} 吗？\n此操作不可恢复！`
+                                    : `确定要删除群组【${gids[0]}】吗？\n此操作不可恢复！`;
                                 
                                 const mm = new MessageMark(document.body, confirmMsg, MessageMark.btnFlags.close | MessageMark.btnFlags.confirm, MessageMark.colors.red, 
                                     () => formmark.remove(),
@@ -25725,11 +25950,11 @@
                                             });
                                             const result = await response.json();
                                             if (result.success) {
-                                                MessageMark.report(result.message || "解散群组成功！", null, null, null, MessageMark.colors.green);
+                                                MessageMark.report(result.message || "删除群组成功！", null, null, null, MessageMark.colors.green);
                                                 formmark.remove();
                                                 this.dashboard_chat.wrapper.sync_contacts();
                                             } else {
-                                                MessageMark.report(result.message || "解散群组失败", null, null, null, MessageMark.colors.red);
+                                                MessageMark.report(result.message || "删除群组失败", null, null, null, MessageMark.colors.red);
                                             }
                                         } catch (error) {
                                             MessageMark.report("网络错误：" + error.message, null, null, null, MessageMark.colors.red);
@@ -25775,7 +26000,7 @@
 
                     const form = [
                         {type: "title", label: "邀请管理",},
-                        {type: "combobox", label: "群组名：", options: groupOptions,},
+                        {type: "combobox", label: "群组：", options: groupOptions,},
                         {type: "combobox", label: "操作：", options: {"invite": "邀请加入", "remove": "移出成员"},},
                         {type: "linetext", label: "用户名：", value: "", placeholder: "请输入要邀请/移出的好友名称，多个请用英文逗号分隔",},
                         {type: "noticing", label: "", text: "批量操作说明：多个用户名用英文逗号分隔，如：张三,李四"},
