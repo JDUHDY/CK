@@ -8436,6 +8436,57 @@
             width: 100%;
         }
 
+        /* 消息内容折叠/展开 */
+        .chat-mcr-text-content {
+            max-height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-mcr-text-content.expanded {
+            max-height: none;
+        }
+
+        /* 渐变遮罩 */
+        .chat-mcr-text-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--rect-bg, #f0f0f0));
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.2s;
+        }
+
+        .chat-mcr-text-content.expanded::after {
+            opacity: 0;
+        }
+
+        /* 展开按钮 - 悬浮在右下角 */
+        .chat-mcr-expand-btn {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #007bff;
+            cursor: pointer;
+            user-select: none;
+            z-index: 1;
+        }
+
+        .chat-mcr-expand-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* 暗色主题适配 */
+        .theme-dark .chat-mcr-expand-btn {
+            color: #63b3ed;
+        }
+
         .chat-mcr-image {
             padding: 6px;
             max-width: 100%;
@@ -9147,7 +9198,7 @@
                     <ol class="nav-buttons">
                     </ol>
                 </nav>
-                <div id="chat-nav-divider" style="height: 3px; background: rgb(138 138 138 / 30%); cursor: row-resize; margin: 0px 6px; border-radius: 3px; flex-shrink: 0;"></div>
+                <div id="chat-nav-divider" style="height: 3px; background: rgba(0, 159, 255, 0.4); cursor: row-resize; margin: 0px 6px; border-radius: 3px; flex-shrink: 0;"></div>
                 <nav id="chat-nav-users">
                     <div class="chat-contact-type chat-contact-type-private">
                         <p class="chat-contact-title">私聊：</p>
@@ -12517,6 +12568,12 @@
                 }
 
                 init() {
+                    // 检查 task_container 是否存在，防止在 DOM 未准备好时访问
+                    if (!this.task_container) {
+                        console.error('[BackTask] task_container is undefined, cannot init task');
+                        return false;
+                    }
+
                     const html = `<div class="backtask-rect">
 
 <div class="backtask-content">
@@ -12555,6 +12612,7 @@
                     });
 
                     this.rect.classList.add("hidden")
+                    return true;
                 }
 
                 fill() {
@@ -13165,7 +13223,10 @@
             }
 
             addTask(t) {
-                t.init();
+                if (!t.init()) {
+                    console.error('[FloatBall] Task initialization failed, skipping');
+                    return;
+                }
                 t.show();
                 t.update_status_text(FloatBall.taskstatus.waiting);
                 this.tasks.push(t);
@@ -14330,7 +14391,7 @@
          * 加载样式文件
          * @private
          */
-        async _loadStyles(url, pluginId) {
+        async _loadStyles(url, pluginId, maxRetries = 3) {
             return new Promise((resolve, reject) => {
                 // 检查是否已存在
                 if (document.getElementById(`plugin-style-${pluginId}`)) {
@@ -14338,16 +14399,61 @@
                     return;
                 }
 
-                const link = document.createElement('link');
-                link.id = `plugin-style-${pluginId}`;
-                link.rel = 'stylesheet';
-                link.href = url;
-                // 本地开发环境不设置 crossOrigin，避免 CORS 问题
+                const cacheKey = `plugin-style-${pluginId}`;
+                const loadStyle = (retryCount = 0) => {
+                    // 尝试从 localStorage 读取缓存
+                    const cached = localStorage.getItem(cacheKey);
+                    if (cached) {
+                        try {
+                            const link = document.createElement('link');
+                            link.id = `plugin-style-${pluginId}`;
+                            link.rel = 'stylesheet';
+                            link.textContent = cached;
+                            document.head.appendChild(link);
+                            console.log(`✓ 从缓存加载样式: ${pluginId}`);
+                            resolve();
+                            return;
+                        } catch (e) {
+                            console.warn(`缓存样式加载失败，尝试网络加载: ${pluginId}`, e);
+                            localStorage.removeItem(cacheKey);
+                        }
+                    }
 
-                link.onload = () => resolve();
-                link.onerror = () => reject(new Error(`加载样式失败: ${url}`));
+                    // 从网络加载
+                    const link = document.createElement('link');
+                    link.id = `plugin-style-${pluginId}`;
+                    link.rel = 'stylesheet';
+                    link.href = url;
 
-                document.head.appendChild(link);
+                    link.onload = () => {
+                        // 保存到缓存
+                        fetch(url).then(res => res.text()).then(text => {
+                            try {
+                                localStorage.setItem(cacheKey, text);
+                                console.log(`✓ 样式已缓存: ${pluginId}`);
+                            } catch (e) {
+                                console.warn(`样式缓存失败: ${pluginId}`, e);
+                            }
+                        }).catch(() => {
+                            console.warn(`获取样式内容失败: ${url}`);
+                        });
+                        resolve();
+                    };
+
+                    link.onerror = () => {
+                        if (retryCount < maxRetries - 1) {
+                            const delay = 1000 * Math.pow(2, retryCount);
+                            console.warn(`样式加载失败，${delay}ms 后重试 (${retryCount + 1}/${maxRetries}): ${url}`);
+                            setTimeout(() => loadStyle(retryCount + 1), delay);
+                        } else {
+                            reject(new Error(`加载样式失败（重试 ${maxRetries} 次）: ${url}`));
+                        }
+                    };
+
+                    document.head.appendChild(link);
+                };
+
+                loadStyle();
             });
         }
 
@@ -14355,7 +14461,7 @@
          * 加载脚本文件
          * @private
          */
-        async _loadScript(url, pluginId) {
+        async _loadScript(url, pluginId, maxRetries = 3) {
             return new Promise((resolve, reject) => {
                 // 检查是否已存在
                 if (document.getElementById(`plugin-script-${pluginId}`)) {
@@ -14363,15 +14469,32 @@
                     return;
                 }
 
-                const script = document.createElement('script');
-                script.id = `plugin-script-${pluginId}`;
-                script.src = url;
-                script.crossOrigin = 'anonymous';
+                const loadScript = (retryCount = 0) => {
+                    // 从网络加载
+                    const script = document.createElement('script');
+                    script.id = `plugin-script-${pluginId}`;
+                    script.src = url;
+                    script.crossOrigin = 'anonymous';
 
-                script.onload = () => resolve();
-                script.onerror = () => reject(new Error(`加载脚本失败: ${url}\n\n请确保插件文件已正确部署到服务器。`));
+                    script.onload = () => {
+                        console.log(`✓ 脚本加载成功: ${pluginId}`);
+                        resolve();
+                    };
 
-                document.head.appendChild(script);
+                    script.onerror = () => {
+                        if (retryCount < maxRetries - 1) {
+                            const delay = 1000 * Math.pow(2, retryCount);
+                            console.warn(`脚本加载失败，${delay}ms 后重试 (${retryCount + 1}/${maxRetries}): ${url}`);
+                            setTimeout(() => loadScript(retryCount + 1), delay);
+                        } else {
+                            reject(new Error(`加载脚本失败（重试 ${maxRetries} 次）: ${url}\n\n请确保插件文件已正确部署到服务器。`));
+                        }
+                    };
+
+                    document.head.appendChild(script);
+                };
+
+                loadScript();
             });
         }
 
@@ -14379,7 +14502,7 @@
          * 等待插件注册
          * @private
          */
-        async _waitForRegistration(pluginId, timeout = 5000) {
+        async _waitForRegistration(pluginId, timeout = 30000) {
             const startTime = Date.now();
 
             while (!this.pluginRegistry[pluginId] && !window.CheckinPluginRegistry?.[pluginId]) {
@@ -15184,6 +15307,19 @@
 
     // DOM 加载完成后执行
     document.addEventListener('DOMContentLoaded', () => {
+        // 清理旧的脚本缓存
+        const keys = Object.keys(localStorage);
+        let clearedCount = 0;
+        keys.forEach(key => {
+            if (key.startsWith('plugin-script-')) {
+                localStorage.removeItem(key);
+                clearedCount++;
+            }
+        });
+        if (clearedCount > 0) {
+            console.log(`✓ 已清理 ${clearedCount} 个旧脚本缓存`);
+        }
+
         // 延迟执行，确保其他初始化完成
         setTimeout(autoLoadEnabledPlugins, 500);
     });
@@ -17259,6 +17395,18 @@
             }
 
             add_upload_task(file) {
+                // 确保 floatball.dialog 已初始化
+                if (!floatball?.dialog) {
+                    console.error('[Drive Upload] FloatBall dialog not available');
+                    return null;
+                }
+                if (!floatball.dialog.filled) {
+                    floatball.dialog.fill();
+                }
+                if (!floatball.dialog.tab_content_backtasks) {
+                    console.error('[Drive Upload] tab_content_backtasks not initialized');
+                    return null;
+                }
                 const t = new FloatBall.tasktypes.Upload(floatball.dialog.tab_content_backtasks, {
                     onfinished: () => {
                         if (this.closed) return;
@@ -17266,6 +17414,10 @@
                     },
                 });
                 floatball.dialog.addTask(t);
+                if (!t.rect) {
+                    console.error('[Drive Upload] Task not initialized properly');
+                    return null;
+                }
                 t.set_name(normalizeName(file.name));
                 t.set_args({
                     file,
@@ -17280,8 +17432,24 @@
                 if (item.attr.type === subviews.Drive.item_type.folder) {
                     this.download_folder(item);
                 } else {
+                    // 确保 floatball.dialog 已初始化
+                    if (!floatball?.dialog) {
+                        console.error('[Drive Download] FloatBall dialog not available');
+                        return;
+                    }
+                    if (!floatball.dialog.filled) {
+                        floatball.dialog.fill();
+                    }
+                    if (!floatball.dialog.tab_content_backtasks) {
+                        console.error('[Drive Download] tab_content_backtasks not initialized');
+                        return;
+                    }
                     const t = new FloatBall.tasktypes.Download(floatball.dialog.tab_content_backtasks);
                     floatball.dialog.addTask(t);
+                    if (!t.rect) {
+                        console.error('[Drive Download] Task not initialized properly');
+                        return;
+                    }
                     t.set_name(normalizeName(this.get_item_display_name(item)));
                     t.set_args({
                         type: this.constructor, // 没用上，记着干嘛
@@ -17345,10 +17513,23 @@
                 const size = file_items.reduce((total, i) => total + i.size, 0);
 
                 MessageMark.confirm(`包含${file_items.length}个文件，${format_bytes(size)}，开始下载？`, null, null, () => {
+                    // 确保 floatball.dialog 已初始化
+                    if (!floatball?.dialog) {
+                        console.error('[Drive Download Folder] FloatBall dialog not available');
+                        return;
+                    }
+                    if (!floatball.dialog.filled) {
+                        floatball.dialog.fill();
+                    }
+                    if (!floatball.dialog.tab_content_backtasks) {
+                        console.error('[Drive Download Folder] tab_content_backtasks not initialized');
+                        return;
+                    }
                     let t;
                     file_items.forEach(item => {
                         t = new FloatBall.tasktypes.Download(floatball.dialog.tab_content_backtasks);
                         floatball.dialog.addTask(t);
+                        if (!t.rect) return; // 跳过初始化失败的任务
 
                         const path = [];
                         const func = (item) => {
@@ -17854,12 +18035,26 @@
                 const selected_items = this.get_selected_items();
                 if (selected_items.length === 0) return;
                 
+                // 确保 floatball.dialog 已初始化
+                if (!floatball?.dialog) {
+                    console.error('[Drive Download Batch] FloatBall dialog not available');
+                    return;
+                }
+                if (!floatball.dialog.filled) {
+                    floatball.dialog.fill();
+                }
+                if (!floatball.dialog.tab_content_backtasks) {
+                    console.error('[Drive Download Batch] tab_content_backtasks not initialized');
+                    return;
+                }
+                
                 for (const item of selected_items) {
                     if (item.attr.type === subviews.Drive.item_type.folder) {
                         this.download_folder(item);
                     } else {
                         const t = new FloatBall.tasktypes.Download(floatball.dialog.tab_content_backtasks);
                         floatball.dialog.addTask(t);
+                        if (!t.rect) continue; // 跳过初始化失败的任务
                         t.set_name(normalizeName(this.get_item_display_name(item)));
                         t.set_args({
                             type: this.constructor,
@@ -20577,6 +20772,20 @@
             }
 
             _send_msg_file(msg) {
+                // 确保 floatball.dialog 已初始化
+                if (!floatball?.dialog) {
+                    console.error('[Upload] FloatBall dialog not available');
+                    return null;
+                }
+                // 触发 fill() 初始化 DOM 元素
+                if (!floatball.dialog.filled) {
+                    floatball.dialog.fill();
+                }
+                // 再次检查 tab_content_backtasks
+                if (!floatball.dialog.tab_content_backtasks) {
+                    console.error('[Upload] tab_content_backtasks not initialized');
+                    return null;
+                }
                 const t = new FloatBall.tasktypes.Upload_ChatMessage(floatball.dialog.tab_content_backtasks, {
                     onfinished: () => {
                         msg.msgobj.update();
@@ -20603,6 +20812,11 @@
                 msg.upload_task = t;
 
                 floatball.dialog.addTask(t);
+                // 检查任务是否成功初始化
+                if (!t.rect) {
+                    console.error('[Upload] Task not initialized properly');
+                    return null;
+                }
                 t.set_name(msg.file_name || normalizeName(msg.file.name));
                 t.set_args({
                     msg,
@@ -22583,6 +22797,54 @@
                             }
                         }
 
+                        // 检测消息内容高度，超长则添加展开按钮
+                        this._init_expand_btn();
+                    }
+
+                    _init_expand_btn() {
+                        // 延迟执行，确保内容已完全渲染（包括代码块等）
+                        setTimeout(() => {
+                            // 如果已存在 wrapper，说明是编辑消息后的更新，需要重建
+                            if (this.e_expand_wrapper) {
+                                // 将 e_mcr_span 从 wrapper 中移出，放回原位置
+                                const parent = this.e_expand_wrapper.parentNode;
+                                parent.insertBefore(this.e_mcr_span, this.e_expand_wrapper);
+                                // 移除旧的 wrapper
+                                this.e_expand_wrapper.remove();
+                                this.e_expand_wrapper = null;
+                                this.e_expand_btn = null;
+                            }
+
+                            const contentHeight = this.e_mcr_span.scrollHeight;
+                            if (contentHeight > 200) {
+                                // 包装内容到可折叠容器
+                                const wrapper = document.createElement('div');
+                                wrapper.className = 'chat-mcr-text-content';
+                                wrapper.style.setProperty('--rect-bg', this.palette.rect_bg);
+                                
+                                // 将内容移动到包装器中
+                                const parent = this.e_mcr_span.parentNode;
+                                parent.insertBefore(wrapper, this.e_mcr_span);
+                                wrapper.appendChild(this.e_mcr_span);
+
+                                // 创建展开按钮 - 直接放在 wrapper 内，悬浮在右下角
+                                const expandBtn = document.createElement('span');
+                                expandBtn.className = 'chat-mcr-expand-btn';
+                                expandBtn.textContent = '展开';
+                                wrapper.appendChild(expandBtn);
+
+                                // 点击展开/收起
+                                expandBtn.addEventListener('click', (e) => {
+                                    e.stopPropagation();
+                                    const isExpanded = wrapper.classList.toggle('expanded');
+                                    expandBtn.textContent = isExpanded ? '收起' : '展开';
+                                });
+
+                                // 保存引用，便于外部访问
+                                this.e_expand_wrapper = wrapper;
+                                this.e_expand_btn = expandBtn;
+                            }
+                        }, 50);
                     }
 
                 }
@@ -22657,6 +22919,19 @@
                                 return;
                             }
 
+                            // 确保 floatball.dialog 已初始化
+                            if (!floatball?.dialog) {
+                                console.error('[Chat Download] FloatBall dialog not available');
+                                return;
+                            }
+                            if (!floatball.dialog.filled) {
+                                floatball.dialog.fill();
+                            }
+                            if (!floatball.dialog.tab_content_backtasks) {
+                                console.error('[Chat Download] tab_content_backtasks not initialized');
+                                return;
+                            }
+
                             const t = new FloatBall.tasktypes.Download_ChatMessage(floatball.dialog.tab_content_backtasks, {
                                 onfinished: () => {
                                     this.update();
@@ -22675,6 +22950,10 @@
                             this.msgattr.download_task = t;
 
                             floatball.dialog.addTask(t);
+                            if (!t.rect) {
+                                console.error('[Chat Download] Task not initialized properly');
+                                return;
+                            }
                             t.set_name(this.msgattr.plain_file_name);
                             t.set_args({
                                 msg: this.msgattr,
@@ -22769,10 +23048,13 @@
                                     this.e_mcr_span.classList.add("mcr-status");
                                     this.e_mcr_span.classList.add("status-download");
 
-                                    const statusText = this.panel.wrapper.format_text_for_msgview(this.msgattr.download_task.backtask_status_text.textContent);
+                                    // 检查 backtask_status_text 是否存在，防止访问 undefined
+                                    const statusText = this.msgattr.download_task?.backtask_status_text
+                                        ? this.panel.wrapper.format_text_for_msgview(this.msgattr.download_task.backtask_status_text.textContent)
+                                        : '';
                                     set_htmlContent_if_different(this.e_mcr_span, `<i class="bi bi-image"></i> 图片 ${this.msgattr.plain_file_name} ${statusText}`);
 
-                                    if (this.msgattr.download_task.args.plain_file_data) {
+                                    if (this.msgattr.download_task?.args?.plain_file_data) {
                                         this.e_mcr_img.classList.remove("hidden");
                                         this.e_mcr_span.classList.add("hidden");
 
@@ -22846,6 +23128,19 @@
                                 return;
                             }
 
+                            // 确保 floatball.dialog 已初始化
+                            if (!floatball?.dialog) {
+                                console.error('[Chat File Download] FloatBall dialog not available');
+                                return;
+                            }
+                            if (!floatball.dialog.filled) {
+                                floatball.dialog.fill();
+                            }
+                            if (!floatball.dialog.tab_content_backtasks) {
+                                console.error('[Chat File Download] tab_content_backtasks not initialized');
+                                return;
+                            }
+
                             const t = new FloatBall.tasktypes.Download_ChatMessage(floatball.dialog.tab_content_backtasks, {
                                 onfinished: () => {
                                     this.update();
@@ -22864,6 +23159,10 @@
                             this.msgattr.download_task = t;
 
                             floatball.dialog.addTask(t);
+                            if (!t.rect) {
+                                console.error('[Chat File Download] Task not initialized properly');
+                                return;
+                            }
                             t.set_name(this.msgattr.plain_file_name);
                             t.set_args({
                                 msg: this.msgattr,
@@ -27548,8 +27847,8 @@
             }
 
             // Tokenize: split into text tokens and marker tokens.
-            // Markers we support (priority order): '~~', '**', '__', '`', '*', '[', ']', '(', ')'
-            const markers = ['~~', '**', '__', '`', '*', '[', ']', '(', ')',];
+            // Markers we support (priority order): 长的在前，确保正确匹配
+            const markers = ['~~~', '~~', '**', '__', '`', '*', '[', ']', '(', ')',];
 
             const atings = ["@", "&",];
             let previous_ating;
@@ -27629,6 +27928,7 @@
                     // Inline code `...` : treat interior as raw text (no further parsing)
                     const m_attr_map = {
                         '`': {type: "code",},
+                        '~~~': {type: "code",},
                         "@": {type: "at", padded: true,},
                         "&": {type: "cite", padded: true,},
                         "<": {type: "html_start",},
@@ -30088,6 +30388,9 @@
         }
 
         logout(event) {
+            // 清理插件缓存
+            this.clearPluginCache();
+
             if (jumpto.backend_panel) {
                 // 清除加密密钥
                 frontCrypto.clearEncryptionKey();
@@ -30115,6 +30418,40 @@
                     delete_cookie("session_id");
                     this.open_startpage(null, true);
                 });
+            }
+        }
+
+        /**
+         * 清理插件缓存
+         */
+        clearPluginCache() {
+            const keys = Object.keys(localStorage);
+            let clearedCount = 0;
+            keys.forEach(key => {
+                if (key.startsWith('plugin-style-') || key.startsWith('plugin-script-')) {
+                    localStorage.removeItem(key);
+                    clearedCount++;
+                }
+            });
+            if (clearedCount > 0) {
+                console.log(`✓ 已清理 ${clearedCount} 个插件缓存`);
+            }
+        }
+
+        /**
+         * 清理旧脚本缓存（升级时调用）
+         */
+        clearOldScriptCache() {
+            const keys = Object.keys(localStorage);
+            let clearedCount = 0;
+            keys.forEach(key => {
+                if (key.startsWith('plugin-script-')) {
+                    localStorage.removeItem(key);
+                    clearedCount++;
+                }
+            });
+            if (clearedCount > 0) {
+                console.log(`✓ 已清理 ${clearedCount} 个旧脚本缓存`);
             }
         }
 
