@@ -13733,6 +13733,10 @@
                 null,
                 null,
                 async () => {
+                    // 显示 loading
+                    this.loadingElement.classList.remove("hidden");
+                    this.emptyElement.classList.add("hidden");
+                    
                     try {
                         // 调用后端 API 安装插件
                         const response = await fetch(`${top_level_path}/api/plugins/${plugin.plugin_id}/install`, {
@@ -13759,6 +13763,9 @@
                         }
                     } catch (error) {
                         showToast(`安装失败: ${error.message}`, 'error');
+                    } finally {
+                        // 隐藏 loading
+                        this.loadingElement.classList.add("hidden");
                     }
                 },
                 MessageMark.colors.blue
@@ -14283,13 +14290,12 @@
             }
             
             // 如果有 repository，使用它作为基础 URL
+            // 支持任意插件库：GitHub、网盘、自建服务器等
+            // 插件作者可以自己决定使用哪个 CDN 或源
             if (plugin.repository) {
-                // GitHub 仓库转换为 CDN URL
-                if (plugin.repository.includes('github.com')) {
-                    const repoPath = plugin.repository.replace('https://github.com/', '').replace('.git', '');
-                    return `https://cdn.jsdelivr.net/gh/${repoPath}/plugins/${plugin.plugin_id}/`;
-                }
-                return plugin.repository + `/plugins/${plugin.plugin_id}/`;
+                // 确保 repository 以 / 结尾，然后拼接插件 ID
+                const baseUrl = plugin.repository.endsWith('/') ? plugin.repository : plugin.repository + '/';
+                return baseUrl + `plugins/${plugin.plugin_id}/`;
             }
             
             // 使用本地插件路径
@@ -14502,7 +14508,7 @@
          * 等待插件注册
          * @private
          */
-        async _waitForRegistration(pluginId, timeout = 10000) {
+        async _waitForRegistration(pluginId, timeout = 30000) {
             const startTime = Date.now();
 
             while (!this.pluginRegistry[pluginId] && !window.CheckinPluginRegistry?.[pluginId]) {
