@@ -1,5 +1,5 @@
-﻿{
-  "base_url": "https://raw.githubusercontent.com/sweetield/CH_plugins/main/plugins/",
+{
+  "base_url": "https://raw.githubusercontent.com/JDUHDY/CK/refs/heads/main/plugins/",
   "plugins": [
     {
       "id": "hello-world",
@@ -8,7 +8,6 @@
       "description": "【管理员专用】一个简单的测试插件，在页面顶部显示欢迎横幅。",
       "author": "CC 团队",
       "manifest_url": "./hello-world/manifest.json"
-      "admin_only": "true"
     },
     {
       "id": "quick-panel",
