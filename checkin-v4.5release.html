@@ -39,7 +39,7 @@
             width: 100%;
             box-sizing: border-box;
 
-            animation:
+            // animation:
                 notify-shadow-breath 5s ease-in-out infinite,
                 notify-text-breath 5s ease-in-out infinite;
         }
@@ -87,33 +87,30 @@
 
         /* 管理员专用红色标识 */
         .plugin-admin-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 8px;
-            padding: 2px 8px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #fff;
-            background: #dc3545;
-            border-radius: 999px;
-            white-space: nowrap;
-            line-height: 1.4;
+            font-size: 11px;
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
         }
 
         .theme-dark .plugin-admin-badge {
-            background: #ff5a6a;
-            color: #fff;
+            background: #5a1a1f;
+            color: #ff9999;
         }
 
         /* 插件进度条 */
         .plugin-item-progress {
             margin-top: 10px;
             width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .plugin-progress-track {
-            width: 100%;
+            flex: 1;
             height: 8px;
             background: #e9ecef;
             border-radius: 999px;
@@ -128,9 +125,10 @@
         }
 
         .plugin-progress-text {
-            margin-top: 6px;
             font-size: 12px;
             color: #666;
+            white-space: nowrap;
+            min-width: 80px;
         }
 
         .theme-dark .plugin-progress-track {
@@ -2735,7 +2733,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
         }
 
         .plugin-item-title {
@@ -2753,7 +2751,6 @@
             padding: 2px 8px;
             background-color: #e0e0e0;
             border-radius: 4px;
-            color: #666;
             font-weight: normal;
         }
 
@@ -3186,18 +3183,9 @@
             margin-bottom: 0 !important;
         }
 
-        .plugin-item-version {
-            font-size: 12px !important;
-            color: #999 !important;
-            margin-left: 8px !important;
-            background: none !important;
-            padding: 0 !important;
-        }
-
         .plugin-item-description {
             font-size: 14px !important;
             color: #666 !important;
-            margin-top: 4px !important;
             line-height: 1.5 !important;
         }
 
@@ -3208,39 +3196,45 @@
 
         .plugin-item-btn {
             padding: 4px 10px !important;
-            background: #2088ee !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 2px !important;
-            cursor: pointer !important;
             font-size: 12px !important;
+            border: 1px solid #ddd !important;
+            border-radius: 3px !important;
+            background: white !important;
+            color: var(--fc-normal) !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
         }
 
-        .plugin-item-btn:hover {
-            background: #1a7acc !important;
-            border-color: transparent !important;
+        .plugin-item-btn:hover:not(:disabled) {
+            background: #c4c4c4 !important;
+            border-color: #2088ee !important;
+        }
+
+        .plugin-item-btn:disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+        }
+
+        .plugin-item-btn.primary {
+            background: #2088ee !important;
             color: white !important;
+            border-color: #2088ee !important;
+        }
+
+        .plugin-item-btn.primary:hover:not(:disabled) {
+            background: #1a7acc !important;
+            border-color: #1a7acc !important;
         }
 
         .plugin-item-btn.danger {
             background: #dc3545 !important;
+            color: white !important;
+            border-color: #dc3545 !important;
         }
 
-        .plugin-item-btn.danger:hover {
+        .plugin-item-btn.danger:hover:not(:disabled) {
             background: #c82333 !important;
-        }
-
-        .plugin-item-btn.secondary {
-            background: #6c757d !important;
-        }
-
-        .plugin-item-btn.secondary:hover {
-            background: #5a6268 !important;
-        }
-
-        .plugin-item-btn:disabled {
-            background: #ccc !important;
-            cursor: not-allowed !important;
+            border-color: #c82333 !important;
         }
 
         .plugin-loading,
@@ -3363,6 +3357,46 @@
 
         .theme-dark .plugin-detail-value {
             color: #b0b0b0 !important;
+        }
+
+        .theme-dark .plugin-item-btn {
+            background: #3d3d3d !important;
+            border-color: #555 !important;
+            color: #e0e0e0 !important;
+        }
+
+        .theme-dark .plugin-item-btn:hover:not(:disabled) {
+            background: #4d4d4d !important;
+        }
+
+        .theme-dark .plugin-item-btn.primary {
+            background: #3b6fdc !important;
+            border-color: #3b6fdc !important;
+        }
+
+        .theme-dark .plugin-item-btn.primary:hover:not(:disabled) {
+            background: #2a5bb5 !important;
+            border-color: #2a5bb5 !important;
+        }
+
+        .theme-dark .plugin-item-btn.danger {
+            background: #c82333 !important;
+            border-color: #c82333 !important;
+        }
+
+        .theme-dark .plugin-item-btn.danger:hover:not(:disabled) {
+            background: #a02020 !important;
+            border-color: #a02020 !important;
+        }
+
+        .theme-dark .plugin-item-btn.secondary {
+            background: #5a6268 !important;
+            border-color: #5a6268 !important;
+        }
+
+        .theme-dark .plugin-item-btn.secondary:hover:not(:disabled) {
+            background: #495057 !important;
+            border-color: #495057 !important;
         }
 
     </style>
@@ -4772,13 +4806,9 @@
             text-align: center;
             opacity: 0.9;
 
-            white-space: normal; /* 允许正常换行 */
+            white-space: pre-wrap; /* 保留换行符和空格，但自动换行 */
             word-wrap: break-word; /* 在单词内换行（旧标准） */
             overflow-wrap: break-word; /* 在需要时强制换行（新标准） */
-
-            /*white-space: pre-wrap; !* 保留空格，但自动换行 *!*/
-            /*word-break: keep-all; !* 尽量保持单词/字符不换行 *!*/
-            /*overflow-wrap: anywhere; !* 必要时才在单词内换行 *!*/
 
         }
 
@@ -5059,6 +5089,24 @@
 
         button.form-mark-btn:hover {
             transform: translateY(-1px);
+        }
+
+        button.form-mark-btn.grant {
+            background: #28a745;
+            color: white;
+        }
+
+        button.form-mark-btn.grant:hover {
+            background: #218838;
+        }
+
+        button.form-mark-btn.revoke {
+            background: #dc3545;
+            color: white;
+        }
+
+        button.form-mark-btn.revoke:hover {
+            background: #c82333;
         }
 
         div#form-mark-btn-group {
@@ -5355,7 +5403,7 @@
             justify-content: left;
             gap: 6px;
             max-width: calc(90vw - 48px - 16px - 10px);
-            width: 500px;
+            width: 600px;
             min-width: 200px;
             max-height: 80vh;
         }
@@ -5653,9 +5701,11 @@
         }
 
         .plugin-item-progress {
-            margin-left: 26px;
-            margin-top: 8px;
-            padding: 8px 0;
+            margin-top: 0;
+        }
+
+        .plugin-item-progress.hidden {
+            display: none;
         }
 
         .plugin-progress-bar-container {
@@ -6023,7 +6073,7 @@
 
     #auth-rect {
         background: white;
-        padding: 16px;
+        padding: 14px;
         box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
         border-radius: 8px;
         display: flex;
@@ -6041,7 +6091,7 @@
     }
 
     .auth-tabbar button {
-        display: inline-block;
+        // display: inline-block;
         padding: 8px 16px;
         background: transparent;
         transition: all 0.1s ease-in-out;
@@ -6081,6 +6131,7 @@
         display: flex;
         flex-direction: column;
         gap: 12px;
+        flex: 1;
     }
 
     .auth-input-row {
@@ -6147,13 +6198,6 @@
         color: #dc3545;
     }
 
-    .batch-auth-container {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        padding: 10px;
-    }
-
     .batch-auth-input-area {
         width: 100%;
     }
@@ -6176,12 +6220,6 @@
         box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
     }
 
-    .batch-auth-buttons {
-        display: flex;
-        gap: 12px;
-        justify-content: flex-start;
-    }
-
     .auth-tabbar {
         display: flex;
         align-items: center;
@@ -6200,52 +6238,51 @@
         gap: 8px;
     }
 
+    .auth-tabbar .auth-mark-close-btn {
+        margin-left: auto;
+        background: transparent !important;
+        border: none !important;
+        font-size: 24px !important;
+        line-height: 1;
+        cursor: pointer;
+        color: var(--fc-less);
+        width: 32px;
+        height: 32px;
+        border-radius: 4px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        padding: 0 !important;
+        text-align: center !important;
+    }
+
+    .auth-mark-close-btn:hover {
+        background: rgba(0, 0, 0, 0.1);
+        color: var(--fc-normal);
+    }
+
     .batch-auth-container {
         display: flex;
         flex-direction: column;
         height: 100%;
+        flex: 1;
     }
 
     .batch-auth-input-area {
         flex: 1;
         display: flex;
+        flex-direction: column;
     }
 
     .batch-usernames-input {
         flex: 1;
         resize: none;
+        margin-bottom: 4px;
     }
 
     .batch-auth-btn {
-        padding: 10px 24px;
-        border: none;
-        border-radius: 6px;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .batch-auth-btn.grant {
-        background: #28a745;
-        color: white;
-    }
-
-    .batch-auth-btn.grant:hover {
-        background: #218838;
-    }
-
-    .batch-auth-btn.revoke {
-        background: #dc3545;
-        color: white;
-    }
-
-    .batch-auth-btn.revoke:hover {
-        background: #c82333;
-    }
-
-    .batch-auth-btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
+        display: none;
     }
 
     .theme-dark .auth-invite-code-item {
@@ -8932,10 +8969,10 @@
             right: 4px;
             font-size: 14px;
             font-weight: 600;
-            color: #007bff;
             cursor: pointer;
             user-select: none;
             z-index: 1;
+            background: white;
         }
 
         .chat-mcr-expand-btn:hover {
@@ -8944,7 +8981,7 @@
 
         /* 暗色主题适配 */
         .theme-dark .chat-mcr-expand-btn {
-            color: #63b3ed;
+            background: #000;
         }
 
         .chat-mcr-image {
@@ -9985,17 +10022,12 @@
                 progressEl.className = 'plugin-item-progress hidden';
                 progressEl.setAttribute('data-plugin-id', pluginId);
                 progressEl.innerHTML = `
-                    <div class="plugin-progress-track">
+                    <div class="plugin-progress-bar-container">
                         <div class="plugin-progress-bar"></div>
                     </div>
                     <div class="plugin-progress-text">准备中...</div>
                 `;
-                const contentEl = pluginItem.querySelector('.plugin-item-content');
-                if (contentEl) {
-                    contentEl.appendChild(progressEl);
-                } else {
-                    pluginItem.appendChild(progressEl);
-                }
+                pluginItem.appendChild(progressEl);
             }
             return progressEl;
         },
@@ -10086,13 +10118,6 @@
                                 </div>
                                 <p class="plugin-item-description">${plugin.description || '暂无描述'}</p>
                                 ${usageMetaHtml}
-
-                                <div class="plugin-item-progress hidden" data-plugin-id="${plugin.plugin_id}">
-                                    <div class="plugin-progress-track">
-                                        <div class="plugin-progress-bar"></div>
-                                    </div>
-                                    <div class="plugin-progress-text">准备中...</div>
-                                </div>
                             </div>
                             <div class="plugin-item-actions">
                                 ${plugin.installed ? `
@@ -10121,6 +10146,12 @@
                                 ${clearCacheBtnHtml}
                             </div>
                         </div>
+                        <div class="plugin-item-progress hidden" data-plugin-id="${plugin.plugin_id}">
+                            <div class="plugin-progress-track">
+                                <div class="plugin-progress-bar"></div>
+                            </div>
+                            <div class="plugin-progress-text">准备中...</div>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -10134,6 +10165,10 @@
                     } else {
                         this.selectedPlugins.delete(pluginId);
                     }
+                    // 更新全选复选框状态
+                    this.updateSelectAllCheckbox();
+                    // 更新批量操作按钮状态（第一个插件列表始终是 false，因为它是插件列表标签页）
+                    this.updateBatchButtons(false);
                 });
             });
 
@@ -11781,7 +11816,7 @@
 <div id="message-mark-dialog">
     <span id="message-mark-top-margin"></span>
     <div id="message-mark-rect">
-        <p id="message-mark-text" class="">${this.message}</p>
+        <p id="message-mark-text" class=""></p>
         <div id="message-mark-btn-group"></div>
     </div>
     <span id="message-mark-bottom-margin"></span>
@@ -11995,7 +12030,7 @@
                             <p>${this.pluginData.description || '暂无描述'}</p>
                             <p><strong>作者：</strong>${this.pluginData.author || '未知'}</p>
                             <p><strong>版本：</strong>v${this.pluginData.version || '1.0.0'}</p>
-                            <p><strong>安装数量：</strong><span class="plugin-usage-badge ${usageBadgeClass}">${usageCount}</span></p>
+                            <p><strong>统计：</strong>已有 ${usageCount} 个用户安装</p>
                             ${this.pluginData.homepage ? `<p><strong>主页：</strong><a href="${this.pluginData.homepage}" target="_blank">${this.pluginData.homepage}</a></p>` : ''}
                         </div>
                     `;
@@ -12480,6 +12515,7 @@
                 <button id="auth-tab-invite" class="active">邀请</button>
                 <button id="auth-tab-batch">授权</button>
             </div>
+            <button id="auth-mark-close-btn" class="auth-mark-close-btn">×</button>
         </div>
         <div class="auth-tabcontent">
             <!-- 邀请标签页 -->
@@ -12492,16 +12528,17 @@
             <div id="auth-content-batch" class="auth-tab-pane">
                 <div class="batch-auth-container">
                     <div class="batch-auth-input-area">
-                        <textarea id="batch-usernames" class="batch-usernames-input" placeholder="批量给用户授予添加好友、创建群组、邀请用户的权限。请输入用户名，多个用户名用英文逗号分隔&#10;例如: user1, user2, user3"></textarea>
-                    </div>
-                    <div class="batch-auth-buttons">
-                        <button id="btn-grant-permissions" class="batch-auth-btn grant">赋予权限</button>
-                        <button id="btn-revoke-permissions" class="batch-auth-btn revoke">移除权限</button>
+                        <textarea id="batch-usernames" class="batch-usernames-input" placeholder="请输入用户名，多个用户名用英文逗号分隔&#10;例如: user1, user2, user3"></textarea>
+                        <span class="form-mark-input-noticing">批量给用户授予/移除添加好友、创建群组、邀请用户的权限</span>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="form-mark-btn-group"></div>
+        <div id="form-mark-btn-group">
+            <button id="btn-grant-permissions" class="form-mark-btn grant">授予权限</button>
+            <button id="btn-revoke-permissions" class="form-mark-btn revoke">移除权限</button>
+            <button id="auth-generate-btn" class="form-mark-btn grant">生成</button>
+        </div>
     </div>
     <span id="auth-bottom-margin"></span>
 </div>
@@ -12524,11 +12561,14 @@
 
             // 一键授权功能元素
             this.batchUsernames = this.mark.querySelector("#batch-usernames");
-            this.btnGrant = this.mark.querySelector("#btn-grant-permissions");
-            this.btnRevoke = this.mark.querySelector("#btn-revoke-permissions");
 
             // 按钮组
             this.btnGroup = this.mark.querySelector("#form-mark-btn-group");
+
+            // 获取按钮引用
+            this.btnGrant = this.mark.querySelector("#btn-grant-permissions");
+            this.btnRevoke = this.mark.querySelector("#btn-revoke-permissions");
+            this.generateBtn = this.mark.querySelector("#auth-generate-btn");
 
             // 点击背景关闭对话框
             this.mark.addEventListener("click", (e) => {
@@ -12541,9 +12581,16 @@
             this.tabInvite.addEventListener("click", () => this.switchTab("invite"));
             this.tabBatch.addEventListener("click", () => this.switchTab("batch"));
 
+            // 关闭按钮事件
+            this.closeBtn = this.mark.querySelector("#auth-mark-close-btn");
+            this.closeBtn.addEventListener("click", () => this.remove());
+
             // 一键授权按钮事件
             this.btnGrant.addEventListener("click", () => this.batchSetPermissions("grant"));
             this.btnRevoke.addEventListener("click", () => this.batchSetPermissions("revoke"));
+
+            // 生成邀请码按钮事件
+            this.generateBtn.addEventListener("click", () => this.generateInviteCode());
 
             // 初始显示邀请标签页
             this.switchTab("invite");
@@ -12556,9 +12603,6 @@
             this.contentInvite.classList.remove("active");
             this.contentBatch.classList.remove("active");
 
-            // 清空按钮组
-            this.btnGroup.innerHTML = "";
-
             // 激活选中的标签页并显示相应按钮
             if (tabName === "invite") {
                 this.tabInvite.classList.add("active");
@@ -12567,22 +12611,18 @@
                 // 自动加载邀请码列表
                 this.loadInviteCodes();
 
-                // 显示"生成"和"取消"按钮
-                this.btnGroup.insertAdjacentHTML("beforeend", `<button class="form-mark-btn" id="auth-generate-btn">生成</button>`);
-                const generateBtn = this.btnGroup.querySelector("#auth-generate-btn");
-                generateBtn.addEventListener("click", () => this.generateInviteCode());
-
-                this.btnGroup.insertAdjacentHTML("beforeend", `<button class="form-mark-btn">关闭</button>`);
-                const cancelBtn = this.btnGroup.querySelector("button:last-of-type");
-                cancelBtn.addEventListener("click", () => this.remove());
+                // 显示"生成"按钮，隐藏授权按钮
+                this.btnGrant.style.display = "none";
+                this.btnRevoke.style.display = "none";
+                this.generateBtn.style.display = "inline-block";
             } else if (tabName === "batch") {
                 this.tabBatch.classList.add("active");
                 this.contentBatch.classList.add("active");
 
-                // 显示"关闭"按钮
-                this.btnGroup.insertAdjacentHTML("beforeend", `<button class="form-mark-btn">关闭</button>`);
-                const closeBtn = this.btnGroup.querySelector("button:last-of-type");
-                closeBtn.addEventListener("click", () => this.remove());
+                // 显示授权按钮，隐藏"生成"按钮
+                this.btnGrant.style.display = "inline-block";
+                this.btnRevoke.style.display = "inline-block";
+                this.generateBtn.style.display = "none";
             }
 
             this.currentTab = tabName;
@@ -14527,17 +14567,10 @@
                             <div class="plugin-item-content">
                                 <div class="plugin-item-title">
                                     <span class="plugin-item-name">${plugin.name || plugin.plugin_id}</span>
-                                    ${badgeHtml}
                                     <span class="plugin-item-version">v${plugin.version || '1.0.0'}</span>
+                                    ${badgeHtml}
                                 </div>
                                 <p class="plugin-item-description">${plugin.description || '暂无描述'}</p>
-
-                                <div class="plugin-item-progress hidden" data-plugin-id="${plugin.plugin_id}">
-                                    <div class="plugin-progress-track">
-                                        <div class="plugin-progress-bar"></div>
-                                    </div>
-                                    <div class="plugin-progress-text">准备中...</div>
-                                </div>
                             </div>
 
                             <div class="plugin-item-actions">
@@ -14566,6 +14599,12 @@
                                     </button>
                                 `}
                             </div>
+                        </div>
+                        <div class="plugin-item-progress hidden" data-plugin-id="${plugin.plugin_id}">
+                            <div class="plugin-progress-track">
+                                <div class="plugin-progress-bar"></div>
+                            </div>
+                            <div class="plugin-progress-text">准备中...</div>
                         </div>
                     </div>
                 `;
@@ -14604,7 +14643,16 @@
                 });
 
                 container.querySelectorAll('.plugin-item-checkbox').forEach(cb => {
-                    cb.addEventListener('change', () => this.updateBatchButtons(cb.dataset.installed === '1'));
+                    cb.addEventListener('change', (e) => {
+                        const pluginId = e.target.dataset.pluginId;
+                        if (e.target.checked) {
+                            this.selectedPlugins.add(pluginId);
+                        } else {
+                            this.selectedPlugins.delete(pluginId);
+                        }
+                        this.updateBatchButtons(cb.dataset.installed === '1');
+                        this.updateSelectAllCheckbox();
+                    });
                 });
             };
 
@@ -14744,17 +14792,10 @@
                         <div class="plugin-item-content">
                             <div class="plugin-item-title">
                                 <span class="plugin-item-name">${plugin.name}</span>
-                                ${badgeHtml}
                                 <span class="plugin-item-version">v${plugin.version}</span>
+                                ${badgeHtml}
                             </div>
                             <p class="plugin-item-description">${plugin.description || '暂无描述'}</p>
-
-                            <div class="plugin-item-progress hidden" data-plugin-id="${plugin.plugin_id}">
-                                <div class="plugin-progress-track">
-                                    <div class="plugin-progress-bar"></div>
-                                </div>
-                                <div class="plugin-progress-text">准备中...</div>
-                            </div>
                         </div>
                         <div class="plugin-item-actions">
                             <button class="plugin-item-action-btn ${plugin.enabled ? '' : 'primary'}" data-action="toggle">
@@ -14763,6 +14804,12 @@
                             <button class="plugin-item-action-btn" data-action="detail">详情</button>
                             <button class="plugin-item-action-btn danger" data-action="uninstall">卸载</button>
                         </div>
+                    </div>
+                    <div class="plugin-item-progress hidden" data-plugin-id="${plugin.plugin_id}">
+                        <div class="plugin-progress-track">
+                            <div class="plugin-progress-bar"></div>
+                        </div>
+                        <div class="plugin-progress-text">准备中...</div>
                     </div>
                 `;
 
@@ -14773,6 +14820,8 @@
                         this.selectedPlugins.delete(plugin.plugin_id);
                     }
                     this.updateSelectAllCheckbox?.();
+                    // 更新批量操作按钮状态
+                    this.updateBatchButtons(true); // 已安装标签页
                 });
 
                 div.querySelectorAll('[data-action]').forEach(btn => {
@@ -15015,17 +15064,12 @@
                 progressEl.className = 'plugin-item-progress hidden';
                 progressEl.setAttribute('data-plugin-id', pluginId);
                 progressEl.innerHTML = `
-                    <div class="plugin-progress-track">
+                    <div class="plugin-progress-bar-container">
                         <div class="plugin-progress-bar"></div>
                     </div>
                     <div class="plugin-progress-text">准备中...</div>
                 `;
-                const contentEl = pluginItem.querySelector('.plugin-item-content');
-                if (contentEl) {
-                    contentEl.appendChild(progressEl);
-                } else {
-                    pluginItem.appendChild(progressEl);
-                }
+                pluginItem.appendChild(progressEl);
             }
             return progressEl;
         }
@@ -15199,20 +15243,55 @@
                 async () => {
                     let installed = 0;
                     const errors = [];
-                    
+
                     for (const plugin of uninstalledPlugins) {
+                        const progressEl = this.ensurePluginProgressEl(plugin.plugin_id);
+                        const pluginItem = progressEl?.closest('.plugin-item');
+
                         try {
+                            this.setPluginProgress(plugin.plugin_id, 10, '正在准备安装...');
+                            
+                            this.setPluginProgress(plugin.plugin_id, 35, '正在请求服务器安装...');
                             const response = await fetch(`${top_level_path}/api/plugins/${plugin.plugin_id}/install`, {
                                 method: 'POST',
                                 credentials: 'same-origin'
                             });
+
+                            this.setPluginProgress(plugin.plugin_id, 68, '正在处理安装结果...');
                             const data = await response.json();
+                            
                             if (data.success) {
+                                this.setPluginProgress(plugin.plugin_id, 82, '正在加载插件资源...');
+                                plugin.installed = true;
+                                plugin.enabled = true;
+                                plugin.installed_version = plugin.version;
+
+                                if (window.pluginLoader && (data.plugin?.entry_point || plugin.entry_point)) {
+                                    if (data.plugin) {
+                                        plugin.entry_point = data.plugin.entry_point || plugin.entry_point;
+                                        plugin.styles = data.plugin.styles || plugin.styles;
+                                    }
+                                    await window.pluginLoader.load(plugin);
+                                }
+
+                                this.setPluginProgress(plugin.plugin_id, 100, '安装完成', 'success');
                                 installed++;
                             } else {
+                                this.setPluginProgress(
+                                    plugin.plugin_id,
+                                    100,
+                                    `安装失败：${data.message || '未知错误'}`,
+                                    'error'
+                                );
                                 errors.push(`${plugin.name}: ${data.message || '安装失败'}`);
                             }
                         } catch (error) {
+                            this.setPluginProgress(
+                                plugin.plugin_id,
+                                100,
+                                `安装失败：${error.message}`,
+                                'error'
+                            );
                             errors.push(`${plugin.name}: ${error.message}`);
                         }
                     }
@@ -15261,28 +15340,72 @@
 
                     // 安装未安装的插件
                     for (const plugin of uninstalledPlugins) {
+                        const progressEl = this.ensurePluginProgressEl(plugin.plugin_id);
+
                         try {
+                            this.setPluginProgress(plugin.plugin_id, 10, '正在准备安装...');
+                            this.setPluginProgress(plugin.plugin_id, 35, '正在请求服务器安装...');
                             const response = await fetch(`${top_level_path}/api/plugins/${plugin.plugin_id}/install`, {
                                 method: 'POST',
                                 credentials: 'same-origin'
                             });
+
+                            this.setPluginProgress(plugin.plugin_id, 68, '正在处理安装结果...');
                             const data = await response.json();
+
                             if (data.success) {
+                                this.setPluginProgress(plugin.plugin_id, 82, '正在加载插件资源...');
+                                plugin.installed = true;
+                                plugin.enabled = true;
+                                plugin.installed_version = plugin.version;
+
+                                if (window.pluginLoader && (data.plugin?.entry_point || plugin.entry_point)) {
+                                    if (data.plugin) {
+                                        plugin.entry_point = data.plugin.entry_point || plugin.entry_point;
+                                        plugin.styles = data.plugin.styles || plugin.styles;
+                                    }
+                                    await window.pluginLoader.load(plugin);
+                                }
+
+                                this.setPluginProgress(plugin.plugin_id, 100, '安装完成', 'success');
                                 successCount++;
                             } else {
+                                this.setPluginProgress(
+                                    plugin.plugin_id,
+                                    100,
+                                    `安装失败：${data.message || '未知错误'}`,
+                                    'error'
+                                );
                                 errors.push(`${plugin.name}: ${data.message || '安装失败'}`);
                             }
                         } catch (error) {
+                            this.setPluginProgress(
+                                plugin.plugin_id,
+                                100,
+                                `安装失败：${error.message}`,
+                                'error'
+                            );
                             errors.push(`${plugin.name}: ${error.message}`);
                         }
                     }
 
                     // 更新可更新的插件
                     for (const plugin of updatablePlugins) {
+                        const progressEl = this.ensurePluginProgressEl(plugin.plugin_id);
+
                         try {
+                            this.setPluginProgress(plugin.plugin_id, 10, '正在准备更新...');
+                            this.setPluginProgress(plugin.plugin_id, 50, '正在更新版本信息...');
                             plugin.installed_version = plugin.version;
+                            this.setPluginProgress(plugin.plugin_id, 100, '更新完成', 'success');
                             successCount++;
                         } catch (error) {
+                            this.setPluginProgress(
+                                plugin.plugin_id,
+                                100,
+                                `更新失败：${error.message}`,
+                                'error'
+                            );
                             errors.push(`${plugin.name}: ${error.message}`);
                         }
                     }
@@ -15322,18 +15445,50 @@
                     const errors = [];
 
                     for (const plugin of installedPlugins) {
+                        const progressEl = this.ensurePluginProgressEl(plugin.plugin_id);
+                        const pluginItem = progressEl?.closest('.plugin-item');
+
                         try {
+                            this.setPluginProgress(plugin.plugin_id, 12, '正在准备卸载...');
+                            
+                            this.setPluginProgress(plugin.plugin_id, 35, '正在请求服务器卸载...');
                             const response = await fetch(`${top_level_path}/api/plugins/${plugin.plugin_id}/uninstall`, {
                                 method: 'POST',
                                 credentials: 'same-origin'
                             });
+
+                            this.setPluginProgress(plugin.plugin_id, 65, '正在处理卸载结果...');
                             const data = await response.json();
+
                             if (data.success) {
+                                this.setPluginProgress(plugin.plugin_id, 82, '正在卸载前端实例...');
+
+                                if (window.pluginLoader) {
+                                    await window.pluginLoader.unload(plugin.plugin_id);
+                                }
+
+                                plugin.installed = false;
+                                plugin.enabled = false;
+                                delete plugin.installed_version;
+
+                                this.setPluginProgress(plugin.plugin_id, 100, '卸载完成', 'success');
                                 uninstalled++;
                             } else {
+                                this.setPluginProgress(
+                                    plugin.plugin_id,
+                                    100,
+                                    `卸载失败：${data.message || '未知错误'}`,
+                                    'error'
+                                );
                                 errors.push(`${plugin.name}: ${data.message || '卸载失败'}`);
                             }
                         } catch (error) {
+                            this.setPluginProgress(
+                                plugin.plugin_id,
+                                100,
+                                `卸载失败：${error.message}`,
+                                'error'
+                            );
                             errors.push(`${plugin.name}: ${error.message}`);
                         }
                     }
@@ -16714,6 +16869,17 @@
                     // 登录成功后，获取加密密钥
                     await this.getEncryptionKey();
                     return true;
+                }
+                throw new Error(await format_error_response(r));
+            }
+
+            async logout() {
+                let url = join_path(this.api_url(), "logout");
+                let body = {}
+                let r = await net_fetcher.nf_post_json(url, body);
+                if (r.status === 200) {
+                    let d = await r.json();
+                    return d;
                 }
                 throw new Error(await format_error_response(r));
             }
@@ -22255,6 +22421,9 @@
                 this.e_inputarea_textarea.placeholder = "";
                 this.e_inputarea_textarea.value = msgattr.plain_data_text;
                 this.e_inputarea_textarea.focus();
+                // 自动增高输入框
+                this.e_inputarea_textarea.style.height = 'auto';
+                this.e_inputarea_textarea.style.height = `${this.e_inputarea_textarea.scrollHeight}px`;
             }
 
             end_editing_msg() {
@@ -22263,6 +22432,8 @@
                 this.e_inputarea_tip_editing.classList.add("hidden");
                 this.e_inputarea_textarea.placeholder = "输入消息后,点击发送或回车...";
                 this.load_draft_text();
+                // 恢复输入框原始高度
+                this.e_inputarea_textarea.style.height = 'auto';
             }
 
             _edit_msg(msgattr, new_text) {
@@ -31823,26 +31994,30 @@
                                             addSuccessCount++;
                                         } else {
                                             addFailCount++;
-                                            MessageMark.report(`添加 ${target_uid} 失败：${result.message}`, null, null, null, MessageMark.colors.red);
+                                            MessageMark.report(`添加好友【${target_uid}】失败：${result.message}`, null, null, null, MessageMark.colors.red);
                                         }
                                     } else {
                                         addFailCount++;
                                         const errorText = await response.text();
-                                        MessageMark.report(`添加 ${target_uid} 失败：${errorText || "服务器错误"}`, null, null, null, MessageMark.colors.red);
+                                        MessageMark.report(`添加好友【${target_uid}】失败：${errorText || "服务器错误"}`, null, null, null, MessageMark.colors.red);
                                     }
                                 } catch (error) {
                                     addFailCount++;
-                                    MessageMark.report(`添加 ${target_uid} 网络错误：${error.message}`, null, null, null, MessageMark.colors.red);
+                                    MessageMark.report(`添加好友【${target_uid}】网络错误：${error.message}`, null, null, null, MessageMark.colors.red);
                                 }
                             }
                             if (addSuccessCount > 0) {
-                                MessageMark.report(`成功添加 ${addSuccessCount} 个好友${addFailCount > 0 ? `，${addFailCount} 个失败` : ""}`, null, null, null, addFailCount > 0 ? MessageMark.colors.yellow : MessageMark.colors.green);
+                                const successUids = target_uids.slice(0, addSuccessCount);
+                                MessageMark.report(`成功添加好友【${successUids.join("、")}】${addFailCount > 0 ? `，${addFailCount} 个失败` : ""}`, null, null, null, addFailCount > 0 ? MessageMark.colors.yellow : MessageMark.colors.green);
+                                // 只有全部成功才关闭面板
+                                if (addFailCount === 0) {
+                                    formmark.remove();
+                                    // 刷新联系人列表
+                                    this.dashboard_chat.wrapper.sync_contacts();
+                                }
                             } else if (addFailCount > 0) {
                                 MessageMark.report(`添加好友失败，共 ${addFailCount} 个失败`, null, null, null, MessageMark.colors.red);
                             }
-                            formmark.remove();
-                            // 刷新联系人列表
-                            this.dashboard_chat.wrapper.sync_contacts();
                         } else if (action === "remove") {
                             // 确认删除
                             const confirmMsg = target_uids.length > 1
@@ -31861,13 +32036,13 @@
                                         const result = await response.json();
                                         if (result.success) {
                                             if (result.failed && result.failed.length > 0) {
-                                                const failDetails = result.failed.map(f => `${f.uid}：${f.reason}`).join("\n");
-                                                MessageMark.report(`${result.message}\n${failDetails}`, null, null, null, MessageMark.colors.yellow);
+                                                const failDetails = result.failed.map((f, index) => `${index + 1}. ${f.uid}：${f.reason}`).join("\n");
+                                                MessageMark.report(`删除好友【${target_uids.join("、")}】部分失败：\n\n${failDetails}`, null, null, null, MessageMark.colors.yellow);
                                             } else {
-                                                MessageMark.report(result.message || "删除好友成功！", null, null, null, MessageMark.colors.green);
+                                                MessageMark.report(`成功删除好友【${target_uids.join("、")}】`, null, null, null, MessageMark.colors.green);
+                                                formmark.remove();
+                                                this.dashboard_chat.wrapper.sync_contacts();
                                             }
-                                            formmark.remove();
-                                            this.dashboard_chat.wrapper.sync_contacts();
                                         } else {
                                             MessageMark.report(result.message || "删除好友失败", null, null, null, MessageMark.colors.red);
                                         }
@@ -31924,6 +32099,8 @@
                         // 根据操作类型执行不同逻辑
                         if (action === "create") {
                             // 批量创建群组逻辑
+                            let createSuccessCount = 0;
+                            let createFailCount = 0;
                             for (const gid of gids) {
                                 try {
                                     const response = await fetch(`${top_level_path}/chat/api/create_group`, {
@@ -31932,17 +32109,28 @@
                                         body: JSON.stringify({gid: gid})
                                     });
                                     const result = await response.json();
-                                    if (!result.success) {
-                                        MessageMark.report(`创建 ${gid} 失败：${result.message}`, null, null, null, MessageMark.colors.red);
+                                    if (result.success) {
+                                        createSuccessCount++;
+                                    } else {
+                                        createFailCount++;
+                                        MessageMark.report(`创建群组【${gid}】失败：${result.message}`, null, null, null, MessageMark.colors.red);
                                     }
                                 } catch (error) {
-                                    MessageMark.report(`创建 ${gid} 网络错误：${error.message}`, null, null, null, MessageMark.colors.red);
+                                    createFailCount++;
+                                    MessageMark.report(`创建群组【${gid}】网络错误：${error.message}`, null, null, null, MessageMark.colors.red);
                                 }
                             }
-                            MessageMark.report(`批量操作完成，共处理 ${gids.length} 个群组`, null, null, null, MessageMark.colors.green);
-                            formmark.remove();
-                            // 刷新联系人列表
-                            this.dashboard_chat.wrapper.sync_contacts();
+                            if (createSuccessCount > 0) {
+                                MessageMark.report(`成功创建 ${createSuccessCount} 个群组${createFailCount > 0 ? `，${createFailCount} 个失败` : ""}`, null, null, null, createFailCount > 0 ? MessageMark.colors.yellow : MessageMark.colors.green);
+                                // 只有全部成功才关闭面板
+                                if (createFailCount === 0) {
+                                    formmark.remove();
+                                    // 刷新联系人列表
+                                    this.dashboard_chat.wrapper.sync_contacts();
+                                }
+                            } else if (createFailCount > 0) {
+                                MessageMark.report(`创建群组失败，共 ${createFailCount} 个失败`, null, null, null, MessageMark.colors.red);
+                            }
                         } else if (action === "delete") {
                             // 确认删除
                             const confirmMsg = gids.length > 1
@@ -31960,7 +32148,7 @@
                                         });
                                         const result = await response.json();
                                         if (result.success) {
-                                            MessageMark.report(result.message || "删除群组成功！", null, null, null, MessageMark.colors.green);
+                                            MessageMark.report(`成功删除群组【${gids.join("、")}】`, null, null, null, MessageMark.colors.green);
                                             formmark.remove();
                                             this.dashboard_chat.wrapper.sync_contacts();
                                         } else {
@@ -32046,6 +32234,7 @@
                             // 批量邀请用户逻辑
                             let inviteSuccessCount = 0;
                             let inviteFailCount = 0;
+                            let inviteFailMessages = [];
                             for (const gid of selectedGids) {
                                 for (const target_uid of target_uids) {
                                     try {
@@ -32060,25 +32249,42 @@
                                                 inviteSuccessCount++;
                                             } else {
                                                 inviteFailCount++;
-                                                MessageMark.report(`邀请 ${target_uid} 到 ${gid} 失败：${result.message}`, null, null, null, MessageMark.colors.red);
+                                                // 尝试解析message字段，如果是JSON字符串则提取message
+                                                let errorMessage = result.message || "未知错误";
+                                                try {
+                                                    const parsed = JSON.parse(errorMessage);
+                                                    if (parsed.message) {
+                                                        errorMessage = parsed.message;
+                                                    }
+                                                } catch (e) {
+                                                    // 不是JSON格式，保持原样
+                                                }
+                                                inviteFailMessages.push(`邀请【${target_uid}】加入群组【${gid}】失败：${errorMessage}`);
                                             }
                                         } else {
                                             inviteFailCount++;
                                             const errorText = await response.text();
-                                            MessageMark.report(`邀请 ${target_uid} 到 ${gid} 失败：${errorText || "服务器错误"}`, null, null, null, MessageMark.colors.red);
+                                            inviteFailMessages.push(`邀请【${target_uid}】加入群组【${gid}】失败：${errorText || "服务器错误"}`);
                                         }
                                     } catch (error) {
                                         inviteFailCount++;
-                                        MessageMark.report(`邀请 ${target_uid} 到 ${gid} 网络错误：${error.message}`, null, null, null, MessageMark.colors.red);
+                                        inviteFailMessages.push(`邀请【${target_uid}】加入群组【${gid}】网络错误：${error.message}`);
                                     }
                                 }
                             }
-                            if (inviteSuccessCount > 0) {
-                                MessageMark.report(`成功邀请 ${inviteSuccessCount} 次${inviteFailCount > 0 ? `，${inviteFailCount} 次失败` : ""}`, null, null, null, inviteFailCount > 0 ? MessageMark.colors.yellow : MessageMark.colors.green);
-                            } else if (inviteFailCount > 0) {
-                                MessageMark.report(`邀请失败，共 ${inviteFailCount} 次失败`, null, null, null, MessageMark.colors.red);
+                            if (inviteSuccessCount > 0 || inviteFailCount > 0) {
+                                const groupNames = selectedGids.map(gid => gid.replace(/^「(.+?)」/, "$1")).join("、");
+                                if (inviteSuccessCount > 0 && inviteFailCount === 0) {
+                                    MessageMark.report(`成功邀请 ${inviteSuccessCount} 用户加入群组【${groupNames}】`, null, null, null, MessageMark.colors.green);
+                                    formmark.remove();
+                                } else if (inviteSuccessCount > 0 && inviteFailCount > 0) {
+                                    const failDetails = inviteFailMessages.map((msg, index) => `${index + 1}. ${msg}`).join("\n");
+                                    MessageMark.report(`成功邀请 ${inviteSuccessCount} 用户加入群组【${groupNames}】\n\n失败信息：\n${failDetails}`, null, null, null, MessageMark.colors.yellow);
+                                } else if (inviteFailCount > 0) {
+                                    const failDetails = inviteFailMessages.map((msg, index) => `${index + 1}. ${msg}`).join("\n");
+                                    MessageMark.report(`邀请用户加入群组【${groupNames}】失败：\n\n${failDetails}`, null, null, null, MessageMark.colors.red);
+                                }
                             }
-                            formmark.remove();
                         } else if (action === "remove") {
                             // 确认移出
                             const displayNames = selectedGids.map(gid => gid.replace(/^「(.+?)」/, ""));
@@ -32108,21 +32314,43 @@
                                                         const failDetails = result.failed.map(f => `${f.uid}：${f.reason}`).join("，");
                                                         failMessages.push(`从 ${gid} 移出失败：${failDetails}`);
                                                     } else {
-                                                        failMessages.push(`从 ${gid} 移出失败：${result.message || "操作失败"}`);
+                                                        // 尝试解析message字段，如果是JSON字符串则提取message
+                                                        let errorMessage = result.message || "操作失败";
+                                                        try {
+                                                            const parsed = JSON.parse(errorMessage);
+                                                            if (parsed.message) {
+                                                                errorMessage = parsed.message;
+                                                            }
+                                                        } catch (e) {
+                                                            // 不是JSON格式，保持原样
+                                                        }
+                                                        failMessages.push(`从 ${gid} 移出失败：${errorMessage}`);
                                                     }
                                                 }
                                             } else {
                                                 const errorText = await response.text();
-                                                failMessages.push(`从 ${gid} 移出失败：${errorText || "服务器错误"}`);
+                                                // 尝试解析错误信息，如果是JSON字符串则提取message
+                                                let errorMessage = errorText || "服务器错误";
+                                                try {
+                                                    const parsed = JSON.parse(errorMessage);
+                                                    if (parsed.message) {
+                                                        errorMessage = parsed.message;
+                                                    }
+                                                } catch (e) {
+                                                    // 不是JSON格式，保持原样
+                                                }
+                                                failMessages.push(`从 ${gid} 移出失败：${errorMessage}`);
                                             }
                                         } catch (error) {
                                             failMessages.push(`从 ${gid} 移出网络错误：${error.message}`);
                                         }
                                     }
                                     if (failMessages.length > 0) {
-                                        MessageMark.report(`移出失败：\n${failMessages.join("\n")}`, null, null, null, MessageMark.colors.yellow);
+                                        const failDetails = failMessages.map((msg, index) => `${index + 1}. ${msg}`).join("\n");
+                                        MessageMark.report(`从群组中移出用户【${target_uids.join("、")}】部分失败：\n\n${failDetails}`, null, null, null, MessageMark.colors.yellow);
                                     } else {
-                                        MessageMark.report(`成功从 ${selectedGids.length} 个群组中移出用户！`, null, null, null, MessageMark.colors.green);
+                                        const groupNames = selectedGids.map(gid => gid.replace(/^「(.+?)」/, "$1")).join("、");
+                                        MessageMark.report(`成功将用户【${target_uids.join("、")}】从群组【${groupNames}】中移出`, null, null, null, MessageMark.colors.green);
                                         formmark.remove();
                                     }
                                 }
@@ -32176,6 +32404,7 @@
                     .then(result => {
                         lm.remove()
                                                 logged_user = result;
+                                                window.logged_user = result;  // 同时设置全局变量，供插件管理器判断权限
 
                                                 // 检查社交功能按钮权限
                                                 this.check_social_buttons_permissions()
@@ -32359,15 +32588,29 @@
             this.clearPluginCache();
 
             if (jumpto.backend_panel) {
-                // 清除加密密钥
-                frontCrypto.clearEncryptionKey();
-                delete_cookie("admin_session_id");
-                // 隐藏授权按钮
-                const headerAuthBtn = document.getElementById("header-toolbar-btn-auth");
-                if (headerAuthBtn) {
-                    headerAuthBtn.classList.add("hidden");
-                }
-                this.open_admin_page(null, true);
+                const loading_mark = new LoadingMark(document.body);
+                loading_mark.show();
+                // 调用管理员登出 API，清除服务端 session 和 cookie
+                this.subviews.admin.logout()
+                    .then(result => {
+                        // 清除加密密钥
+                        frontCrypto.clearEncryptionKey();
+                        // 隐藏授权按钮
+                        const headerAuthBtn = document.getElementById("header-toolbar-btn-auth");
+                        if (headerAuthBtn) {
+                            headerAuthBtn.classList.add("hidden");
+                        }
+                        // 刷新 /admin 页面，显示登录界面
+                        this.open_admin_page(null, true);
+                    }).catch(error => {
+                    // 即使 API 调用失败，也清理本地状态
+                    frontCrypto.clearEncryptionKey();
+                    const headerAuthBtn = document.getElementById("header-toolbar-btn-auth");
+                    if (headerAuthBtn) {
+                        headerAuthBtn.classList.add("hidden");
+                    }
+                    this.open_admin_page(null, true);
+                });
             } else {
                 const loading_mark = new LoadingMark(document.body);
                 loading_mark.show();
@@ -32541,6 +32784,7 @@
                     if (result && result.uid) {
                         // 更新 logged_user 为完整的用户信息
                         logged_user = result;
+                        window.logged_user = result;  // 同时设置全局变量，供插件管理器判断权限
                         // 检查社交功能按钮权限
                         this.check_social_buttons_permissions();
                     }
