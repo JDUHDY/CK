@@ -5124,7 +5124,6 @@
             gap: 8px;
 
             overflow-y: auto;
-            max-height: 60vh;
             padding-right: 4px;
         }
 
@@ -6698,6 +6697,437 @@
         body.dark-mode label.form-mark-multiselect-option.selected,
         .theme-dark label.form-mark-multiselect-option.selected {
             background: #1a3a4a;
+        }
+
+        /* 双栏编辑器样式 - 用于编辑用户弹窗 */
+        div.form-mark-dual-editor {
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+            width: 100%;
+        }
+
+        div.form-mark-editor-left {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        div.form-mark-editor-left::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        div.form-mark-editor-left::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        div.form-mark-editor-left::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        div.form-mark-editor-right {
+            flex: 0 0 400px;
+            min-width: 400px;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #e0e0e0;
+            padding-left: 16px;
+        }
+
+        body.dark-mode div.form-mark-editor-right,
+        .theme-dark div.form-mark-editor-right {
+            border-left-color: #444;
+        }
+
+        div.form-mark-editor-right-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        div.form-mark-editor-right-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        body.dark-mode div.form-mark-editor-right-title,
+        .theme-dark div.form-mark-editor-right-title {
+            color: #ddd;
+        }
+
+        button.form-mark-toggle-btn {
+            padding: 4px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background: #f5f5f5;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        button.form-mark-toggle-btn:hover {
+            background: #e0e0e0;
+        }
+
+        body.dark-mode button.form-mark-toggle-btn,
+        .theme-dark button.form-mark-toggle-btn {
+            background: #333;
+            border-color: #555;
+            color: #ddd;
+        }
+
+        body.dark-mode button.form-mark-toggle-btn:hover,
+        .theme-dark button.form-mark-toggle-btn:hover {
+            background: #444;
+        }
+
+        div.form-mark-editor-right-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        textarea.form-mark-json-editor {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        body.dark-mode textarea.form-mark-json-editor,
+        .theme-dark textarea.form-mark-json-editor {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #ddd;
+        }
+
+        div.form-mark-preview {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+
+        body.dark-mode div.form-mark-preview,
+        .theme-dark div.form-mark-preview {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #ddd;
+        }
+
+        div.form-mark-preview-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed #ccc;
+            color: #333;
+        }
+
+        body.dark-mode div.form-mark-preview-title,
+        .theme-dark div.form-mark-preview-title {
+            color: #ddd;
+            border-bottom-color: #555;
+        }
+
+        div.form-mark-preview-section {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+        }
+
+        body.dark-mode div.form-mark-preview-section,
+        .theme-dark div.form-mark-preview-section {
+            border-top-color: #444;
+        }
+
+        div.form-mark-preview-section-title {
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        body.dark-mode div.form-mark-preview-section-title,
+        .theme-dark div.form-mark-preview-section-title {
+            color: #aaa;
+        }
+
+        div.form-mark-preview-row {
+            display: flex;
+            padding: 2px 0;
+        }
+
+        span.form-mark-preview-label {
+            color: #666;
+            min-width: 90px;
+            flex-shrink: 0;
+        }
+
+        body.dark-mode span.form-mark-preview-label,
+        .theme-dark span.form-mark-preview-label {
+            color: #aaa;
+        }
+
+        span.form-mark-preview-value {
+            color: #333;
+        }
+
+        body.dark-mode span.form-mark-preview-value,
+        .theme-dark span.form-mark-preview-value {
+            color: #ddd;
+        }
+
+        span.form-mark-preview-status-on {
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        span.form-mark-preview-status-off {
+            color: #6c757d;
+        }
+
+        /* 选项组样式 */
+        div.form-mark-option-group {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 8px 10px;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode div.form-mark-option-group,
+        .theme-dark div.form-mark-option-group {
+            border-color: #444;
+        }
+
+        div.form-mark-option-group.disabled {
+            opacity: 0.5;
+            background: #f9f9f9;
+        }
+
+        body.dark-mode div.form-mark-option-group.disabled,
+        .theme-dark div.form-mark-option-group.disabled {
+            background: #252525;
+        }
+
+        div.form-mark-option-group-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        /* inline 模式：header 和 content 在同一行 */
+        div.form-mark-option-group.inline {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        div.form-mark-option-group.inline div.form-mark-option-group-header {
+            margin-bottom: 0;
+        }
+
+        div.form-mark-option-group.inline div.form-mark-option-group-content {
+            padding-left: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        div.form-mark-option-group-header input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        span.form-mark-option-group-title {
+            font-weight: 500;
+            font-size: 13px;
+            color: #333;
+        }
+
+        body.dark-mode span.form-mark-option-group-title,
+        .theme-dark span.form-mark-option-group-title {
+            color: #ddd;
+        }
+
+        div.form-mark-option-group-content {
+            padding-left: 22px;
+        }
+
+        div.form-mark-option-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        select.form-mark-option-select {
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            background: #fff;
+        }
+
+        body.dark-mode select.form-mark-option-select,
+        .theme-dark select.form-mark-option-select {
+            background: #333;
+            border-color: #555;
+            color: #ddd;
+        }
+
+        input.form-mark-option-input {
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            width: 80px;
+        }
+
+        body.dark-mode input.form-mark-option-input,
+        .theme-dark input.form-mark-option-input {
+            background: #333;
+            border-color: #555;
+            color: #ddd;
+        }
+
+        span.form-mark-option-unit {
+            color: #666;
+            font-size: 13px;
+        }
+
+        body.dark-mode span.form-mark-option-unit,
+        .theme-dark span.form-mark-option-unit {
+            color: #aaa;
+        }
+
+        /* 多选行内样式 */
+        div.form-mark-option-multiselect-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        div.form-mark-inline-multiselect {
+            position: relative;
+            flex: 1;
+        }
+
+        input.form-mark-inline-multiselect-header {
+            width: 100%;
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            background: #fff;
+            box-sizing: border-box;
+        }
+
+        body.dark-mode input.form-mark-inline-multiselect-header,
+        .theme-dark input.form-mark-inline-multiselect-header {
+            background: #333;
+            border-color: #555;
+            color: #ddd;
+        }
+
+        div.form-mark-inline-multiselect-dropdown {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            background: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border-radius: 4px;
+            max-height: 200px;
+            overflow: hidden;
+        }
+
+        body.dark-mode div.form-mark-inline-multiselect-dropdown,
+        .theme-dark div.form-mark-inline-multiselect-dropdown {
+            background: #2a2a2a;
+            border-color: #444;
+        }
+
+        div.form-mark-inline-multiselect-options {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+
+        label.form-mark-inline-multiselect-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.15s;
+        }
+
+        label.form-mark-inline-multiselect-option:hover {
+            background: #f0f7ff;
+        }
+
+        body.dark-mode label.form-mark-inline-multiselect-option:hover,
+        .theme-dark label.form-mark-inline-multiselect-option:hover {
+            background: #3a3a3a;
+        }
+
+        label.form-mark-inline-multiselect-option.selected {
+            background: #e8f4fc;
+        }
+
+        body.dark-mode label.form-mark-inline-multiselect-option.selected,
+        .theme-dark label.form-mark-inline-multiselect-option.selected {
+            background: #1a3a4a;
+        }
+
+        label.form-mark-inline-multiselect-option.hidden {
+            display: none;
+        }
+
+        /* 复选框组样式 */
+        div.form-mark-checkbox-group {
+            display: flex;
+            gap: 8px 14px;
+            margin-top: 4px;
+        }
+
+        label.form-mark-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #333;
+            min-width: 100px;
+        }
+
+        body.dark-mode label.form-mark-checkbox-item,
+        .theme-dark label.form-mark-checkbox-item {
+            color: #ddd;
         }
 
     </style>
@@ -12117,6 +12547,12 @@
             this.rect = this.mark.querySelector(":scope div#form-mark-rect");
             this.rect.style.background = MessageMark.get_background_color.call(this);
 
+            // 检测是否有 dual_editor 类型，设置更宽的弹窗宽度
+            const hasDualEditor = this.form.some(el => el.type === "dual_editor");
+            if (hasDualEditor) {
+                this.rect.style.minHeight = "60vw";
+            }
+
             // 输入区域
             this.input_group = this.mark.querySelector(":scope div#form-mark-input-group");
             for (const formElement of this.form) {
@@ -12180,6 +12616,9 @@
             }//
             else if (row.type === "noticing") {
                 this.#add_input_element_noticing(row, input_group);
+            }//
+            else if (row.type === "dual_editor") {
+                this.#add_input_element_dual_editor(row, input_group);
             }
         }
 
@@ -12455,6 +12894,666 @@
             row.input_element = row.label_element.querySelector(":scope > span");
         }
 
+        #add_input_element_dual_editor(row, input_group) {
+            // 保存引用以便后续数据绑定
+            row.dualEditor = this;
+            row.jsonData = JSON.parse(JSON.stringify(row.value)); // 深拷贝初始数据
+            row.rightPanelMode = 'json'; // 'json' | 'preview'
+
+            // 创建容器
+            let html = `
+<div class="form-mark-dual-editor" style="width: 100%;">
+    <div class="form-mark-editor-left" id="dual-editor-left-${Date.now()}"></div>
+    <div class="form-mark-editor-right">
+        <div class="form-mark-editor-right-header">
+            <div class="form-mark-editor-right-title">JSON 编辑器</div>
+            <button class="form-mark-toggle-btn" type="button">切换预览</button>
+        </div>
+        <div class="form-mark-editor-right-content">
+            <textarea class="form-mark-json-editor" wrap="soft"></textarea>
+            <div class="form-mark-preview" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+`;
+            input_group.insertAdjacentHTML("beforeend", html);
+            row.containerElement = input_group.querySelector(":scope > div:last-of-type");
+            row.leftPanel = row.containerElement.querySelector(".form-mark-editor-left");
+            row.rightPanel = row.containerElement.querySelector(".form-mark-editor-right");
+            row.jsonEditor = row.containerElement.querySelector(".form-mark-json-editor");
+            row.previewPanel = row.containerElement.querySelector(".form-mark-preview");
+            row.toggleBtn = row.containerElement.querySelector(".form-mark-toggle-btn");
+            row.rightTitle = row.containerElement.querySelector(".form-mark-editor-right-title");
+
+            // 保存原始数据（用于取消勾选时恢复）
+            row.originalData = JSON.parse(JSON.stringify(row.jsonData));
+
+            // 初始化 JSON 编辑器内容
+            // 批量编辑时显示所有用户数据，单用户编辑时显示单个用户数据
+            if (row.isBatchEdit && row.selectedUsers && row.selectedUsers.length > 0) {
+                // 批量编辑：保存每个用户的原始数据
+                row.originalUsersData = row.selectedUsers.map(user => ({
+                    "名称": user.uid,
+                    "密码": "不变", // "不变"表示不修改密码
+                    "停用": Boolean(user.disabled),
+                    "储存空间": `${user.free_space}mb`,
+                    "所属组": user.groups || [],
+                    "允许主动与所有用户通信": Boolean(user.contact_any),
+                    "允许主动与这些组通信": user.contact_groups || [],
+                    "允许主动与这些用户通信": user.contact_users || [],
+                    "允许管理所有用户的网盘": Boolean(user.manage_drive),
+                    "允许添加好友": Boolean(user.can_add_friend),
+                    "允许创建群组": Boolean(user.can_create_group),
+                    "允许邀请用户": Boolean(user.can_invite_to_group),
+                }));
+                row.jsonEditor.value = JSON.stringify(row.originalUsersData, null, 2);
+            } else {
+                row.jsonEditor.value = JSON.stringify(row.jsonData, null, 2);
+            }
+
+            // 渲染左侧选项组
+            this.#renderDualEditorLeftPanel(row);
+
+            // 切换按钮事件
+            row.toggleBtn.addEventListener("click", () => {
+                if (row.rightPanelMode === 'json') {
+                    row.rightPanelMode = 'preview';
+                    row.jsonEditor.style.display = 'none';
+                    row.previewPanel.style.display = 'block';
+                    row.toggleBtn.textContent = '切换编辑';
+                    row.rightTitle.textContent = '可视化预览';
+                    this.#updateDualEditorPreview(row);
+                } else {
+                    row.rightPanelMode = 'json';
+                    row.jsonEditor.style.display = 'block';
+                    row.previewPanel.style.display = 'none';
+                    row.toggleBtn.textContent = '切换预览';
+                    row.rightTitle.textContent = 'JSON 编辑器';
+                }
+            });
+
+            // JSON 编辑器可编辑，编辑后更新预览（不同步左侧选项组）
+            row.jsonEditor.addEventListener("input", () => {
+                if (row.rightPanelMode === 'preview') {
+                    this.#updateDualEditorPreview(row);
+                }
+            });
+
+            // 保存选项组配置供后续使用
+            row.optionGroups = row.options || [];
+        }
+
+        #renderDualEditorLeftPanel(row) {
+            const leftPanel = row.leftPanel;
+            leftPanel.innerHTML = '';
+
+            // 定义选项组配置
+            // 批量编辑时默认所有选项组都不启用，单用户编辑时账户状态默认启用
+            const defaultStatusEnabled = !row.isBatchEdit;
+            
+            const optionGroups = [
+                {
+                    id: 'status',
+                    title: '账户状态',
+                    enabled: defaultStatusEnabled,
+                    type: 'select',
+                    field: '停用',
+                    options: [{value: false, label: '启用'}, {value: true, label: '禁用'}],
+                    getValue: (data) => data['停用'],
+                    setValue: (data, val) => { data['停用'] = val; }
+                },
+                {
+                    id: 'storage',
+                    title: '储存空间',
+                    enabled: false,
+                    type: 'input',
+                    field: '储存空间',
+                    unit: 'MB',
+                    placeholder: '不修改请留空',
+                    getValue: (data) => {
+                        const val = data['储存空间'] || '';
+                        const match = val.match(/^(\d+)mb$/i);
+                        return match ? match[1] : '';
+                    },
+                    setValue: (data, val) => {
+                        if (val && val.trim()) {
+                            data['储存空间'] = `${val.trim()}mb`;
+                        }
+                    }
+                },
+                {
+                    id: 'groups',
+                    title: '所属组',
+                    enabled: false,
+                    type: 'multiselect',
+                    field: '所属组',
+                    operationLabel: '操作',
+                    operations: [{value: 'add', label: '加入群组'}, {value: 'remove', label: '移出群组'}],
+                    options: row.groupOptions || {},
+                    currentValues: row.jsonData['所属组'] || [],
+                    getValue: (data) => data['所属组'] || [],
+                    setValue: (data, val, operation, selected) => {
+                        const current = data['所属组'] || [];
+                        if (operation === 'add') {
+                            data['所属组'] = [...new Set([...current, ...selected])];
+                        } else if (operation === 'remove') {
+                            data['所属组'] = current.filter(g => !selected.includes(g));
+                        }
+                    }
+                },
+                {
+                    id: 'contact_any',
+                    title: '允许主动与所有用户通信',
+                    enabled: false,
+                    type: 'select',
+                    field: '允许主动与所有用户通信',
+                    options: [{value: true, label: '启用'}, {value: false, label: '禁用'}],
+                    getValue: (data) => data['允许主动与所有用户通信'],
+                    setValue: (data, val) => { data['允许主动与所有用户通信'] = val; }
+                },
+                {
+                    id: 'contact_groups',
+                    title: '允许主动与这些组通信',
+                    enabled: false,
+                    type: 'multiselect',
+                    field: '允许主动与这些组通信',
+                    operations: [{value: 'add', label: '加入群组'}, {value: 'remove', label: '移出群组'}],
+                    options: row.groupOptions || {},
+                    currentValues: row.jsonData['允许主动与这些组通信'] || [],
+                    getValue: (data) => data['允许主动与这些组通信'] || [],
+                    setValue: (data, val, operation, selected) => {
+                        const current = data['允许主动与这些组通信'] || [];
+                        if (operation === 'add') {
+                            data['允许主动与这些组通信'] = [...new Set([...current, ...selected])];
+                        } else if (operation === 'remove') {
+                            data['允许主动与这些组通信'] = current.filter(g => !selected.includes(g));
+                        }
+                    }
+                },
+                {
+                    id: 'contact_users',
+                    title: '允许主动与这些用户通信',
+                    enabled: false,
+                    type: 'multiselect',
+                    field: '允许主动与这些用户通信',
+                    operations: [{value: 'add', label: '添加好友'}, {value: 'remove', label: '删除好友'}],
+                    options: row.userOptions || {},
+                    currentValues: row.jsonData['允许主动与这些用户通信'] || [],
+                    getValue: (data) => data['允许主动与这些用户通信'] || [],
+                    setValue: (data, val, operation, selected) => {
+                        const current = data['允许主动与这些用户通信'] || [];
+                        if (operation === 'add') {
+                            data['允许主动与这些用户通信'] = [...new Set([...current, ...selected])];
+                        } else if (operation === 'remove') {
+                            data['允许主动与这些用户通信'] = current.filter(u => !selected.includes(u));
+                        }
+                    }
+                },
+                {
+                    id: 'manage_drive',
+                    title: '允许管理所有用户的网盘',
+                    enabled: false,
+                    type: 'select',
+                    field: '允许管理所有用户的网盘',
+                    options: [{value: true, label: '启用'}, {value: false, label: '禁用'}],
+                    getValue: (data) => data['允许管理所有用户的网盘'],
+                    setValue: (data, val) => { data['允许管理所有用户的网盘'] = val; }
+                },
+                {
+                    id: 'extra_perms',
+                    title: '附加权限',
+                    enabled: false,
+                    type: 'checkbox_group',
+                    checkboxes: [
+                        {field: '允许添加好友', label: '允许添加好友'},
+                        {field: '允许创建群组', label: '允许创建群组'},
+                        {field: '允许邀请用户', label: '允许邀请用户'}
+                    ],
+                    getValue: (data, field) => data[field],
+                    setValue: (data, field, val) => { data[field] = val; }
+                }
+            ];
+
+            row.optionGroups = optionGroups;
+            row.groupElements = {};
+
+            // 渲染每个选项组
+            for (const group of optionGroups) {
+                const groupHtml = this.#createOptionGroupHtml(group, row);
+                leftPanel.insertAdjacentHTML("beforeend", groupHtml);
+                const groupElement = leftPanel.querySelector(`:scope > div:last-of-type`);
+                row.groupElements[group.id] = groupElement;
+
+                // 绑定事件
+                this.#bindOptionGroupEvents(group, groupElement, row);
+            }
+        }
+
+        #createOptionGroupHtml(group, row) {
+            const currentValue = group.getValue(row.jsonData);
+            let contentHtml = '';
+            // select 和 input 类型使用 inline 模式
+            const isInline = group.type === 'select' || group.type === 'input';
+
+            if (group.type === 'select') {
+                const optionsHtml = group.options.map(opt =>
+                    `<option value="${opt.value}" ${opt.value === currentValue ? 'selected' : ''}>${opt.label}</option>`
+                ).join('');
+                contentHtml = `
+                    <select class="form-mark-option-select" data-field="${group.field}">
+                        ${optionsHtml}
+                    </select>
+                `;
+            } else if (group.type === 'input') {
+                contentHtml = `
+                    <input type="text" class="form-mark-option-input" data-field="${group.field}"
+                           value="${group.getValue(row.jsonData)}" placeholder="${group.placeholder || ''}">
+                    <span class="form-mark-option-unit">${group.unit || ''}</span>
+                `;
+            } else if (group.type === 'multiselect') {
+                const opsHtml = group.operations.map((op, idx) =>
+                    `<option value="${op.value}" ${idx === 0 ? 'selected' : ''}>${op.label}</option>`
+                ).join('');
+                const dropdownId = `inline-dropdown-${group.id}-${Date.now()}`;
+                contentHtml = `
+                    <div class="form-mark-option-multiselect-row">
+                        <select class="form-mark-option-select" data-operation="${group.id}" style="width: 110px;">
+                            ${opsHtml}
+                        </select>
+                        <div class="form-mark-inline-multiselect">
+                            <input type="text" class="form-mark-inline-multiselect-header" readonly
+                                   placeholder="点击选择..." data-dropdown="${dropdownId}">
+                        </div>
+                    </div>
+                    <div class="form-mark-inline-multiselect-dropdown" id="${dropdownId}">
+                        <div class="form-mark-inline-multiselect-options"></div>
+                    </div>
+                `;
+            } else if (group.type === 'checkbox_group') {
+                const checkboxesHtml = group.checkboxes.map(cb => `
+                    <label class="form-mark-checkbox-item">
+                        <input type="checkbox" data-field="${cb.field}" ${group.getValue(row.jsonData, cb.field) ? 'checked' : ''}>
+                        <span>${cb.label}</span>
+                    </label>
+                `).join('');
+                contentHtml = `<div class="form-mark-checkbox-group">${checkboxesHtml}</div>`;
+            }
+
+            return `
+                <div class="form-mark-option-group ${group.enabled ? '' : 'disabled'} ${isInline ? 'inline' : ''}" data-group-id="${group.id}">
+                    <div class="form-mark-option-group-header">
+                        <input type="checkbox" ${group.enabled ? 'checked' : ''} data-enable="${group.id}">
+                        <span class="form-mark-option-group-title">${group.title}</span>
+                    </div>
+                    <div class="form-mark-option-group-content">
+                        ${contentHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        #bindOptionGroupEvents(group, groupElement, row) {
+            const enableCheckbox = groupElement.querySelector(`input[data-enable="${group.id}"]`);
+            const contentDiv = groupElement.querySelector(".form-mark-option-group-content");
+
+            // 启用/禁用选项组
+            enableCheckbox.addEventListener("change", () => {
+                if (enableCheckbox.checked) {
+                    groupElement.classList.remove("disabled");
+                    group.enabled = true;
+                } else {
+                    groupElement.classList.add("disabled");
+                    group.enabled = false;
+                    // 取消勾选时恢复原始数据
+                    this.#restoreGroupOriginalValue(group, row);
+                }
+            });
+
+            // 绑定内容事件
+            if (group.type === 'select') {
+                const select = groupElement.querySelector("select[data-field]");
+                select.addEventListener("change", () => {
+                    let val = select.value === 'true';
+                    this.#applyValueToEditor(group.field, val, row);
+                });
+            } else if (group.type === 'input') {
+                const input = groupElement.querySelector("input[data-field]");
+                input.addEventListener("input", () => {
+                    // 转换为带 mb 后缀的值
+                    const val = input.value ? `${input.value}mb` : '';
+                    this.#applyValueToEditor(group.field, val, row);
+                });
+            } else if (group.type === 'multiselect') {
+                const operationSelect = groupElement.querySelector(`select[data-operation="${group.id}"]`);
+                const headerInput = groupElement.querySelector(".form-mark-inline-multiselect-header");
+                const dropdown = groupElement.querySelector(".form-mark-inline-multiselect-dropdown");
+                const optionsContainer = dropdown.querySelector(".form-mark-inline-multiselect-options");
+
+                // 渲染选项
+                optionsContainer.innerHTML = '';
+                row.multiSelectStates = row.multiSelectStates || {};
+                row.multiSelectStates[group.id] = [];
+
+                for (const key in group.options) {
+                    const optionHtml = `
+                        <label class="form-mark-inline-multiselect-option" data-value="${key}">
+                            <input type="checkbox" value="${key}">
+                            <span>${group.options[key]}</span>
+                        </label>
+                    `;
+                    optionsContainer.insertAdjacentHTML("beforeend", optionHtml);
+                }
+
+                // 点击展开/收起下拉
+                headerInput.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const isOpen = dropdown.style.display === 'block';
+                    // 先关闭所有其他下拉
+                    document.querySelectorAll(".form-mark-inline-multiselect-dropdown").forEach(d => {
+                        d.style.display = 'none';
+                    });
+                    if (!isOpen) {
+                        const rect = headerInput.getBoundingClientRect();
+                        dropdown.style.display = 'block';
+                        dropdown.style.position = 'fixed';
+                        dropdown.style.top = `${rect.bottom}px`;
+                        dropdown.style.left = `${rect.left}px`;
+                        dropdown.style.width = `${rect.width}px`;
+                    }
+                });
+
+                // 选项点击
+                optionsContainer.querySelectorAll("label").forEach(label => {
+                    const checkbox = label.querySelector("input");
+                    checkbox.addEventListener("change", () => {
+                        const value = checkbox.value;
+                        if (checkbox.checked) {
+                            label.classList.add("selected");
+                            if (!row.multiSelectStates[group.id].includes(value)) {
+                                row.multiSelectStates[group.id].push(value);
+                            }
+                        } else {
+                            label.classList.remove("selected");
+                            row.multiSelectStates[group.id] = row.multiSelectStates[group.id].filter(v => v !== value);
+                        }
+                        // 更新显示
+                        const selectedLabels = row.multiSelectStates[group.id].map(v => group.options[v]);
+                        headerInput.value = selectedLabels.join(", ");
+
+                        // 更新数据：基于 JSON 编辑器当前数据进行修改
+                        const operation = operationSelect.value;
+                        if (row.multiSelectStates[group.id].length > 0) {
+                            this.#applyMultiselectToEditor(group, row, operation, row.multiSelectStates[group.id]);
+                        }
+                    });
+                });
+
+                // 点击外部关闭
+                document.addEventListener("click", (e) => {
+                    if (!dropdown.contains(e.target) && e.target !== headerInput) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+            } else if (group.type === 'checkbox_group') {
+                groupElement.querySelectorAll("input[data-field]").forEach(checkbox => {
+                    checkbox.addEventListener("change", () => {
+                        const field = checkbox.dataset.field;
+                        this.#applyValueToEditor(field, checkbox.checked, row);
+                    });
+                });
+            }
+        }
+
+        #applyValueToEditor(field, value, row) {
+            // 直接修改 JSON 编辑器中的指定字段
+            try {
+                const currentData = JSON.parse(row.jsonEditor.value);
+
+                if (row.isBatchEdit && Array.isArray(currentData)) {
+                    // 批量编辑：对每个用户应用修改
+                    const updatedData = currentData.map(item => {
+                        item[field] = value;
+                        return item;
+                    });
+                    row.jsonEditor.value = JSON.stringify(updatedData, null, 2);
+                } else {
+                    // 单用户编辑
+                    currentData[field] = value;
+                    row.jsonEditor.value = JSON.stringify(currentData, null, 2);
+                    // 同步更新 jsonData
+                    row.jsonData[field] = value;
+                }
+
+                // 更新预览（如果可见）
+                if (row.rightPanelMode === 'preview') {
+                    this.#updateDualEditorPreview(row);
+                }
+            } catch (e) {
+                console.error("JSON 解析错误:", e);
+            }
+        }
+
+        #applyMultiselectToEditor(group, row, operation, selected) {
+            // 直接修改 JSON 编辑器中的数据
+            try {
+                const currentData = JSON.parse(row.jsonEditor.value);
+
+                if (row.isBatchEdit && Array.isArray(currentData)) {
+                    // 批量编辑：对每个用户应用修改
+                    const updatedData = currentData.map((item, idx) => {
+                        const current = item[group.field] || [];
+                        if (operation === 'add') {
+                            item[group.field] = [...new Set([...current, ...selected])];
+                        } else if (operation === 'remove') {
+                            item[group.field] = current.filter(v => !selected.includes(v));
+                        }
+                        return item;
+                    });
+                    row.jsonEditor.value = JSON.stringify(updatedData, null, 2);
+                } else {
+                    // 单用户编辑
+                    const current = currentData[group.field] || [];
+                    if (operation === 'add') {
+                        currentData[group.field] = [...new Set([...current, ...selected])];
+                    } else if (operation === 'remove') {
+                        currentData[group.field] = current.filter(v => !selected.includes(v));
+                    }
+                    row.jsonEditor.value = JSON.stringify(currentData, null, 2);
+                    // 同步更新 jsonData
+                    row.jsonData[group.field] = currentData[group.field];
+                }
+
+                // 更新预览（如果可见）
+                if (row.rightPanelMode === 'preview') {
+                    this.#updateDualEditorPreview(row);
+                }
+            } catch (e) {
+                console.error("JSON 解析错误:", e);
+            }
+        }
+
+        #restoreGroupOriginalValue(group, row) {
+            // 取消勾选时恢复该选项组的原始数据
+            if (row.isBatchEdit && row.originalUsersData) {
+                // 批量编辑：从原始数据恢复
+                // 直接从 JSON 编辑器读取当前数据，然后恢复该字段
+                try {
+                    const currentData = JSON.parse(row.jsonEditor.value);
+                    if (Array.isArray(currentData)) {
+                        const restoredData = currentData.map((item, idx) => {
+                            if (row.originalUsersData[idx]) {
+                                // 根据选项组类型恢复对应字段
+                                if (group.type === 'select' || group.type === 'input') {
+                                    item[group.field] = row.originalUsersData[idx][group.field];
+                                } else if (group.type === 'multiselect') {
+                                    item[group.field] = row.originalUsersData[idx][group.field] || [];
+                                } else if (group.type === 'checkbox_group') {
+                                    for (const cb of group.checkboxes) {
+                                        item[cb.field] = row.originalUsersData[idx][cb.field];
+                                    }
+                                }
+                            }
+                            return item;
+                        });
+                        row.jsonEditor.value = JSON.stringify(restoredData, null, 2);
+                    }
+                } catch (e) {
+                    // JSON 解析错误，忽略
+                }
+            } else if (row.originalData) {
+                // 单用户编辑：从原始数据恢复
+                if (group.type === 'select' || group.type === 'input') {
+                    row.jsonData[group.field] = row.originalData[group.field];
+                } else if (group.type === 'multiselect') {
+                    row.jsonData[group.field] = row.originalData[group.field] || [];
+                } else if (group.type === 'checkbox_group') {
+                    for (const cb of group.checkboxes) {
+                        row.jsonData[cb.field] = row.originalData[cb.field];
+                    }
+                }
+                // 更新 JSON 编辑器
+                row.jsonEditor.value = JSON.stringify(row.jsonData, null, 2);
+            }
+
+            // 恢复左侧选项组控件的显示值
+            if (group.type === 'select') {
+                const select = row.groupElements[group.id].querySelector("select[data-field]");
+                if (select) {
+                    const originalVal = row.isBatchEdit ? null : row.originalData[group.field];
+                    select.value = String(originalVal);
+                }
+            } else if (group.type === 'input') {
+                const input = row.groupElements[group.id].querySelector("input[data-field]");
+                if (input) {
+                    const originalVal = row.isBatchEdit ? '' : row.originalData[group.field];
+                    // 提取数字部分
+                    const match = (originalVal || '').match(/^(\d+)mb$/i);
+                    input.value = match ? match[1] : '';
+                }
+            } else if (group.type === 'checkbox_group') {
+                for (const cb of group.checkboxes) {
+                    const checkbox = row.groupElements[group.id].querySelector(`input[data-field="${cb.field}"]`);
+                    if (checkbox && row.originalData) {
+                        checkbox.checked = row.originalData[cb.field];
+                    }
+                }
+            }
+
+            // 更新预览（如果可见）
+            if (row.rightPanelMode === 'preview') {
+                this.#updateDualEditorPreview(row);
+            }
+        }
+
+        #updateDualEditorPreview(row) {
+            const previewPanel = row.previewPanel;
+            const isBatchEdit = row.isBatchEdit;
+
+            // 从 JSON 编辑器读取当前数据
+            let jsonData;
+            try {
+                jsonData = JSON.parse(row.jsonEditor.value);
+            } catch (e) {
+                previewPanel.innerHTML = '<div style="color: red;">JSON 解析错误</div>';
+                return;
+            }
+
+            // 生成单个用户的预览内容
+            const generateUserPreview = (userName, userData) => {
+                return `
+                    <div style="padding: 8px 0; border-bottom: 1px dashed #ddd; margin-bottom: 8px;">
+                        <div style="font-weight: 600; color: #333; margin-bottom: 6px;">👤 ${userName}</div>
+                        <div class="form-mark-preview-row">
+                            <span class="form-mark-preview-label">停用：</span>
+                            <span class="${userData['停用'] ? 'form-mark-preview-status-on' : 'form-mark-preview-status-off'}">${userData['停用'] ? '是' : '否'}</span>
+                        </div>
+                        <div class="form-mark-preview-row">
+                            <span class="form-mark-preview-label">储存空间：</span>
+                            <span class="form-mark-preview-value">${userData['储存空间'] || '-'}</span>
+                        </div>
+                        <div class="form-mark-preview-row">
+                            <span class="form-mark-preview-label">所属组：</span>
+                            <span class="form-mark-preview-value">${(userData['所属组'] || []).join('、') || '无'}</span>
+                        </div>
+                        <div class="form-mark-preview-row">
+                            <span class="form-mark-preview-label">允许主动与所有用户通信：</span>
+                            <span class="${userData['允许主动与所有用户通信'] ? 'form-mark-preview-status-on' : 'form-mark-preview-status-off'}">${userData['允许主动与所有用户通信'] ? '是' : '否'}</span>
+                        </div>
+                        <div class="form-mark-preview-row">
+                            <span class="form-mark-preview-label">允许主动与这些组通信：</span>
+                            <span class="form-mark-preview-value">${(userData['允许主动与这些组通信'] || []).join('、') || '无'}</span>
+                        </div>
+                        <div class="form-mark-preview-row">
+                            <span class="form-mark-preview-label">允许主动与这些用户通信：</span>
+                            <span class="form-mark-preview-value">${(userData['允许主动与这些用户通信'] || []).join('、') || '无'}</span>
+                        </div>
+                        <div class="form-mark-preview-row">
+                            <span class="form-mark-preview-label">允许管理所有用户的网盘：</span>
+                            <span class="${userData['允许管理所有用户的网盘'] ? 'form-mark-preview-status-on' : 'form-mark-preview-status-off'}">${userData['允许管理所有用户的网盘'] ? '是' : '否'}</span>
+                        </div>
+                        <div class="form-mark-preview-row">
+                            <span class="form-mark-preview-label">允许添加好友：</span>
+                            <span class="${userData['允许添加好友'] ? 'form-mark-preview-status-on' : 'form-mark-preview-status-off'}">${userData['允许添加好友'] ? '是' : '否'}</span>
+                        </div>
+                        <div class="form-mark-preview-row">
+                            <span class="form-mark-preview-label">允许创建群组：</span>
+                            <span class="${userData['允许创建群组'] ? 'form-mark-preview-status-on' : 'form-mark-preview-status-off'}">${userData['允许创建群组'] ? '是' : '否'}</span>
+                        </div>
+                        <div class="form-mark-preview-row">
+                            <span class="form-mark-preview-label">允许邀请用户：</span>
+                            <span class="${userData['允许邀请用户'] ? 'form-mark-preview-status-on' : 'form-mark-preview-status-off'}">${userData['允许邀请用户'] ? '是' : '否'}</span>
+                        </div>
+                    </div>
+                `;
+            };
+
+            let html = '';
+
+            if (isBatchEdit && Array.isArray(jsonData)) {
+                // 批量编辑：显示每个用户的预览（直接使用 JSON 编辑器数据）
+                for (const userData of jsonData) {
+                    html += generateUserPreview(userData['名称'] || '-', userData);
+                }
+            } else {
+                // 单用户编辑
+                html = generateUserPreview(jsonData['名称'] || '-', jsonData);
+            }
+
+            previewPanel.innerHTML = html;
+        }
+
+        #syncDualEditorFromJson(row) {
+            // 从 JSON 数据同步到左侧选项组
+            for (const group of row.optionGroups) {
+                const groupElement = row.groupElements[group.id];
+                if (!groupElement) continue;
+
+                if (group.type === 'select') {
+                    const select = groupElement.querySelector("select[data-field]");
+                    if (select) {
+                        select.value = String(group.getValue(row.jsonData));
+                    }
+                } else if (group.type === 'input') {
+                    const input = groupElement.querySelector("input[data-field]");
+                    if (input) {
+                        input.value = group.getValue(row.jsonData);
+                    }
+                } else if (group.type === 'checkbox_group') {
+                    group.checkboxes.forEach(cb => {
+                        const checkbox = groupElement.querySelector(`input[data-field="${cb.field}"]`);
+                        if (checkbox) {
+                            checkbox.checked = group.getValue(row.jsonData, cb.field);
+                        }
+                    });
+                }
+            }
+
+            // 更新预览（如果可见）
+            if (row.rightPanelMode === 'preview') {
+                this.#updateDualEditorPreview(row);
+            }
+        }
+
         collect_data(form = undefined) {
             if (!form) form = this.form;
             for (const row of form) {
@@ -12480,9 +13579,31 @@
                     row.collect_data(this, row);
                 } else if (row.type === "number") {
                     row.value = parseInt(row.input_element.value);
+                } else if (row.type === "dual_editor") {
+                    // 收集 dual_editor 数据，只返回已启用选项组的修改
+                    row.value = this.#collectDualEditorData(row);
                 }
             }
 
+        }
+
+        #collectDualEditorData(row) {
+            // 从 JSON 编辑器读取最终数据（JSON 编辑器是最终数据源）
+            try {
+                const jsonData = JSON.parse(row.jsonEditor.value);
+
+                // 批量编辑：返回数组
+                if (row.isBatchEdit && Array.isArray(jsonData)) {
+                    return jsonData;
+                }
+
+                // 单用户编辑：返回对象
+                return jsonData;
+            } catch (e) {
+                // JSON 解析错误，返回空对象或空数组
+                console.error("JSON 解析错误:", e);
+                return row.isBatchEdit ? [] : {};
+            }
         }
 
         static get_global_input(form, confirm_callback, parent_element) {
@@ -14557,6 +15678,11 @@
                 const isInstalled = !!plugin.installed;
                 const isEnabled = !!plugin.enabled;
 
+                // 检测是否有更新可用
+                const hasUpdate = isInstalled && plugin.installed_version && plugin.installed_version !== plugin.version;
+                const versionClass = hasUpdate ? 'plugin-version has-update' : 'plugin-version';
+                const versionText = hasUpdate ? `v${plugin.installed_version} → v${plugin.version}` : `v${plugin.version || '1.0.0'}`;
+
                 return `
                     <div class="plugin-item" data-plugin-id="${plugin.plugin_id}">
                         <div class="plugin-item-header">
@@ -14567,7 +15693,7 @@
                             <div class="plugin-item-content">
                                 <div class="plugin-item-title">
                                     <span class="plugin-item-name">${plugin.name || plugin.plugin_id}</span>
-                                    <span class="plugin-item-version">v${plugin.version || '1.0.0'}</span>
+                                    <span class="${versionClass}">${versionText}</span>
                                     ${badgeHtml}
                                 </div>
                                 <p class="plugin-item-description">${plugin.description || '暂无描述'}</p>
@@ -14581,6 +15707,13 @@
                                 </button>
 
                                 ${isInstalled ? `
+                                    ${hasUpdate ? `
+                                        <button class="plugin-item-btn primary"
+                                                data-action="update"
+                                                data-plugin-id="${plugin.plugin_id}">
+                                            更新
+                                        </button>
+                                    ` : ''}
                                     <button class="plugin-item-btn ${isEnabled ? 'secondary' : 'primary'}"
                                             data-action="toggle"
                                             data-plugin-id="${plugin.plugin_id}">
@@ -15929,39 +17062,42 @@
          * @private
          */
         async _loadScript(url, pluginId, pluginVersion = '', maxRetries = 3) {
-            return new Promise((resolve, reject) => {
-                document.getElementById(`plugin-script-${pluginId}`)?.remove();
+            const sep = url.includes('?') ? '&' : '?';
+            const ver = encodeURIComponent(pluginVersion || Date.now());
+            const fullUrl = `${url}${sep}_v=${ver}`;
 
-                const loadScript = (retryCount = 0) => {
-                    const script = document.createElement('script');
-                    script.id = `plugin-script-${pluginId}`;
+            const loadScript = async (retryCount = 0) => {
+                try {
+                    const response = await fetch(fullUrl, {
+                        credentials: 'same-origin',
+                        headers: { 'Accept': 'application/javascript' }
+                    });
 
-                    const sep = url.includes('?') ? '&' : '?';
-                    const ver = encodeURIComponent(pluginVersion || Date.now());
-                    script.src = `${url}${sep}_v=${ver}`;
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
 
-                    script.crossOrigin = 'anonymous';
+                    const code = await response.text();
 
-                    script.onload = () => {
-                        console.log(`✓ 脚本加载成功: ${pluginId}`);
-                        resolve();
-                    };
+                    // 使用 new Function 执行，避免 class 重复声明问题
+                    // 将 registerPlugin 注入到脚本作用域
+                    const fn = new Function('registerPlugin', code);
+                    fn(window.registerPlugin);
 
-                    script.onerror = () => {
-                        if (retryCount < maxRetries - 1) {
-                            const delay = 1000 * Math.pow(2, retryCount);
-                            console.warn(`脚本加载失败，${delay}ms 后重试 (${retryCount + 1}/${maxRetries}): ${url}`);
-                            setTimeout(() => loadScript(retryCount + 1), delay);
-                        } else {
-                            reject(new Error(`加载脚本失败（重试 ${maxRetries} 次）: ${url}`));
-                        }
-                    };
+                    console.log(`✓ 脚本加载成功: ${pluginId}`);
+                } catch (error) {
+                    if (retryCount < maxRetries - 1) {
+                        const delay = 1000 * Math.pow(2, retryCount);
+                        console.warn(`脚本加载失败，${delay}ms 后重试 (${retryCount + 1}/${maxRetries}): ${url}`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return loadScript(retryCount + 1);
+                    } else {
+                        throw new Error(`加载脚本失败（重试 ${maxRetries} 次）: ${url} - ${error.message}`);
+                    }
+                }
+            };
 
-                    document.head.appendChild(script);
-                };
-
-                loadScript();
-            });
+            await loadScript();
         }
 
         /**
@@ -27996,39 +29132,77 @@
                     _template["名称"] = attr.uid;
                     _template["密码"] = "不变";
                     _template["储存空间"] = `${attr.free_space}mb`;
-                    _template["所属组"] = attr.groups;
+                    _template["所属组"] = attr.groups || [];
                     _template["允许主动与所有用户通信"] = Boolean(attr.contact_any);
-                    _template["允许主动与这些组通信"] = attr.contact_groups;
-                    _template["允许主动与这些用户通信"] = attr.contact_users;
+                    _template["允许主动与这些组通信"] = attr.contact_groups || [];
+                    _template["允许主动与这些用户通信"] = attr.contact_users || [];
                     _template["允许管理所有用户的网盘"] = Boolean(attr.manage_drive);
                     _template["允许添加好友"] = Boolean(attr.can_add_friend);
                     _template["允许创建群组"] = Boolean(attr.can_create_group);
                     _template["允许邀请用户"] = Boolean(attr.can_invite_to_group);
 
-                    let form = [
-                        {type: "title", label: `编辑用户：${attr.uid}`},
-                        {type: "textarea", label: "", value: JSON.stringify(_template, null, 2),},
-                    ];
+                    // 获取群组列表和用户列表
+                    this.loading_mark.show();
+                    Promise.all([
+                        this.client.subviews.admin.fetch_group_list(),
+                        this.client.subviews.admin.fetch_user_list()
+                    ]).then(([groups, users]) => {
+                        if (this.closed) return;
+                        this.remove_loading_mark();
 
-                    const confirm_callback = (fm,) => {
-                        fm.collect_data();
-
-                        try {
-                            let _template = JSON.parse(form[1].value)
-
-                            if (!form_field_checker.ffc_object(_template)) throw new Error("object");
-                            this._check_form(_template, true);
-
-                            // fm.remove();
-                            this.__edit_user(clicking_info, fm, _template, attr.uid);
-
-                        } catch (e) {
-                            MessageMark.report(e, fm.rect)
+                        // 构建群组选项 {gid: gid}
+                        const groupOptions = {};
+                        for (const g of groups) {
+                            groupOptions[g.gid] = g.gid;
                         }
 
-                    }
+                        // 构建用户选项 {uid: uid}，排除当前用户
+                        const userOptions = {};
+                        for (const u of users) {
+                            if (u.uid !== attr.uid) {
+                                userOptions[u.uid] = u.uid;
+                            }
+                        }
 
-                    FormMark.get_global_input(form, confirm_callback)
+                        // 使用新的 dual_editor 类型
+                        let form = [
+                            {type: "title", label: `编辑用户：${attr.uid}`},
+                            {
+                                type: "dual_editor",
+                                label: "",
+                                value: _template,
+                                groupOptions: groupOptions,
+                                userOptions: userOptions
+                            },
+                        ];
+
+                        const confirm_callback = (fm,) => {
+                            fm.collect_data();
+
+                            try {
+                                // 直接使用 JSON 编辑器数据（JSON 编辑器是最终数据源）
+                                let editedData = form[1].value;
+
+                                if (!form_field_checker.ffc_object(editedData)) throw new Error("object");
+
+                                // 直接使用 JSON 编辑器数据提交
+                                this._check_form(editedData, true);
+
+                                // fm.remove();
+                                this.__edit_user(clicking_info, fm, editedData, attr.uid);
+
+                            } catch (e) {
+                                MessageMark.report(e, fm.rect)
+                            }
+
+                        }
+
+                        FormMark.get_global_input(form, confirm_callback)
+                    }).catch(error => {
+                        if (this.closed) return;
+                        this.remove_loading_mark();
+                        MessageMark.report(error);
+                    });
                 }
 
                 __edit_user(clicking_info, fm, form, old_uid) {
@@ -28232,77 +29406,89 @@
                         return;
                     }
 
-                    // 批量获取用户完整数据
+                    // 批量获取用户完整数据、群组列表、用户列表
                     this.loading_mark.show();
-                    this.e_delete_status.textContent = "加载用户数据...";
+                    this.e_delete_status.textContent = "加载数据...";
 
-                    this.client.subviews.admin.fetch_user_attrs(selected_uids)
-                        .then(user_attrs => {
-                            if (this.closed) return;
-                            
-                            const users_templates = [];
-                            
-                            // 按照选中的顺序填充用户数据
-                            for (const uid of selected_uids) {
-                                const attr = user_attrs.find(user => user.uid === uid);
-                                if (attr) {
-                                    const _template = {...this.#_template}
-                                    
-                                    _template["停用"] = Boolean(attr.disabled);
-                                    _template["名称"] = attr.uid;
-                                    _template["密码"] = "不变";
-                                    _template["储存空间"] = `${attr.free_space}mb`;
-                                    _template["所属组"] = attr.groups;
-                                    _template["允许主动与所有用户通信"] = Boolean(attr.contact_any);
-                                    _template["允许主动与这些组通信"] = attr.contact_groups;
-                                    _template["允许主动与这些用户通信"] = attr.contact_users;
-                                    _template["允许管理所有用户的网盘"] = Boolean(attr.manage_drive);
-                                    
-                                    users_templates.push(_template);
-                                }
-                            }
+                    Promise.all([
+                        this.client.subviews.admin.fetch_user_attrs(selected_uids),
+                        this.client.subviews.admin.fetch_group_list(),
+                        this.client.subviews.admin.fetch_user_list()
+                    ]).then(([user_attrs, groups, users]) => {
+                        if (this.closed) return;
+                        this.remove_loading_mark();
 
-                            this.remove_loading_mark();
+                        // 构建群组选项 {gid: gid}
+                        const groupOptions = {};
+                        for (const g of groups) {
+                            groupOptions[g.gid] = g.gid;
+                        }
 
-                            if (users_templates.length === 0) {
-                                MessageMark.report(new Error("未找到用户数据"));
-                                return;
-                            }
+                        // 构建用户选项 {uid: uid}
+                        const userOptions = {};
+                        for (const u of users) {
+                            userOptions[u.uid] = u.uid;
+                        }
 
-                            // 显示批量编辑弹窗
-                            this._show_batch_edit_modal(users_templates);
-                        })
-                        .catch(error => {
-                            if (this.closed) return;
-                            this.remove_loading_mark();
-                            MessageMark.report(error);
-                        });
+                        // 批量编辑模板（不包含名称，因为要应用到多个用户）
+                        const batchTemplate = {
+                            "停用": false,
+                            "储存空间": "",
+                            "所属组": [],
+                            "允许主动与所有用户通信": false,
+                            "允许主动与这些组通信": [],
+                            "允许主动与这些用户通信": [],
+                            "允许管理所有用户的网盘": false,
+                            "允许添加好友": false,
+                            "允许创建群组": false,
+                            "允许邀请用户": false,
+                        };
+
+                        // 保存选中的用户信息
+                        const selectedUsersInfo = user_attrs.filter(u => selected_uids.includes(u.uid));
+
+                        // 显示批量编辑弹窗
+                        this._show_batch_edit_modal(batchTemplate, selectedUsersInfo, groupOptions, userOptions);
+                    })
+                    .catch(error => {
+                        if (this.closed) return;
+                        this.remove_loading_mark();
+                        MessageMark.report(error);
+                    });
                 }
 
                 // 显示批量编辑弹窗
-                _show_batch_edit_modal(users_templates) {
-                    // 将用户模板数据转换为格式化的 JSON 字符串
-                    const json_text = JSON.stringify(users_templates, null, 2);
-
+                _show_batch_edit_modal(batchTemplate, selectedUsersInfo, groupOptions, userOptions) {
+                    // 使用新的 dual_editor 类型
                     let form = [
-                        {type: "title", label: `批量编辑用户（${users_templates.length}个）：`},
-                        {type: "textarea", label: "", value: json_text, style: "min-height: 400px; font-family: monospace; font-size: 12px;"},
+                        {type: "title", label: `批量编辑用户（${selectedUsersInfo.length}个）：`},
+                        {
+                            type: "dual_editor",
+                            label: "",
+                            value: batchTemplate,
+                            groupOptions: groupOptions,
+                            userOptions: userOptions,
+                            isBatchEdit: true,
+                            selectedUsers: selectedUsersInfo
+                        },
                     ];
 
                     const confirm_callback = (fm,) => {
                         fm.collect_data();
 
                         try {
-                            let edited_templates = JSON.parse(form[1].value)
+                            // 直接使用 JSON 编辑器数据（JSON 编辑器是最终数据源）
+                            let editedData = form[1].value;
 
-                            if (!form_field_checker.ffc_array(edited_templates)) throw new Error("用户数据必须是数组格式");
-                            
-                            for (const template of edited_templates) {
+                            // 批量编辑时 editedData 应该是数组
+                            if (!form_field_checker.ffc_array(editedData)) throw new Error("用户数据必须是数组格式");
+
+                            for (const template of editedData) {
                                 this._check_form(template, true);
                             }
 
                             // fm.remove();
-                            this._batch_edit_users_submit(fm, edited_templates);
+                            this._batch_edit_users_submit(fm, editedData);
 
                         } catch (e) {
                             MessageMark.report(e, fm.rect)
