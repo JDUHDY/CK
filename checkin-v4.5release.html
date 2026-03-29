@@ -14642,6 +14642,13 @@
                     });
                 });
 
+                container.querySelectorAll('[data-action="update"]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const plugin = this.plugins.find(p => p.plugin_id === btn.dataset.pluginId);
+                        if (plugin) this.updatePlugin(plugin);
+                    });
+                });
+
                 container.querySelectorAll('.plugin-item-checkbox').forEach(cb => {
                     cb.addEventListener('change', (e) => {
                         const pluginId = e.target.dataset.pluginId;
@@ -14692,6 +14699,8 @@
             // 判断是否有更新可用（这里简化处理，实际应该比较版本号）
             const hasUpdate = plugin.installed && plugin.installed_version && plugin.installed_version !== plugin.version;
 
+            console.log(`[插件渲染] ${plugin.plugin_id}: installed=${plugin.installed}, installed_version=${plugin.installed_version}, version=${plugin.version}, hasUpdate=${hasUpdate}`);
+
             const versionClass = hasUpdate ? 'plugin-version has-update' : 'plugin-version';
             const versionText = hasUpdate ? `v${plugin.installed_version} → v${plugin.version}` : `v${plugin.version}`;
 
@@ -14706,15 +14715,15 @@
                     <div class="plugin-item-actions">
                         ${plugin.installed ?
                             (hasUpdate ?
-                                `<button class="plugin-action-btn primary" data-action="update">更新</button>
-                                 <button class="plugin-action-btn ${plugin.enabled ? '' : 'primary'}" data-action="toggle">${plugin.enabled ? '停用' : '启用'}</button>
-                                 <button class="plugin-action-btn" data-action="detail">详情</button>
-                                 <button class="plugin-action-btn danger" data-action="uninstall">卸载</button>` :
-                                `<button class="plugin-action-btn ${plugin.enabled ? '' : 'primary'}" data-action="toggle">${plugin.enabled ? '停用' : '启用'}</button>
-                                 <button class="plugin-action-btn" data-action="detail">详情</button>
-                                 <button class="plugin-action-btn danger" data-action="uninstall">卸载</button>`
+                                `<button class="plugin-action-btn primary" data-action="update" data-plugin-id="${plugin.plugin_id}">更新</button>
+                                 <button class="plugin-action-btn ${plugin.enabled ? '' : 'primary'}" data-action="toggle" data-plugin-id="${plugin.plugin_id}">${plugin.enabled ? '停用' : '启用'}</button>
+                                 <button class="plugin-action-btn" data-action="detail" data-plugin-id="${plugin.plugin_id}">详情</button>
+                                 <button class="plugin-action-btn danger" data-action="uninstall" data-plugin-id="${plugin.plugin_id}">卸载</button>` :
+                                `<button class="plugin-action-btn ${plugin.enabled ? '' : 'primary'}" data-action="toggle" data-plugin-id="${plugin.plugin_id}">${plugin.enabled ? '停用' : '启用'}</button>
+                                 <button class="plugin-action-btn" data-action="detail" data-plugin-id="${plugin.plugin_id}">详情</button>
+                                 <button class="plugin-action-btn danger" data-action="uninstall" data-plugin-id="${plugin.plugin_id}">卸载</button>`
                             ) :
-                            `<button class="plugin-action-btn primary" data-action="install">安装</button>`
+                            `<button class="plugin-action-btn primary" data-action="install" data-plugin-id="${plugin.plugin_id}">安装</button>`
                         }
                     </div>
                 </div>
@@ -15395,10 +15404,27 @@
 
                         try {
                             this.setPluginProgress(plugin.plugin_id, 10, '正在准备更新...');
-                            this.setPluginProgress(plugin.plugin_id, 50, '正在更新版本信息...');
-                            plugin.installed_version = plugin.version;
-                            this.setPluginProgress(plugin.plugin_id, 100, '更新完成', 'success');
-                            successCount++;
+                            this.setPluginProgress(plugin.plugin_id, 50, '正在请求服务器更新...');
+                            const response = await fetch(`${top_level_path}/api/plugins/${plugin.plugin_id}/update`, {
+                                method: 'POST',
+                                credentials: 'same-origin'
+                            });
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                plugin.installed_version = plugin.version;
+                                this.setPluginProgress(plugin.plugin_id, 100, '更新完成', 'success');
+                                successCount++;
+                            } else {
+                                this.setPluginProgress(
+                                    plugin.plugin_id,
+                                    100,
+                                    `更新失败：${data.message || '未知错误'}`,
+                                    'error'
+                                );
+                                errors.push(`${plugin.name}: ${data.message || '更新失败'}`);
+                            }
                         } catch (error) {
                             this.setPluginProgress(
                                 plugin.plugin_id,
@@ -15564,10 +15590,21 @@
                 null,
                 async () => {
                     try {
-                        plugin.installed_version = plugin.version;
-                        showToast(`插件 "${plugin.name}" 更新成功`, 'success');
-                        this.renderPluginList();
-                        this.updateBatchButtons(false);
+                        const response = await fetch(`${top_level_path}/api/plugins/${plugin.plugin_id}/update`, {
+                            method: 'POST',
+                            credentials: 'same-origin'
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            plugin.installed_version = plugin.version;
+                            showToast(`插件 "${plugin.name}" ${data.message}`, 'success');
+                            await this.loadPlugins();
+                            this.updateBatchButtons(false);
+                        } else {
+                            showToast(`更新失败: ${data.message}`, 'error');
+                        }
                     } catch (error) {
                         showToast(`更新失败: ${error.message}`, 'error');
                     }
