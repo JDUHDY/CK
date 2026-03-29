@@ -1,7 +1,7 @@
 {
   "id": "hello-world",
   "name": "Hello World",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "【管理员专用】一个简单的测试插件，在页面顶部显示欢迎横幅。",
   "author": "CC 团队",
   "entry": "main.js",
