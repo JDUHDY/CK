@@ -12550,7 +12550,7 @@
             // 检测是否有 dual_editor 类型，设置更宽的弹窗宽度
             const hasDualEditor = this.form.some(el => el.type === "dual_editor");
             if (hasDualEditor) {
-                this.rect.style.minHeight = "60vw";
+                this.rect.style.minHeight = "80vw";
             }
 
             // 输入区域
@@ -13461,7 +13461,7 @@
             // 生成单个用户的预览内容
             const generateUserPreview = (userName, userData) => {
                 return `
-                    <div style="padding: 8px 0; border-bottom: 1px dashed #ddd; margin-bottom: 8px;">
+                    <div style="padding: 8px 0; border-bottom: 1px solid #000; margin-bottom: 8px;">
                         <div style="font-weight: 600; color: #333; margin-bottom: 6px;">👤 ${userName}</div>
                         <div class="form-mark-preview-row">
                             <span class="form-mark-preview-label">停用：</span>
@@ -17276,6 +17276,72 @@
                         return response.ok;
                     } catch (error) {
                         console.error('Set config error:', error);
+                        return false;
+                    }
+                },
+
+                /**
+                 * 获取协作共享数据
+                 * @param {string} key - 数据键名
+                 * @param {string} scope - 共享范围：'global' | 'group:{groupId}' | 'team:{teamId}'
+                 * @returns {Promise<any>}
+                 */
+                async getShared(key, scope = 'global') {
+                    self.requirePermission('storage');
+                    try {
+                        const response = await fetch(`${top_level_path}/api/plugins/${self.pluginId}/shared/${key}?scope=${encodeURIComponent(scope)}`, {
+                            credentials: 'same-origin'
+                        });
+                        if (response.ok) {
+                            const data = await response.json();
+                            return data.value;
+                        }
+                        return null;
+                    } catch (error) {
+                        console.error('Shared storage get error:', error);
+                        return null;
+                    }
+                },
+
+                /**
+                 * 保存协作共享数据
+                 * @param {string} key - 数据键名
+                 * @param {any} value - 数据值
+                 * @param {string} scope - 共享范围：'global' | 'group:{groupId}' | 'team:{teamId}'
+                 * @returns {Promise<boolean>}
+                 */
+                async setShared(key, value, scope = 'global') {
+                    self.requirePermission('storage');
+                    try {
+                        const response = await fetch(`${top_level_path}/api/plugins/${self.pluginId}/shared/${key}?scope=${encodeURIComponent(scope)}`, {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ value })
+                        });
+                        return response.ok;
+                    } catch (error) {
+                        console.error('Shared storage set error:', error);
+                        return false;
+                    }
+                },
+
+                /**
+                 * 删除协作共享数据
+                 * @param {string} key - 数据键名
+                 * @param {string} scope - 共享范围：'global' | 'group:{groupId}' | 'team:{teamId}'
+                 * @returns {Promise<boolean>}
+                 */
+                async removeShared(key, scope = 'global') {
+                    self.requirePermission('storage');
+                    try {
+                        const response = await fetch(`${top_level_path}/api/plugins/${self.pluginId}/shared/${key}?scope=${encodeURIComponent(scope)}`, {
+                            method: 'DELETE',
+                            credentials: 'same-origin'
+                        });
+                        return response.ok;
+                    } catch (error) {
+                        console.error('Shared storage remove error:', error);
                         return false;
                     }
                 }
