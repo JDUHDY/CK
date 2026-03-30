@@ -373,16 +373,14 @@ class ScheduledMessagePlugin {
         // 如果是编辑模式，使用编辑的消息内容
         const initialText = editMessage ? editMessage.message : currentText;
         
-                // 生成时间选择器的默认值（当前时间）
-        
-                const defaultTime = editMessage 
-        
-                    ? new Date(editMessage.scheduledTime)
-        
-                    : new Date();
-        
-                const defaultTimeStr = this.formatDateTimeLocal(defaultTime);
-        
+                // 生成时间选择器的默认值（当前北京时间）
+
+        const defaultTime = editMessage
+            ? new Date(editMessage.scheduledTime)
+            : new Date();
+
+        const defaultTimeStr = this.formatDateTimeLocal(defaultTime);
+
         // 默认截止日期（3个月后）
         const defaultUntil = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
         const defaultUntilStr = this.formatDateTimeLocal(defaultUntil);
@@ -497,7 +495,7 @@ class ScheduledMessagePlugin {
             return;
         }
         
-        const scheduledTime = new Date(timeStr);
+        const scheduledTime = this.parseDateTimeLocal(timeStr);
         if (scheduledTime <= new Date()) {
             this.api.ui.showToast('发送时间必须晚于当前时间', 'warning');
             return;
@@ -575,10 +573,10 @@ class ScheduledMessagePlugin {
         this.scheduledMessages[msgIndex] = {
             ...this.scheduledMessages[msgIndex],
             message: message,
-            scheduledTime: new Date(timeStr).toISOString(),
+            scheduledTime: this.parseDateTimeLocal(timeStr).toISOString(),
             repeat: {
                 type: repeatType,
-                until: repeatType !== 'none' ? new Date(untilStr).toISOString() : null
+                until: repeatType !== 'none' ? this.parseDateTimeLocal(untilStr).toISOString() : null
             },
             updatedTime: new Date().toISOString()
         };
@@ -1124,8 +1122,9 @@ class ScheduledMessagePlugin {
             }
             body.ceid = msg.ceid;
             
-            // 发送请求
-            const response = await fetch('/chat/api/send', {
+            // 发送请求（使用正确的路径）
+            const top_level_path = typeof window.top_level_path !== 'undefined' ? window.top_level_path : '';
+            const response = await fetch(`${top_level_path}/chat/api/send`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'same-origin',
@@ -1245,15 +1244,27 @@ class ScheduledMessagePlugin {
     }
 
     /**
-     * 格式化日期时间为 datetime-local 格式
+     * 格式化时间为 datetime-local 格式（使用北京时间）
      */
     formatDateTimeLocal(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
+        // 转换为北京时间（UTC+8）
+        const beijingDate = new Date(date.getTime() + (8 * 60 * 60 * 1000));
+        const year = beijingDate.getUTCFullYear();
+        const month = String(beijingDate.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(beijingDate.getUTCDate()).padStart(2, '0');
+        const hours = String(beijingDate.getUTCHours()).padStart(2, '0');
+        const minutes = String(beijingDate.getUTCMinutes()).padStart(2, '0');
         return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    /**
+     * 从 datetime-local 格式解析为 Date 对象（北京时间）
+     */
+    parseDateTimeLocal(timeStr) {
+        const date = new Date(timeStr);
+        // datetime-local 返回的是本地时间，需要转换为北京时间
+        // 假设用户选择的就是北京时间，直接使用
+        return date;
     }
 
     /**

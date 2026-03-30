@@ -1,0 +1,1 @@
+{"name": "协作存储测试插件", "version": "1.0.0", "description": "用于测试插件协作存储功能的示例插件", "author": "CC Project", "permissions": ["storage", "ui"], "entry": "main.js", "styles": "styles.css"}

@@ -1,10 +1,10 @@
-{
-  "base_url": "https://raw.githubusercontent.com/JDUHDY/CK/refs/heads/main/plugins/",
+﻿{
   "plugins": [
     {
       "id": "hello-world",
       "name": "Hello World",
       "version": "1.0.0",
+      "admin_only": true,
       "description": "【管理员专用】一个简单的测试插件，在页面顶部显示欢迎横幅。",
       "author": "CC 团队",
       "manifest_url": "./hello-world/manifest.json",
@@ -25,6 +25,23 @@
       "description": "支持定时发送消息，可设置一次性发送或周期重复（每日/每周/每月）。到时间自动发送，支持编辑和取消。",
       "author": "CC 团队",
       "manifest_url": "./scheduled-message/manifest.json"
+    },
+    {
+      "id": "team-collab",
+      "name": "团队协作",
+      "version": "3.1.7",
+      "description": "团队协作插件，支持项目、任务、学习计划、评论、通知与项目包导入导出",
+      "author": "CC 团队",
+      "manifest_url": "./team-collab/manifest.json"
+    },
+    {
+    "id": "shared-storage-test",
+    "name": "协作存储测试",
+    "version": "1.0.0",
+    "description":
+    "用于测试插件协作存储功能的示例插件，支持全局共享和群组共享数据的读写测试。",
+    "author": "CC 团队",
+    "manifest_url": "./shared-storage-test/manifest.json"
     }
   ]
 }
