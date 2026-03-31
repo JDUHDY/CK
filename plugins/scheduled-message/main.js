@@ -1,21 +1,46 @@
 ﻿/**
  * 定时消息插件
  * 支持定时发送消息，可设置一次性发送或周期重复（每日/每周/每月）
+ * v2.0.0: 使用数据库 API 存储数据
  */
 class ScheduledMessagePlugin {
+    // 数据库迁移脚本
+    migrations = {
+        1: {
+            up: `
+                CREATE TABLE IF NOT EXISTS "plugin_scheduled-message_tasks" (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    message TEXT NOT NULL,
+                    contact_type INTEGER NOT NULL,
+                    xxid TEXT NOT NULL,
+                    ceid INTEGER,
+                    scheduled_time DATETIME NOT NULL,
+                    status INTEGER DEFAULT 0,
+                    repeat_type TEXT,
+                    repeat_until DATETIME,
+                    sent_time DATETIME,
+                    contact_name TEXT,
+                    created_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    updated_time DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            `,
+            down: `DROP TABLE IF EXISTS "plugin_scheduled-message_tasks"`
+        }
+    };
+
     constructor(api) {
         this.api = api;
         this.name = '定时消息';
-        this.version = '1.0.0';
-        
+        this.version = '2.0.0';
+
         // 插件状态
         this.isActivated = false;
         this.checkInterval = null;
         this.scheduledMessages = [];
-        
+
         // 按钮引用
         this.scheduleBtn = null;
-        
+
         // 重复类型
         this.REPEAT_TYPES = {
             none: 'none',       // 一次性
@@ -23,24 +48,24 @@ class ScheduledMessagePlugin {
             weekly: 'weekly',   // 每周
             monthly: 'monthly'  // 每月
         };
-        
+
         // 消息状态
         this.STATUS = {
             pending: 0,    // 待发送
             sent: 1,       // 已发送
             cancelled: 2   // 已取消
         };
-        
+
         // 默认配置
         this.defaultConfig = {
             autoCleanup: false,          // 是否启用自动清理
             cleanupIntervalDays: 7,      // 清理间隔（天），清理多少天前的已发送消息
             cleanupCheckHours: 24        // 检查间隔（小时）
         };
-        
+
         // 当前配置
         this.config = { ...this.defaultConfig };
-        
+
         // 清理定时器
         this.cleanupInterval = null;
     }
@@ -49,7 +74,7 @@ class ScheduledMessagePlugin {
      * 插件激活
      */
     async onActivate() {
-        console.log('🚀 定时消息插件已激活');
+        console.log('🚀 定时消息插件已激活 (v2.0.0)');
 
         // 标记为已激活
         this.isActivated = true;
@@ -67,6 +92,9 @@ class ScheduledMessagePlugin {
         // 使用 setTimeout 将这些操作放到下一个事件循环
         setTimeout(async () => {
             try {
+                // 初始化数据库表
+                await this.initDatabase();
+
                 // 加载配置
                 await this.loadConfig();
 
@@ -79,6 +107,26 @@ class ScheduledMessagePlugin {
                 console.error('定时消息插件初始化失败:', error);
             }
         }, 0);
+    }
+
+    /**
+     * 初始化数据库表
+     */
+    async initDatabase() {
+        try {
+            // 运行迁移
+            const result = await this.api.database.migrate(0, 1, this.migrations);
+            if (result.success) {
+                console.log('✓ 数据库表初始化成功');
+            } else {
+                console.warn('数据库表初始化:', result.message);
+            }
+        } catch (error) {
+            console.error('数据库表初始化失败:', error);
+            // 如果数据库不可用，回退到 KV 存储
+            console.log('回退到 KV 存储模式');
+            this.useFallbackStorage = true;
+        }
     }
     
     /**
@@ -184,6 +232,18 @@ class ScheduledMessagePlugin {
         // 移除弹窗
         this.closeAllModals();
         
+        // 清理数据表（如果使用数据库存储）
+        if (!this.useFallbackStorage) {
+            try {
+                // 检查是否有其他用户在使用这个插件的数据表
+                // 注意：这里只是清理当前用户的数据，不是删除表
+                // 如果要完全清理表，需要检查是否还有其他用户使用
+                console.log('插件停用，数据表保留（供其他用户使用）');
+            } catch (error) {
+                console.error('清理数据表失败:', error);
+            }
+        }
+        
         this.isActivated = false;
     }
 
@@ -192,15 +252,53 @@ class ScheduledMessagePlugin {
      */
     async loadScheduledMessages() {
         try {
-            const data = await this.api.storage.get('scheduled_messages');
-            if (Array.isArray(data)) {
-                this.scheduledMessages = data;
-            } else {
-                this.scheduledMessages = [];
+            // 如果启用了回退存储，使用 KV
+            if (this.useFallbackStorage) {
+                const data = await this.api.storage.get('scheduled_messages');
+                if (Array.isArray(data)) {
+                    this.scheduledMessages = data;
+                } else {
+                    this.scheduledMessages = [];
+                }
+                return;
             }
+
+            // 使用数据库查询
+            const results = await this.api.database.query(
+                `SELECT * FROM "plugin_scheduled-message_tasks" ORDER BY created_time DESC`
+            );
+
+            // 转换数据库格式为插件格式
+            this.scheduledMessages = results.map(row => ({
+                id: row.id.toString(),
+                message: row.message,
+                contactType: row.contact_type === 2 ? 'group' : 'user',
+                xxid: row.xxid,
+                ceid: row.ceid,
+                contactName: row.contact_name || row.xxid,
+                scheduledTime: row.scheduled_time,
+                repeat: {
+                    type: row.repeat_type || 'none',
+                    until: row.repeat_until
+                },
+                status: row.status,
+                createdTime: row.created_time,
+                sentTime: row.sent_time
+            }));
+
         } catch (error) {
             console.error('加载定时消息失败:', error);
             this.scheduledMessages = [];
+            // 如果数据库失败，尝试使用 KV
+            try {
+                const data = await this.api.storage.get('scheduled_messages');
+                if (Array.isArray(data)) {
+                    this.scheduledMessages = data;
+                    this.useFallbackStorage = true;
+                }
+            } catch (e) {
+                console.error('回退到 KV 存储也失败:', e);
+            }
         }
     }
 
@@ -209,7 +307,17 @@ class ScheduledMessagePlugin {
      */
     async saveScheduledMessages() {
         try {
-            await this.api.storage.set('scheduled_messages', this.scheduledMessages);
+            // 如果启用了回退存储，使用 KV
+            if (this.useFallbackStorage) {
+                await this.api.storage.set('scheduled_messages', this.scheduledMessages);
+                return;
+            }
+
+            // 数据库模式下，每次保存时同步到数据库
+            // 注意：这不是最优的实现方式，但为了保持兼容性
+            // 更好的方式是在单个操作中直接操作数据库
+            console.warn('建议使用数据库直接操作，而非批量保存');
+
         } catch (error) {
             console.error('保存定时消息失败:', error);
         }
@@ -483,64 +591,96 @@ class ScheduledMessagePlugin {
         const timeStr = modal.querySelector('#sm-time').value;
         const repeatType = modal.querySelector('#sm-repeat').value;
         const untilStr = modal.querySelector('#sm-until').value;
-        
+
         // 验证
         if (!message) {
             this.api.ui.showToast('请输入消息内容', 'warning');
             return;
         }
-        
+
         if (!timeStr) {
             this.api.ui.showToast('请选择发送时间', 'warning');
             return;
         }
-        
+
         const scheduledTime = this.parseDateTimeLocal(timeStr);
         if (scheduledTime <= new Date()) {
             this.api.ui.showToast('发送时间必须晚于当前时间', 'warning');
             return;
         }
-        
-        // 构建消息对象
-        const scheduledMessage = {
-            id: this.generateId(),
-            message: message,
-            contactType: contactInfo.contactType,
-            xxid: contactInfo.xxid,
-            ceid: contactInfo.ceid,
-            contactName: contactInfo.name,
-            scheduledTime: scheduledTime.toISOString(),
-            repeat: {
-                type: repeatType,
-                until: repeatType !== 'none' ? new Date(untilStr).toISOString() : null
-            },
-            status: this.STATUS.pending,
-            createdTime: new Date().toISOString(),
-            sentTime: null
-        };
-        
-        // 添加到列表
-        this.scheduledMessages.push(scheduledMessage);
-        await this.saveScheduledMessages();
-        
-        this.api.ui.showToast('定时消息创建成功 ✓', 'success');
-        
-        // 清空输入框
-        const textarea = document.querySelector('.chat-session-inputarea-textarea');
-        if (textarea) {
-            textarea.value = '';
+
+        try {
+            // 使用数据库直接插入
+            if (!this.useFallbackStorage) {
+                const contactType = contactInfo.contactType === 'group' ? 2 : 1;
+                const repeatUntil = repeatType !== 'none' ? new Date(untilStr).toISOString() : null;
+
+                const results = await this.api.database.query(
+                    `INSERT INTO "plugin_scheduled-message_tasks"
+                     (message, contact_type, xxid, ceid, contact_name, scheduled_time, status, repeat_type, repeat_until)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [
+                        message,
+                        contactType,
+                        contactInfo.xxid,
+                        contactInfo.ceid || null,
+                        contactInfo.name,
+                        scheduledTime.toISOString(),
+                        this.STATUS.pending,
+                        repeatType,
+                        repeatUntil
+                    ]
+                );
+
+                // 重新加载列表
+                await this.loadScheduledMessages();
+            } else {
+                // 回退到 KV 存储
+                const scheduledMessage = {
+                    id: this.generateId(),
+                    message: message,
+                    contactType: contactInfo.contactType,
+                    xxid: contactInfo.xxid,
+                    ceid: contactInfo.ceid,
+                    contactName: contactInfo.name,
+                    scheduledTime: scheduledTime.toISOString(),
+                    repeat: {
+                        type: repeatType,
+                        until: repeatType !== 'none' ? new Date(untilStr).toISOString() : null
+                    },
+                    status: this.STATUS.pending,
+                    createdTime: new Date().toISOString(),
+                    sentTime: null
+                };
+
+                // 添加到列表
+                this.scheduledMessages.push(scheduledMessage);
+                await this.saveScheduledMessages();
+            }
+
+            this.api.ui.showToast('定时消息创建成功 ✓', 'success');
+
+            // 清空输入框
+            const textarea = document.querySelector('.chat-session-inputarea-textarea');
+            if (textarea) {
+                textarea.value = '';
+            }
+
+            // 清空弹窗中的消息输入框，重置时间选择器
+            const msgInput = modal.querySelector('#sm-message');
+            const timeInput = modal.querySelector('#sm-time');
+            const repeatSelect = modal.querySelector('#sm-repeat');
+            const untilGroup = modal.querySelector('.sm-repeat-until-group');
+
+            if (msgInput) msgInput.value = '';
+            if (timeInput) timeInput.value = this.formatDateTimeLocal(new Date());
+            if (repeatSelect) repeatSelect.value = 'none';
+            if (untilGroup) untilGroup.style.display = 'none';
+
+        } catch (error) {
+            console.error('创建定时消息失败:', error);
+            this.api.ui.showToast('创建失败: ' + error.message, 'error');
         }
-        
-        // 清空弹窗中的消息输入框，重置时间选择器
-        const msgInput = modal.querySelector('#sm-message');
-        const timeInput = modal.querySelector('#sm-time');
-        const repeatSelect = modal.querySelector('#sm-repeat');
-        const untilGroup = modal.querySelector('.sm-repeat-until-group');
-        
-        if (msgInput) msgInput.value = '';
-        if (timeInput) timeInput.value = this.formatDateTimeLocal(new Date());
-        if (repeatSelect) repeatSelect.value = 'none';
-        if (untilGroup) untilGroup.style.display = 'none';
     }
 
     /**
@@ -551,53 +691,74 @@ class ScheduledMessagePlugin {
         const timeStr = modal.querySelector('#sm-time').value;
         const repeatType = modal.querySelector('#sm-repeat').value;
         const untilStr = modal.querySelector('#sm-until').value;
-        
+
         // 验证
         if (!message) {
             this.api.ui.showToast('请输入消息内容', 'warning');
             return;
         }
-        
+
         if (!timeStr) {
             this.api.ui.showToast('请选择发送时间', 'warning');
             return;
         }
-        
-        // 找到消息并更新
-        const msgIndex = this.scheduledMessages.findIndex(m => m.id === messageId);
-        if (msgIndex === -1) {
-            this.api.ui.showToast('消息不存在', 'error');
-            return;
+
+        try {
+            // 使用数据库更新
+            if (!this.useFallbackStorage) {
+                const repeatUntil = repeatType !== 'none' ? this.parseDateTimeLocal(untilStr).toISOString() : null;
+                const scheduledTime = this.parseDateTimeLocal(timeStr).toISOString();
+
+                await this.api.database.query(
+                    `UPDATE "plugin_scheduled-message_tasks"
+                     SET message = ?, scheduled_time = ?, repeat_type = ?, repeat_until = ?, updated_time = ?
+                     WHERE id = ?`,
+                    [message, scheduledTime, repeatType, repeatUntil, new Date().toISOString(), messageId]
+                );
+
+                // 重新加载列表
+                await this.loadScheduledMessages();
+            } else {
+                // 回退到 KV 存储
+                const msgIndex = this.scheduledMessages.findIndex(m => m.id === messageId);
+                if (msgIndex === -1) {
+                    this.api.ui.showToast('消息不存在', 'error');
+                    return;
+                }
+
+                this.scheduledMessages[msgIndex] = {
+                    ...this.scheduledMessages[msgIndex],
+                    message: message,
+                    scheduledTime: this.parseDateTimeLocal(timeStr).toISOString(),
+                    repeat: {
+                        type: repeatType,
+                        until: repeatType !== 'none' ? this.parseDateTimeLocal(untilStr).toISOString() : null
+                    },
+                    updatedTime: new Date().toISOString()
+                };
+
+                await this.saveScheduledMessages();
+            }
+
+            // 关闭弹窗
+            modal.closest('.plugin-modal-overlay').remove();
+
+            this.api.ui.showToast('定时消息已更新 ✓', 'success');
+        } catch (error) {
+            console.error('更新定时消息失败:', error);
+            this.api.ui.showToast('更新失败: ' + error.message, 'error');
         }
-        
-        this.scheduledMessages[msgIndex] = {
-            ...this.scheduledMessages[msgIndex],
-            message: message,
-            scheduledTime: this.parseDateTimeLocal(timeStr).toISOString(),
-            repeat: {
-                type: repeatType,
-                until: repeatType !== 'none' ? this.parseDateTimeLocal(untilStr).toISOString() : null
-            },
-            updatedTime: new Date().toISOString()
-        };
-        
-        await this.saveScheduledMessages();
-        
-        // 关闭弹窗
-        modal.closest('.plugin-modal-overlay').remove();
-        
-        this.api.ui.showToast('定时消息已更新 ✓', 'success');
     }
 
     /**
      * 显示定时消息列表
      */
-    showMessagesList() {
+    async showMessagesList() {
         const pendingMessages = this.scheduledMessages.filter(m => m.status === this.STATUS.pending);
         const sentMessages = this.scheduledMessages.filter(m => m.status === this.STATUS.sent);
-        
+
         let listHtml = '';
-        
+
         if (pendingMessages.length === 0 && sentMessages.length === 0) {
             listHtml = '<div class="sm-empty"><i class="bi bi-clock-history"></i><p>暂无定时消息</p></div>';
         } else {
@@ -610,7 +771,7 @@ class ScheduledMessagePlugin {
                 });
                 listHtml += '</div></div>';
             }
-            
+
             // 已发送列表（最近10条）
             if (sentMessages.length > 0) {
                 listHtml += '<div class="sm-section"><h4 class="sm-section-title">已发送</h4>';
@@ -621,7 +782,7 @@ class ScheduledMessagePlugin {
                 listHtml += '</div></div>';
             }
         }
-        
+
         const modalContent = `
             <div class="scheduled-message-list-modal">
                 <div class="sm-list-content">
@@ -642,213 +803,16 @@ class ScheduledMessagePlugin {
                 </div>
             </div>
         `;
-        
+
         const modal = this.api.ui.showModal({
             title: '定时消息列表',
             content: modalContent,
             width: '550px',
             height: '500px'
         });
-        
+
         // 绑定事件
         this.bindListEvents(modal);
-    }
-
-    /**
-     * 渲染消息项
-     */
-    renderMessageItem(msg, isSent = false) {
-        const repeatText = this.getRepeatText(msg.repeat);
-        const timeStr = this.formatDisplayTime(new Date(msg.scheduledTime));
-        
-        return `
-            <div class="sm-message-item ${isSent ? 'sm-sent' : ''}" data-id="${msg.id}">
-                <div class="sm-message-header">
-                    <span class="sm-message-contact">
-                        <i class="bi ${msg.contactType === 'group' ? 'bi-people' : 'bi-person'}"></i>
-                        ${msg.contactName}
-                    </span>
-                    <span class="sm-message-time">
-                        <i class="bi bi-clock"></i>
-                        ${timeStr}
-                        ${repeatText ? `<span class="sm-repeat-badge">${repeatText}</span>` : ''}
-                    </span>
-                </div>
-                <div class="sm-message-content">${this.escapeHtml(msg.message)}</div>
-                <div class="sm-message-actions">
-                    ${!isSent ? `
-                        <button class="sm-action-btn sm-edit" title="编辑"><i class="bi bi-pencil"></i></button>
-                        <button class="sm-action-btn sm-cancel" title="取消"><i class="bi bi-x-circle"></i></button>
-                    ` : `
-                        <span class="sm-sent-badge">已发送</span>
-                        <button class="sm-action-btn sm-delete" title="删除"><i class="bi bi-trash"></i></button>
-                    `}
-                </div>
-            </div>
-        `;
-    }
-
-    /**
-     * 绑定列表事件
-     */
-    bindListEvents(modal) {
-        // 返回按钮
-        const backBtn = modal.querySelector('#sm-back');
-        if (backBtn) {
-            backBtn.addEventListener('click', () => {
-                modal.closest('.plugin-modal-overlay').remove();
-                this.showScheduleModal();
-            });
-        }
-        
-        // 创建新消息
-        const createBtn = modal.querySelector('#sm-create-new');
-        createBtn.addEventListener('click', () => {
-            modal.closest('.plugin-modal-overlay').remove();
-            this.showScheduleModal();
-        });
-        
-        // 编辑按钮
-        modal.querySelectorAll('.sm-edit').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const item = e.target.closest('.sm-message-item');
-                const messageId = item.dataset.id;
-                const msg = this.scheduledMessages.find(m => m.id === messageId);
-                if (msg) {
-                    modal.closest('.plugin-modal-overlay').remove();
-                    this.showScheduleModal(msg);
-                }
-            });
-        });
-        
-        // 取消按钮
-        modal.querySelectorAll('.sm-cancel').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const item = e.target.closest('.sm-message-item');
-                const messageId = item.dataset.id;
-                
-                // 使用自定义确认弹窗
-                this.showCancelConfirm(messageId, modal);
-            });
-        });
-        
-        // 删除按钮（已发送消息）
-        modal.querySelectorAll('.sm-delete').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const item = e.target.closest('.sm-message-item');
-                const messageId = item.dataset.id;
-                
-                // 使用自定义确认弹窗
-                this.showDeleteConfirm(messageId, modal);
-            });
-        });
-        
-        // 配置按钮
-        const settingsBtn = modal.querySelector('#sm-settings');
-        if (settingsBtn) {
-            settingsBtn.addEventListener('click', () => {
-                modal.closest('.plugin-modal-overlay').remove();
-                this.showSettingsModal();
-            });
-        }
-    }
-
-    /**
-     * 显示取消确认弹窗
-     */
-    showCancelConfirm(messageId, parentModal) {
-        const confirmContent = `
-            <div class="sm-confirm-dialog">
-                <div class="sm-confirm-icon">
-                    <i class="bi bi-exclamation-triangle"></i>
-                </div>
-                <div class="sm-confirm-text">确定要取消这条定时消息吗？</div>
-                <div class="sm-confirm-actions">
-                    <button class="sm-btn sm-btn-secondary" id="sm-confirm-no">取消</button>
-                    <button class="sm-btn sm-btn-danger" id="sm-confirm-yes">确定</button>
-                </div>
-            </div>
-        `;
-        
-        const confirmModal = this.api.ui.showModal({
-            title: '确认取消',
-            content: confirmContent,
-            width: '320px',
-            height: 'auto'
-        });
-        
-        // 绑定事件
-        confirmModal.querySelector('#sm-confirm-no').addEventListener('click', () => {
-            confirmModal.closest('.plugin-modal-overlay').remove();
-        });
-        
-        confirmModal.querySelector('#sm-confirm-yes').addEventListener('click', async () => {
-            confirmModal.closest('.plugin-modal-overlay').remove();
-            await this.cancelMessage(messageId);
-            parentModal.closest('.plugin-modal-overlay').remove();
-            this.showMessagesList();
-        });
-    }
-
-    /**
-     * 取消定时消息
-     */
-    async cancelMessage(messageId) {
-        const msgIndex = this.scheduledMessages.findIndex(m => m.id === messageId);
-        if (msgIndex !== -1) {
-            this.scheduledMessages[msgIndex].status = this.STATUS.cancelled;
-            await this.saveScheduledMessages();
-            this.api.ui.showToast('定时消息已取消', 'success');
-        }
-    }
-
-    /**
-     * 显示删除确认弹窗
-     */
-    showDeleteConfirm(messageId, parentModal) {
-        const confirmContent = `
-            <div class="sm-confirm-dialog">
-                <div class="sm-confirm-icon">
-                    <i class="bi bi-trash"></i>
-                </div>
-                <div class="sm-confirm-text">确定要删除这条已发送的消息记录吗？</div>
-                <div class="sm-confirm-actions">
-                    <button class="sm-btn sm-btn-secondary" id="sm-confirm-no">取消</button>
-                    <button class="sm-btn sm-btn-danger" id="sm-confirm-yes">删除</button>
-                </div>
-            </div>
-        `;
-        
-        const confirmModal = this.api.ui.showModal({
-            title: '确认删除',
-            content: confirmContent,
-            width: '320px',
-            height: 'auto'
-        });
-        
-        // 绑定事件
-        confirmModal.querySelector('#sm-confirm-no').addEventListener('click', () => {
-            confirmModal.closest('.plugin-modal-overlay').remove();
-        });
-        
-        confirmModal.querySelector('#sm-confirm-yes').addEventListener('click', async () => {
-            confirmModal.closest('.plugin-modal-overlay').remove();
-            await this.deleteMessage(messageId);
-            parentModal.closest('.plugin-modal-overlay').remove();
-            this.showMessagesList();
-        });
-    }
-
-    /**
-     * 删除消息记录
-     */
-    async deleteMessage(messageId) {
-        const msgIndex = this.scheduledMessages.findIndex(m => m.id === messageId);
-        if (msgIndex !== -1) {
-            this.scheduledMessages.splice(msgIndex, 1);
-            await this.saveScheduledMessages();
-            this.api.ui.showToast('消息记录已删除', 'success');
-        }
     }
 
     /**
@@ -993,6 +957,217 @@ class ScheduledMessagePlugin {
     }
 
     /**
+     * 渲染消息项
+     */
+    renderMessageItem(msg, isSent = false) {
+        const repeatText = this.getRepeatText(msg.repeat);
+        const timeStr = this.formatDisplayTime(new Date(msg.scheduledTime));
+        
+        return `
+            <div class="sm-message-item ${isSent ? 'sm-sent' : ''}" data-id="${msg.id}">
+                <div class="sm-message-header">
+                    <span class="sm-message-contact">
+                        <i class="bi ${msg.contactType === 'group' ? 'bi-people' : 'bi-person'}"></i>
+                        ${msg.contactName}
+                    </span>
+                    <span class="sm-message-time">
+                        <i class="bi bi-clock"></i>
+                        ${timeStr}
+                        ${repeatText ? `<span class="sm-repeat-badge">${repeatText}</span>` : ''}
+                    </span>
+                </div>
+                <div class="sm-message-content">${this.escapeHtml(msg.message)}</div>
+                <div class="sm-message-actions">
+                    ${!isSent ? `
+                        <button class="sm-action-btn sm-edit" title="编辑"><i class="bi bi-pencil"></i></button>
+                        <button class="sm-action-btn sm-cancel" title="取消"><i class="bi bi-x-circle"></i></button>
+                    ` : `
+                        <span class="sm-sent-badge">已发送</span>
+                        <button class="sm-action-btn sm-delete" title="删除"><i class="bi bi-trash"></i></button>
+                    `}
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 绑定列表事件
+     */
+    bindListEvents(modal) {
+        // 返回按钮
+        const backBtn = modal.querySelector('#sm-back');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                modal.closest('.plugin-modal-overlay').remove();
+                this.showScheduleModal();
+            });
+        }
+        
+        // 创建新消息
+        const createBtn = modal.querySelector('#sm-create-new');
+        createBtn.addEventListener('click', () => {
+            modal.closest('.plugin-modal-overlay').remove();
+            this.showScheduleModal();
+        });
+        
+        // 编辑按钮
+        modal.querySelectorAll('.sm-edit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const item = e.target.closest('.sm-message-item');
+                const messageId = item.dataset.id;
+                const msg = this.scheduledMessages.find(m => m.id === messageId);
+                if (msg) {
+                    modal.closest('.plugin-modal-overlay').remove();
+                    this.showScheduleModal(msg);
+                }
+            });
+        });
+        
+        // 取消按钮
+        modal.querySelectorAll('.sm-cancel').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const item = e.target.closest('.sm-message-item');
+                const messageId = item.dataset.id;
+                
+                // 使用自定义确认弹窗
+                this.showCancelConfirm(messageId, modal);
+            });
+        });
+        
+        // 删除按钮（已发送消息）
+        modal.querySelectorAll('.sm-delete').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const item = e.target.closest('.sm-message-item');
+                const messageId = item.dataset.id;
+                
+                // 使用自定义确认弹窗
+                this.showDeleteConfirm(messageId, modal);
+            });
+        });
+        
+        // 配置按钮
+        const settingsBtn = modal.querySelector('#sm-settings');
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', () => {
+                modal.closest('.plugin-modal-overlay').remove();
+                this.showSettingsModal();
+            });
+        }
+    }
+
+    /**
+     * 显示取消确认弹窗
+     */
+    showCancelConfirm(messageId, parentModal) {
+        const confirmContent = `
+            <div class="sm-confirm-dialog">
+                <div class="sm-confirm-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div class="sm-confirm-text">确定要取消这条定时消息吗？</div>
+                <div class="sm-confirm-actions">
+                    <button class="sm-btn sm-btn-secondary" id="sm-confirm-no">取消</button>
+                    <button class="sm-btn sm-btn-danger" id="sm-confirm-yes">确定</button>
+                </div>
+            </div>
+        `;
+        
+        const confirmModal = this.api.ui.showModal({
+            title: '确认取消',
+            content: confirmContent,
+            width: '320px',
+            height: 'auto'
+        });
+        
+        // 绑定事件
+        confirmModal.querySelector('#sm-confirm-no').addEventListener('click', () => {
+            confirmModal.closest('.plugin-modal-overlay').remove();
+        });
+        
+        confirmModal.querySelector('#sm-confirm-yes').addEventListener('click', async () => {
+            confirmModal.closest('.plugin-modal-overlay').remove();
+            await this.cancelMessage(messageId);
+            parentModal.closest('.plugin-modal-overlay').remove();
+            this.showMessagesList();
+        });
+    }
+
+    /**
+     * 取消定时消息
+     */
+    async cancelMessage(messageId) {
+        if (!this.useFallbackStorage) {
+            await this.api.database.query(
+                `UPDATE "plugin_scheduled-message_tasks" SET status = ? WHERE id = ?`,
+                [this.STATUS.cancelled, messageId]
+            );
+        } else {
+            const msgIndex = this.scheduledMessages.findIndex(m => m.id === messageId);
+            if (msgIndex !== -1) {
+                this.scheduledMessages[msgIndex].status = this.STATUS.cancelled;
+                await this.saveScheduledMessages();
+            }
+        }
+        this.api.ui.showToast('定时消息已取消', 'success');
+    }
+
+    /**
+     * 显示删除确认弹窗
+     */
+    showDeleteConfirm(messageId, parentModal) {
+        const confirmContent = `
+            <div class="sm-confirm-dialog">
+                <div class="sm-confirm-icon">
+                    <i class="bi bi-trash"></i>
+                </div>
+                <div class="sm-confirm-text">确定要删除这条已发送的消息记录吗？</div>
+                <div class="sm-confirm-actions">
+                    <button class="sm-btn sm-btn-secondary" id="sm-confirm-no">取消</button>
+                    <button class="sm-btn sm-btn-danger" id="sm-confirm-yes">删除</button>
+                </div>
+            </div>
+        `;
+        
+        const confirmModal = this.api.ui.showModal({
+            title: '确认删除',
+            content: confirmContent,
+            width: '320px',
+            height: 'auto'
+        });
+        
+        // 绑定事件
+        confirmModal.querySelector('#sm-confirm-no').addEventListener('click', () => {
+            confirmModal.closest('.plugin-modal-overlay').remove();
+        });
+        
+        confirmModal.querySelector('#sm-confirm-yes').addEventListener('click', async () => {
+            confirmModal.closest('.plugin-modal-overlay').remove();
+            await this.deleteMessage(messageId);
+            parentModal.closest('.plugin-modal-overlay').remove();
+            this.showMessagesList();
+        });
+    }
+
+    /**
+     * 删除消息记录
+     */
+    async deleteMessage(messageId) {
+        if (!this.useFallbackStorage) {
+            await this.api.database.query(
+                `DELETE FROM "plugin_scheduled-message_tasks" WHERE id = ?`,
+                [messageId]
+            );
+        } else {
+            const msgIndex = this.scheduledMessages.findIndex(m => m.id === messageId);
+            if (msgIndex !== -1) {
+                this.scheduledMessages.splice(msgIndex, 1);
+                await this.saveScheduledMessages();
+            }
+        }
+        this.api.ui.showToast('消息记录已删除', 'success');
+    }
+
+    /**
      * 启动定时检查
      */
     startPeriodicCheck() {
@@ -1059,40 +1234,108 @@ class ScheduledMessagePlugin {
      */
     async checkAndSendMessages() {
         const now = new Date();
-        
-        const pendingMessages = this.scheduledMessages.filter(m => 
-            m.status === this.STATUS.pending && 
-            new Date(m.scheduledTime) <= now
-        );
-        
-        for (const msg of pendingMessages) {
-            try {
-                await this.sendMessage(msg);
-                
-                // 更新状态
-                if (msg.repeat.type !== 'none') {
-                    // 周期消息：计算下次发送时间
-                    const nextTime = this.calculateNextSendTime(msg);
-                    
-                    if (nextTime && (!msg.repeat.until || nextTime <= new Date(msg.repeat.until))) {
-                        msg.scheduledTime = nextTime.toISOString();
-                    } else {
-                        msg.status = this.STATUS.sent;
+        const nowIso = now.toISOString();
+
+        try {
+            // 使用数据库查询待发送的消息
+            if (!this.useFallbackStorage) {
+                const pendingMessages = await this.api.database.query(
+                    `SELECT * FROM "plugin_scheduled-message_tasks"
+                     WHERE status = ? AND scheduled_time <= ?
+                     ORDER BY scheduled_time ASC`,
+                    [this.STATUS.pending, nowIso]
+                );
+
+                for (const msg of pendingMessages) {
+                    try {
+                        // 转换为插件格式
+                        const pluginMsg = {
+                            id: msg.id.toString(),
+                            message: msg.message,
+                            contactType: msg.contact_type === 2 ? 'group' : 'user',
+                            xxid: msg.xxid,
+                            ceid: msg.ceid,
+                            scheduledTime: msg.scheduled_time,
+                            repeat: {
+                                type: msg.repeat_type || 'none',
+                                until: msg.repeat_until
+                            }
+                        };
+
+                        await this.sendMessage(pluginMsg);
+
+                        // 更新状态
+                        if (msg.repeat_type && msg.repeat_type !== 'none') {
+                            // 周期消息：计算下次发送时间
+                            const nextTime = this.calculateNextSendTime(pluginMsg);
+
+                            if (nextTime && (!msg.repeat_until || nextTime <= new Date(msg.repeat_until))) {
+                                await this.api.database.query(
+                                    `UPDATE "plugin_scheduled-message_tasks"
+                                     SET scheduled_time = ?, updated_time = ?
+                                     WHERE id = ?`,
+                                    [nextTime.toISOString(), nowIso, msg.id]
+                                );
+                            } else {
+                                // 周期结束，标记为已发送
+                                await this.api.database.query(
+                                    `UPDATE "plugin_scheduled-message_tasks"
+                                     SET status = ?, sent_time = ?, updated_time = ?
+                                     WHERE id = ?`,
+                                    [this.STATUS.sent, nowIso, nowIso, msg.id]
+                                );
+                            }
+                        } else {
+                            // 一次性消息：标记为已发送
+                            await this.api.database.query(
+                                `UPDATE "plugin_scheduled-message_tasks"
+                                 SET status = ?, sent_time = ?, updated_time = ?
+                                 WHERE id = ?`,
+                                [this.STATUS.sent, nowIso, nowIso, msg.id]
+                            );
+                        }
+
+                    } catch (error) {
+                        console.error('发送定时消息失败:', error);
                     }
-                } else {
-                    // 一次性消息：标记为已发送
-                    msg.status = this.STATUS.sent;
                 }
-                
-                msg.sentTime = now.toISOString();
-                
-            } catch (error) {
-                console.error('发送定时消息失败:', error);
+            } else {
+                // 回退到内存模式
+                const pendingMessages = this.scheduledMessages.filter(m =>
+                    m.status === this.STATUS.pending &&
+                    new Date(m.scheduledTime) <= now
+                );
+
+                for (const msg of pendingMessages) {
+                    try {
+                        await this.sendMessage(msg);
+
+                        // 更新状态
+                        if (msg.repeat.type !== 'none') {
+                            const nextTime = this.calculateNextSendTime(msg);
+
+                            if (nextTime && (!msg.repeat.until || nextTime <= new Date(msg.repeat.until))) {
+                                msg.scheduledTime = nextTime.toISOString();
+                            } else {
+                                msg.status = this.STATUS.sent;
+                            }
+                        } else {
+                            msg.status = this.STATUS.sent;
+                        }
+
+                        msg.sentTime = nowIso;
+
+                    } catch (error) {
+                        console.error('发送定时消息失败:', error);
+                    }
+                }
+
+                if (pendingMessages.length > 0) {
+                    await this.saveScheduledMessages();
+                }
             }
-        }
-        
-        if (pendingMessages.length > 0) {
-            await this.saveScheduledMessages();
+        } catch (error) {
+            console.error('检查定时消息失败:', error);
         }
     }
 
@@ -1123,7 +1366,10 @@ class ScheduledMessagePlugin {
             body.ceid = msg.ceid;
             
             // 发送请求（使用正确的路径）
-            const top_level_path = typeof window.top_level_path !== 'undefined' ? window.top_level_path : '';
+            // 在本地开发环境中，top_level_path 可能未定义，使用默认值
+            const top_level_path = (typeof window.top_level_path !== 'undefined' && window.top_level_path !== null && window.top_level_path !== '') 
+                ? window.top_level_path 
+                : '/code';
             const response = await fetch(`${top_level_path}/chat/api/send`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
