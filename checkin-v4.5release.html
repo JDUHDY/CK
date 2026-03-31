@@ -5678,6 +5678,12 @@
         }
 
         .plugin-version.has-update {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+            font-weight: 600;
+        }
+
+        .plugin-version.version-downgrade {
             color: #28a745;
             background: rgba(40, 167, 69, 0.1);
             font-weight: 600;
@@ -5920,6 +5926,11 @@
         }
 
         .theme-dark .plugin-version.has-update {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.15);
+        }
+
+        .theme-dark .plugin-version.version-downgrade {
             color: #4ade80;
             background: rgba(74, 222, 128, 0.15);
         }
@@ -15419,6 +15430,75 @@
             );
         }
 
+        /**
+         * 对比语义化版本号
+         * @param {string} v1 - 第一个版本号
+         * @param {string} v2 - 第二个版本号
+         * @returns {number} 1: v1 > v2, 0: v1 == v2, -1: v1 < v2
+         */
+        compareVersions(v1, v2) {
+            // 移除 'v' 前缀
+            const cleanV1 = (v1 || '').replace(/^v/i, '');
+            const cleanV2 = (v2 || '').replace(/^v/i, '');
+
+            // 如果任一版本号为空，视为相等
+            if (!cleanV1 || !cleanV2) return 0;
+
+            // 分割版本号（major.minor.patch）
+            const parts1 = cleanV1.split('.').map(n => parseInt(n) || 0);
+            const parts2 = cleanV2.split('.').map(n => parseInt(n) || 0);
+
+            // 依次比较 major, minor, patch
+            for (let i = 0; i < 3; i++) {
+                if (parts1[i] > parts2[i]) return 1;
+                if (parts1[i] < parts2[i]) return -1;
+            }
+
+            return 0; // 版本号相等
+        }
+
+        /**
+         * 获取版本号的显示样式
+         * @param {Object} plugin - 插件对象
+         * @returns {Object} { className, versionText }
+         */
+        getVersionDisplay(plugin) {
+            const installedVersion = plugin.installed_version;
+            const sourceVersion = plugin.version;
+
+            // 如果未安装，显示源版本
+            if (!installedVersion) {
+                return {
+                    className: 'plugin-version',
+                    versionText: `v${sourceVersion}`
+                };
+            }
+
+            // 如果版本号相同，显示当前版本
+            const comparison = this.compareVersions(installedVersion, sourceVersion);
+            if (comparison === 0) {
+                return {
+                    className: 'plugin-version',
+                    versionText: `v${sourceVersion}`
+                };
+            }
+
+            // 源版本更高 → 需要更新（红色）
+            if (comparison === -1) {
+                return {
+                    className: 'plugin-version has-update',
+                    versionText: `v${installedVersion} → v${sourceVersion}`
+                };
+            }
+
+            // 源版本更低 → 已是最新（绿色）
+            // 这种情况很少见，可能是降级安装
+            return {
+                className: 'plugin-version version-downgrade',
+                versionText: `v${installedVersion} (已最新)`
+            };
+        }
+
         isAdminOnlyPlugin(plugin) {
             if (!plugin) return false;
 
@@ -15678,10 +15758,9 @@
                 const isInstalled = !!plugin.installed;
                 const isEnabled = !!plugin.enabled;
 
-                // 检测是否有更新可用
-                const hasUpdate = isInstalled && plugin.installed_version && plugin.installed_version !== plugin.version;
-                const versionClass = hasUpdate ? 'plugin-version has-update' : 'plugin-version';
-                const versionText = hasUpdate ? `v${plugin.installed_version} → v${plugin.version}` : `v${plugin.version || '1.0.0'}`;
+                // 获取版本号显示信息
+                const versionDisplay = this.getVersionDisplay(plugin);
+                const hasUpdate = versionDisplay.className === 'plugin-version has-update';
 
                 return `
                     <div class="plugin-item" data-plugin-id="${plugin.plugin_id}">
@@ -15693,7 +15772,7 @@
                             <div class="plugin-item-content">
                                 <div class="plugin-item-title">
                                     <span class="plugin-item-name">${plugin.name || plugin.plugin_id}</span>
-                                    <span class="${versionClass}">${versionText}</span>
+                                    <span class="${versionDisplay.className}">${versionDisplay.versionText}</span>
                                     ${badgeHtml}
                                 </div>
                                 <p class="plugin-item-description">${plugin.description || '暂无描述'}</p>
@@ -15829,20 +15908,18 @@
 
             const isAdminOnly = plugin.admin_only ? '<span class="plugin-admin-only-badge">管理员</span>' : '';
 
-            // 判断是否有更新可用（这里简化处理，实际应该比较版本号）
-            const hasUpdate = plugin.installed && plugin.installed_version && plugin.installed_version !== plugin.version;
+            // 获取版本号显示信息
+            const versionDisplay = this.getVersionDisplay(plugin);
+            const hasUpdate = versionDisplay.className === 'plugin-version has-update';
 
             console.log(`[插件渲染] ${plugin.plugin_id}: installed=${plugin.installed}, installed_version=${plugin.installed_version}, version=${plugin.version}, hasUpdate=${hasUpdate}`);
-
-            const versionClass = hasUpdate ? 'plugin-version has-update' : 'plugin-version';
-            const versionText = hasUpdate ? `v${plugin.installed_version} → v${plugin.version}` : `v${plugin.version}`;
 
             div.innerHTML = `
                 <div class="plugin-item-header">
                     <input type="checkbox" class="plugin-item-checkbox" data-plugin-id="${plugin.plugin_id}">
                     <div class="plugin-name-wrapper">
                         <span class="plugin-name">${plugin.name}</span>
-                        <span class="${versionClass}">${versionText}</span>
+                        <span class="${versionDisplay.className}">${versionDisplay.versionText}</span>
                         ${isAdminOnly}
                     </div>
                     <div class="plugin-item-actions">
@@ -17147,6 +17224,7 @@
             this.http = this._initHttpAPI();
             this.chat = this._initChatAPI();
             this.drive = this._initDriveAPI();
+            this.database = this._initDatabaseAPI();
         }
 
         /**
@@ -17923,6 +18001,142 @@
                     } catch (error) {
                         console.error('Create folder error:', error);
                         throw error;
+                    }
+                }
+            };
+        }
+
+        /**
+         * 初始化数据库 API
+         * @private
+         */
+        _initDatabaseAPI() {
+            const self = this;
+            return {
+                /**
+                 * 创建表
+                 * @param {Object} schema - 表结构定义
+                 * @returns {Promise<Object>}
+                 */
+                async createTable(schema) {
+                    self.requirePermission('database');
+                    try {
+                        const response = await fetch(`${top_level_path}/api/plugins/${self.pluginId}/database/schema`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'same-origin',
+                            body: JSON.stringify(schema)
+                        });
+                        return await response.json();
+                    } catch (error) {
+                        console.error('Database createTable error:', error);
+                        return { success: false, message: error.message };
+                    }
+                },
+
+                /**
+                 * 获取表结构
+                 * @param {string} tableName - 表名（不含前缀）
+                 * @returns {Promise<Object>}
+                 */
+                async getTableSchema(tableName) {
+                    self.requirePermission('database');
+                    try {
+                        const response = await fetch(`${top_level_path}/api/plugins/${self.pluginId}/database/schema/${tableName}`, {
+                            credentials: 'same-origin'
+                        });
+                        return await response.json();
+                    } catch (error) {
+                        console.error('Database getTableSchema error:', error);
+                        return { success: false, message: error.message };
+                    }
+                },
+
+                /**
+                 * 执行查询
+                 * @param {string} sql - SQL 语句
+                 * @param {Array} params - 参数数组
+                 * @returns {Promise<Array>}
+                 */
+                async query(sql, params = []) {
+                    self.requirePermission('database');
+                    try {
+                        const response = await fetch(`${top_level_path}/api/plugins/${self.pluginId}/database/query`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'same-origin',
+                            body: JSON.stringify({ sql, params })
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            return result.data;
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    } catch (error) {
+                        console.error('Database query error:', error);
+                        throw error;
+                    }
+                },
+
+                /**
+                 * 执行事务
+                 * @param {Function} callback - 事务回调函数
+                 * @returns {Promise<Array>}
+                 */
+                async transaction(callback) {
+                    self.requirePermission('database');
+                    try {
+                        const queries = [];
+                        // 创建事务上下文
+                        const tx = {
+                            query: async (sql, params) => {
+                                queries.push({ sql, params });
+                            }
+                        };
+
+                        // 执行回调
+                        await callback(tx);
+
+                        // 提交事务
+                        const response = await fetch(`${top_level_path}/api/plugins/${self.pluginId}/database/transaction`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'same-origin',
+                            body: JSON.stringify({ queries })
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            return result.data;
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    } catch (error) {
+                        console.error('Database transaction error:', error);
+                        throw error;
+                    }
+                },
+
+                /**
+                 * 数据迁移
+                 * @param {number} fromVersion - 当前版本
+                 * @param {number} toVersion - 目标版本
+                 * @param {Object} migrations - 迁移脚本
+                 * @returns {Promise<Object>}
+                 */
+                async migrate(fromVersion, toVersion, migrations) {
+                    self.requirePermission('database');
+                    try {
+                        const response = await fetch(`${top_level_path}/api/plugins/${self.pluginId}/database/migrate`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'same-origin',
+                            body: JSON.stringify({ from: fromVersion, to: toVersion, migrations })
+                        });
+                        return await response.json();
+                    } catch (error) {
+                        console.error('Database migrate error:', error);
+                        return { success: false, message: error.message };
                     }
                 }
             };
