@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 协作存储测试插件
  * 用于测试插件协作存储功能的示例插件
  */
@@ -36,13 +36,44 @@ class SharedStorageTestPlugin {
                 padding: '20px',
                 backgroundColor: '#f5f5f5',
                 borderRadius: '8px',
-                marginTop: '20px'
+                marginTop: '20px',
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: '99',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                maxWidth: '1000px',
+                width: '90%'
+            }
+        });
+
+        const header = this.api.ui.createElement('div', {
+            style: {
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '15px'
             }
         });
 
         const title = this.api.ui.createElement('h3', {
-            style: { marginBottom: '15px', color: '#333' }
+            style: { margin: '0', color: '#333' }
         }, '协作存储测试插件');
+
+        const closeButton = this.api.ui.createElement('button', {
+            className: 'btn btn-sm',
+            style: {
+                padding: '5px 10px',
+                fontSize: '14px',
+                cursor: 'pointer',
+                background: '#ff0000b5'
+            },
+            onclick: () => this.removeTestUI()
+        }, '×');
+
+        header.appendChild(title);
+        header.appendChild(closeButton);
 
         const testSection = this.api.ui.createElement('div', {
             className: 'test-section',
@@ -71,7 +102,7 @@ class SharedStorageTestPlugin {
                 padding: '15px',
                 borderRadius: '4px',
                 minHeight: '100px',
-                maxHeight: '300px',
+                maxHeight: '400px',
                 overflowY: 'auto',
                 fontFamily: 'monospace',
                 fontSize: '12px',
@@ -85,7 +116,7 @@ class SharedStorageTestPlugin {
         testSection.appendChild(buttonGroup);
         testSection.appendChild(resultArea);
 
-        container.appendChild(title);
+        container.appendChild(header);
         container.appendChild(testSection);
 
         // 添加到页面

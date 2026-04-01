@@ -1329,6 +1329,11 @@ class StorageAdapter {
      * @param {Object} task - 任务对象
      */
     async saveTask(task) {
+        // 保存到服务器共享存储，使用项目 ID 作为 scope
+        const scope = `group:${task.projectId}`;
+        await this.saveToServerShared(`task:${task.id}`, task, scope);
+        
+        // 同时保存到本地存储（作为缓存）
         const keys = this.getKeys();
         const legacyKeys = this.getLegacyKeys();
         await this.saveSharedBoth(keys.task(task.id), legacyKeys.task(task.id), task, true);
@@ -1337,9 +1342,21 @@ class StorageAdapter {
     /**
      * 读取任务
      * @param {string} taskId - 任务 ID
+     * @param {string} projectId - 项目 ID（可选，用于确定 scope）
      * @returns {Promise<Object|null>}
      */
-    async loadTask(taskId) {
+    async loadTask(taskId, projectId = null) {
+        // 如果提供了项目 ID，优先从服务器共享存储加载
+        if (projectId) {
+            const scope = `group:${projectId}`;
+            const serverData = await this.loadFromServerShared(`task:${taskId}`, scope);
+            if (serverData) {
+                console.log('[StorageAdapter] 从服务器加载任务:', taskId);
+                return serverData;
+            }
+        }
+        
+        // 从本地存储加载
         const keys = this.getKeys();
         const legacyKeys = this.getLegacyKeys();
         return await this.loadSharedWithFallback(keys.task(taskId), legacyKeys.task(taskId), true);
@@ -1451,6 +1468,11 @@ class StorageAdapter {
      * @param {Array} taskIds - 任务 ID 列表
      */
     async saveProjectTaskIndex(projectId, taskIds) {
+        // 保存到服务器共享存储，使用项目 ID 作为 scope
+        const scope = `group:${projectId}`;
+        await this.saveToServerShared(`project-task-index`, taskIds, scope);
+        
+        // 同时保存到本地存储（作为缓存）
         const keys = this.getKeys();
         const legacyKeys = this.getLegacyKeys();
         await this.saveSharedBoth(keys.projectTaskIndex(projectId), legacyKeys.projectTaskIndex(projectId), taskIds, false);
@@ -1462,6 +1484,15 @@ class StorageAdapter {
      * @returns {Promise<Array>}
      */
     async loadProjectTaskIndex(projectId) {
+        // 优先从服务器共享存储加载
+        const scope = `group:${projectId}`;
+        const serverData = await this.loadFromServerShared(`project-task-index`, scope);
+        if (serverData) {
+            console.log('[StorageAdapter] 从服务器加载项目任务索引:', projectId);
+            return serverData;
+        }
+        
+        // 从本地存储加载
         const keys = this.getKeys();
         const legacyKeys = this.getLegacyKeys();
         return await this.loadSharedWithFallback(keys.projectTaskIndex(projectId), legacyKeys.projectTaskIndex(projectId), false, []);
@@ -1706,7 +1737,8 @@ class IndexManager {
         const tasks = [];
 
         for (const taskId of taskIds) {
-            const task = await this.storage.loadTask(taskId);
+            // 传入项目 ID 以便从服务器共享存储加载
+            const task = await this.storage.loadTask(taskId, projectId);
             if (task && !task.deletedAt) {
                 tasks.push(task);
             }
@@ -1728,12 +1760,38 @@ class IndexManager {
 
         for (const project of projects) {
             const projectTasks = await this.getProjectTasks(project.id);
-            // 只返回分配给该用户或由该用户创建的任务
-            const userTasks = projectTasks.filter(task =>
-                task.assigneeIds.includes(userId) ||
-                task.createdBy === userId ||
-                task.watcherIds.includes(userId)
-            );
+            const projectDetail = await this.getProject(project.id);
+            
+            // 根据任务的可见性和用户角色过滤任务
+            const userTasks = projectTasks.filter(task => {
+                const member = this.getMemberRole(userId, projectDetail);
+                
+                // 如果用户不是项目成员，无法查看任务
+                if (!member) return false;
+                
+                // owner 和 admin 可以查看所有任务
+                if (['owner', 'admin'].includes(member.role)) return true;
+                
+                // 根据任务可见性判断
+                if (task.visibility === 'project') {
+                    // 项目成员可见：所有成员都能看到
+                    return true;
+                }
+                if (task.visibility === 'private') {
+                    // 仅相关人员可见：创建者、负责人、关注者
+                    return (
+                        task.createdBy === userId ||
+                        task.assigneeIds?.includes(userId) ||
+                        task.watcherIds?.includes(userId)
+                    );
+                }
+                if (task.visibility === 'custom') {
+                    // 自定义可见性：只有 aclUserIds 中的用户能看到
+                    return task.aclUserIds?.includes(userId);
+                }
+                
+                return false;
+            });
             tasks.push(...userTasks);
         }
 
