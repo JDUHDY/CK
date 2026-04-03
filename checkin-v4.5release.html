@@ -3719,6 +3719,20 @@
             display: none;
         }
 
+        /* 下载按钮拖放状态 */
+        .header-toolbar-btn.drag-over {
+            background: rgba(0, 123, 255, 0.3) !important;
+            color: #007bff !important;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
+
+        .theme-dark .header-toolbar-btn.drag-over {
+            background: rgba(0, 123, 255, 0.4) !important;
+            color: #64b5f6 !important;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+        }
+
         /* Header 下拉菜单 */
         .header-dropdown {
             position: fixed;
@@ -7300,7 +7314,7 @@
         }
 
         details.tree-widget > summary.as-item.active {
-            background-color: rgba(255, 255, 0, 0.35);
+            background-color: rgba(0, 123, 255, 0.2);
         }
 
         /* Flex布局模拟多列 */
@@ -7532,6 +7546,237 @@
 
         .theme-dark .drive-search-count {
             color: #aaa;
+        }
+
+        /* 聊天消息搜索 */
+        .chat-msg-search {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+            max-width: 450px;
+            height: 32px;
+        }
+
+        .chat-msg-search-input {
+            flex: 1;
+            padding: 7px 8px;
+            font-size: 13px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #fff;
+            color: #000;
+            min-width: 160px;
+        }
+
+        .chat-msg-search-input:focus {
+            border-color: #007bff;
+        }
+
+        .chat-msg-search-input::placeholder {
+            color: #aaa;
+        }
+
+        .theme-dark .chat-msg-search-input {
+            background: #3d3d3d;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .theme-dark .chat-msg-search-input:focus {
+            border-color: #63b3ed;
+        }
+
+        .theme-dark .chat-msg-search-input::placeholder {
+            color: #888;
+        }
+
+        .chat-msg-search-regex-btn {
+            padding: 7px 8px;
+            font-size: 11px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+            color: #666;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+            font-family: monospace;
+        }
+
+        .chat-msg-search-regex-btn.active {
+            background: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        .chat-msg-search-regex-btn:hover {
+            border-color: #007bff;
+        }
+
+        .theme-dark .chat-msg-search-regex-btn {
+            background: #3d3d3d;
+            border-color: #555;
+            color: #ccc;
+        }
+
+        .theme-dark .chat-msg-search-regex-btn.active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #fff;
+        }
+
+        .chat-msg-search-results {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            max-height: 400px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            z-index: 100;
+            display: none;
+        }
+
+        .theme-dark .chat-msg-search-results {
+            background: #2d2d2d;
+            border-color: #555;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        .chat-msg-search-result-count {
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #888;
+            border-bottom: 1px solid #eee;
+            background: #fafafa;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .theme-dark .chat-msg-search-result-count {
+            color: #aaa;
+            border-bottom-color: #444;
+            background: #333;
+        }
+
+        .chat-msg-search-result-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.1s;
+            border-left: 3px solid transparent;
+        }
+
+        .chat-msg-search-result-item:hover {
+            background: #f0f7ff;
+            border-left-color: #007bff;
+        }
+
+        .chat-msg-search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .theme-dark .chat-msg-search-result-item {
+            border-bottom-color: #444;
+        }
+
+        .theme-dark .chat-msg-search-result-item:hover {
+            background: #3a3a3a;
+            border-left-color: #2563eb;
+        }
+
+        .chat-msg-search-result-sender {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-msg-search-result-sender .search-sender-name {
+            color: #007bff;
+            font-weight: 500;
+        }
+
+        .chat-msg-search-result-sender .search-msg-time {
+            color: #bbb;
+            font-size: 11px;
+        }
+
+        .theme-dark .chat-msg-search-result-sender {
+            color: #aaa;
+        }
+
+        .theme-dark .chat-msg-search-result-sender .search-sender-name {
+            color: #63b3ed;
+        }
+
+        .chat-msg-search-result-text {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.5;
+            word-break: break-all;
+        }
+
+        .chat-msg-search-result-text mark {
+            background: #fff59d;
+            color: #000;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+
+        .theme-dark .chat-msg-search-result-text {
+            color: #ddd;
+        }
+
+        .theme-dark .chat-msg-search-result-text mark {
+            background: #665c00;
+            color: #fff;
+        }
+
+        .chat-msg-search-result-text .md-text-bold { font-weight: bold; }
+        .chat-msg-search-result-text .md-text-italic { font-style: italic; }
+        .chat-msg-search-result-text .md-text-strikethrough { text-decoration: line-through; color: #999; }
+        .chat-msg-search-result-text .md-inline-code {
+            background: #f0f0f0;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #d63384;
+        }
+        .chat-msg-search-result-text .md-text-at { color: #007bff; font-weight: 500; }
+
+        .theme-dark .chat-msg-search-result-text .md-inline-code {
+            background: #444;
+            color: #e8a0bf;
+        }
+
+        .chat-msg-search-result-empty {
+            padding: 24px 12px;
+            text-align: center;
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .theme-dark .chat-msg-search-result-empty {
+            color: #777;
+        }
+
+        .chat-msg-search-result-ellipsis {
+            color: #ccc;
+        }
+
+        .theme-dark .chat-msg-search-result-ellipsis {
+            color: #666;
         }
 
         .drive-items-wrap {
@@ -7923,6 +8168,50 @@
             background: #4d4d4d;
         }
 
+        /* 搜索框样式 */
+        .fmic-search-box {
+            margin-bottom: 10px;
+            padding: 0 2px;
+        }
+
+        .fmic-search-input {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            background: #fff;
+            color: #333;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .fmic-search-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .fmic-search-input::placeholder {
+            color: #999;
+        }
+
+        /* 暗色主题搜索框样式 */
+        .theme-dark .fmic-search-input {
+            background: #3d3d3d;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .theme-dark .fmic-search-input:focus {
+            border-color: #63b3ed;
+            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+        }
+
+        .theme-dark .fmic-search-input::placeholder {
+            color: #888;
+        }
+
     </style>
 
     <!--聊天页面 联系人-->
@@ -8139,6 +8428,7 @@
             margin-right: 2px;
             cursor: pointer;
             border: none !important;
+            padding: 4px 8px;
         }
 
         .chat-session-header-btn-close:hover {
@@ -8161,9 +8451,7 @@
             flex-direction: row;
             align-items: center;
             gap: 20px;
-            padding-left: 4px;
-            padding-top: 4px;
-            padding-bottom: 2px;
+            padding: 5px 8px;
             user-select: none;
 
             position: relative;
@@ -9740,6 +10028,19 @@
             box-sizing: border-box;
         }
 
+        .md-line-blockquote .md-text-bold .md-text {
+            background: #ffffff;
+            color: #000000;
+            padding: 1px 4px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .theme-dark .md-line-blockquote .md-text-bold .md-text {
+            background: #444;
+            color: #ffffff;
+        }
+
         .md-line-title {
             font-weight: bold;
         }
@@ -11156,6 +11457,73 @@
             });
         }
 
+        // 下载任务按钮拖放功能 - 拖放网盘文件自动下载
+        if (headerDownloadBtn) {
+            headerDownloadBtn.addEventListener('dragenter', (event) => {
+                // 检查是否有网盘文件被拖动
+                if (dragging_items.length > 0) {
+                    event.preventDefault();
+                    headerDownloadBtn.classList.add('drag-over');
+                }
+            });
+
+            headerDownloadBtn.addEventListener('dragover', (event) => {
+                // 检查是否有网盘文件被拖动
+                if (dragging_items.length > 0) {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = 'move';
+                    headerDownloadBtn.classList.add('drag-over');
+                }
+            });
+
+            headerDownloadBtn.addEventListener('dragleave', (event) => {
+                // 防止鼠标移到子元素时误触发
+                if (event.target === headerDownloadBtn) {
+                    headerDownloadBtn.classList.remove('drag-over');
+                }
+            });
+
+            headerDownloadBtn.addEventListener('drop', (event) => {
+                headerDownloadBtn.classList.remove('drag-over');
+                
+                // 检查是否有网盘文件被拖动
+                if (dragging_items.length === 0) return;
+                
+                event.preventDefault();
+                event.stopPropagation();
+
+                // 直接访问 checkin.subviews.drive
+                if (checkin && checkin.subviews && checkin.subviews.drive) {
+                    // 分离文件和文件夹
+                    const files_to_download = dragging_items.filter(item => 
+                        item.attr.type === subviews.Drive.item_type.file
+                    );
+                    const folders_to_download = dragging_items.filter(item => 
+                        item.attr.type === subviews.Drive.item_type.folder
+                    );
+
+                    // 下载文件 - 调用与"下载"按钮相同的逻辑
+                    for (const item of files_to_download) {
+                        // 使用 checkin.current_content_page 访问当前的 Drive 视图
+                        if (checkin.current_content_page && checkin.current_content_page.download) {
+                            checkin.current_content_page.download({}, item);
+                        }
+                    }
+
+                    // 下载文件夹 - 调用与"下载文件夹"按钮相同的逻辑
+                    for (const folder of folders_to_download) {
+                        // 使用 checkin.current_content_page 访问当前的 Drive 视图
+                        if (checkin.current_content_page && checkin.current_content_page.download_folder) {
+                            checkin.current_content_page.download_folder(folder);
+                        }
+                    }
+                }
+
+                // 不自动显示下载任务对话框
+                dragging_items = [];
+            });
+        }
+
         // 授权按钮 - 始终绑定事件，通过 CSS 控制显示/隐藏
         const headerAuthBtn = document.getElementById("header-toolbar-btn-auth");
         if (headerAuthBtn && typeof AuthDialog !== "undefined") {
@@ -11342,15 +11710,16 @@
     const disallowed_upload = null;
     const HEADER_LINKS = null; // 被服务端文本替换
     const chat_settings = null; // 被服务端文本替换
+    const drive_settings = null; // 被服务端文本替换
     let logged_admin = false;
     let logged_user = null;
 
 
-    const default_key = "C******";
     const decrypt_error_string = "解密失败，检查密钥后刷新页面。"
     const decrypt_processing_string = "正在解密。"
 
-    let dragging_item = null;
+    let dragging_items = [];
+    let dragging_item = null;  // 用于聊天附件拖动
     const full_width_space = "　";
 
     function is_theme_dark() {
@@ -12078,7 +12447,10 @@
             this.is_creating = true;
             await this.clear();
             await this.create(passwords[0]);
-            await this.create(default_key);
+            const systemKey = frontCrypto.getEncryptionKey();  // 从 sessionStorage 获取系统密钥
+            if (systemKey) {
+                await this.create(systemKey);      // 系统密钥作为备用
+            }
             for (const password of passwords.slice(1)) await this.create(password);
             this.is_creating = false;
             // console.log(this.ors);
@@ -19159,7 +19531,7 @@
                 throw new Error(await format_error_response(r));
             }
 
-            async send_text(ws_send, contact_type, xxid, ceid, sender_rand, plain_text,) {
+            async send_text(ws_send, contact_type, xxid, ceid, sender_rand, plain_text, cite_message_id) {
                 let url = join_path(this.api_url(), "send");
                 let body = {
                     contact_type, ceid,
@@ -19168,6 +19540,9 @@
                     type: dashboardwrappers.ChatDashboardWrapper.message_type.text,
                     data_text: await encryptors.encrypt2base64(plain_text),
                 };
+                if (cite_message_id) {
+                    body.cite_message_id = cite_message_id;
+                }
                 if (contact_type === subviews.Chat.receiver_type.group) {
                     body.gid = xxid;
                 } else if (contact_type === subviews.Chat.receiver_type.user) {
@@ -19650,6 +20025,7 @@
                 super(client, panel, li);
                 this.drive_path_items = [];
                 this.drive_items = [];
+                this.shift_anchor_item = null; // 用于 Shift 连选：记录锚点（第一次点击的项）
             }
 
             close_page() {
@@ -19794,26 +20170,38 @@
 
                 // 拖拽上传
                 this.element_drive_items_wrap.addEventListener('dragenter', (event) => {
-                    if (dragging_item) return;
+                    if (dragging_items.length > 0) return;
                     if (this.current_path_item().attr.type === _drive.path_item_type.root && this.constructor.name !== "myspace") return;
                     event.preventDefault();
                     this.element_drive_items_wrap.classList.add("drag-active");
                 });
                 this.element_drive_items_wrap.addEventListener('dragover', (event) => {
-                    if (dragging_item) return;
+                    if (dragging_items.length > 0) return;
                     if (this.current_path_item().attr.type === _drive.path_item_type.root && this.constructor.name !== "myspace") return;
                     event.preventDefault();
                     event.dataTransfer.dropEffect = 'copy';
                     this.element_drive_items_wrap.classList.add("drag-active");
                 });
                 this.element_drive_items_wrap.addEventListener('dragleave', () => {
-                    if (dragging_item) return;
+                    if (dragging_items.length > 0) return;
                     if (this.current_path_item().attr.type === _drive.path_item_type.root && this.constructor.name !== "myspace") return;
                     this.element_drive_items_wrap.classList.remove("drag-active");
                 });
                 this.element_drive_items_wrap.addEventListener('drop', async (event) => {
-                    if (dragging_item) return;
+                    if (dragging_items.length > 0) return;
                     if (this.current_path_item().attr.type === _drive.path_item_type.root && this.constructor.name !== "myspace") return;
+
+                    // 检查是否拖放到了文件夹上，如果是则不处理（避免与文件夹的 drop 事件重复）
+                    const targetSummary = event.target.closest("summary");
+                    if (targetSummary) {
+                        const targetItem = this.drive_items.find(item => item.summary === targetSummary);
+                        if (targetItem && targetItem.attr.type === subviews.Drive.item_type.folder) {
+                            // 让文件夹的 drop 事件处理，但需要移除当前目录的遮罩
+                            this.element_drive_items_wrap.classList.remove("drag-active");
+                            return;
+                        }
+                    }
+
                     event.preventDefault();
                     this.element_drive_items_wrap.classList.remove("drag-active");
                     const dataTransferItems = event.dataTransfer.items;
@@ -19899,15 +20287,24 @@
                         }
                     }
                     if (files.length > 0) {
-                        MessageMark.confirm(`${files.length}个文件，开始上传？`, null, null, () => {
-                            let first_task = null;
+                        // 根据 drive_settings.auto_upload_on_drop 决定是否显示确认弹窗
+                        if (drive_settings && drive_settings.auto_upload_on_drop) {
+                            // 自动上传模式：直接上传，不显示确认弹窗和后台任务面板
                             for (const file of files) {
-                                // console.log(file, file.relativePath, file.formated_name)
                                 const task = this.add_upload_task(file);
-                                if (!first_task) first_task = task;
                             }
-                            floatball.look_upload_tasks(first_task);
-                        }, MessageMark.colors.blue)
+                        } else {
+                            // 确认模式：显示确认弹窗和后台任务面板
+                            MessageMark.confirm(`${files.length}个文件，开始上传？`, null, null, () => {
+                                let first_task = null;
+                                for (const file of files) {
+                                    // console.log(file, file.relativePath, file.formated_name)
+                                    const task = this.add_upload_task(file);
+                                    if (!first_task) first_task = task;
+                                }
+                                floatball.look_upload_tasks(first_task);
+                            }, MessageMark.colors.blue)
+                        }
                     }
                 });
 
@@ -19949,7 +20346,7 @@
                 });
 
                 path_item_btn.addEventListener('drop', (event) => {
-                    if (!dragging_item) return;
+                    if (dragging_items.length === 0) return;
                     if (path_item === this.drive_path_items[this.drive_path_items.length - 1]) return;
                     if (path_item.attr.type === _drive.path_item_type.root && this.constructor.name !== "myspace") return;
                     const station_element = event.target.closest(".drive-path-item-btn");
@@ -19957,13 +20354,13 @@
                     path_item_btn.classList.remove("active");
                     // const d = JSON.parse(event.dataTransfer.getData("application/json"));
                     if (path_item.attr.type === _drive.path_item_type.root) {
-                        this.move(dragging_item, undefined, path_item);
+                        this.move_items(dragging_items, undefined, path_item);
                     } else {
-                        this.move(dragging_item, path_item);
+                        this.move_items(dragging_items, path_item);
                     }
                 });
                 path_item_btn.addEventListener('dragover', (event) => {
-                    if (!dragging_item) return;
+                    if (dragging_items.length === 0) return;
                     if (path_item === this.drive_path_items[this.drive_path_items.length - 1]) return;
                     if (path_item.attr.type === _drive.path_item_type.root && this.constructor.name !== "myspace") return;
                     const station_element = event.target.closest(".drive-path-item-btn");
@@ -19972,7 +20369,7 @@
                     path_item_btn.classList.add("active");
                 });
                 path_item_btn.addEventListener('dragenter', (event) => {
-                    if (!dragging_item) return;
+                    if (dragging_items.length === 0) return;
                     if (path_item === this.drive_path_items[this.drive_path_items.length - 1]) return;
                     if (path_item.attr.type === _drive.path_item_type.root && this.constructor.name !== "myspace") return;
                     const station_element = event.target.closest(".drive-path-item-btn");
@@ -19981,7 +20378,7 @@
                     path_item_btn.classList.add("active");
                 });
                 path_item_btn.addEventListener('dragleave', (event) => {
-                    if (!dragging_item) return;
+                    if (dragging_items.length === 0) return;
                     if (path_item === this.drive_path_items[this.drive_path_items.length - 1]) return;
                     if (path_item.attr.type === _drive.path_item_type.root && this.constructor.name !== "myspace") return;
                     const station_element = event.target.closest(".drive-path-item-btn");
@@ -20057,33 +20454,134 @@
                     item.summary.draggable = "true";
                 }
                 if (attr.type === subviews.Drive.item_type.folder) {
-                    item.summary.addEventListener('drop', (event) => {
-                        if (!dragging_item) return;
+                    item.summary.addEventListener('drop', async (event) => {
+                                        item.summary.classList.remove("active");
+                                        const station_element = event.target.closest("summary");
+                                        if (!station_element) return;
+                    
+                                        // 检查是否是拖放文件上传（外部文件）
+                                        const dataTransferItems = event.dataTransfer.items;
+                                        let hasExternalFiles = false;
+                    
+                                        for (let i = 0; i < dataTransferItems.length; i++) {
+                                            const itemData = dataTransferItems[i];
+                                            if (itemData.kind === 'file') {
+                                                hasExternalFiles = true;
+                                                break;
+                                            }
+                                        }
+                    
+                                        if (hasExternalFiles && dragging_items.length === 0) {
+                                            // 外部文件拖放上传到文件夹
+                                            event.preventDefault();
+                                            const validFiles = [];
+                    
+                                            for (let i = 0; i < dataTransferItems.length; i++) {
+                                                const itemData = dataTransferItems[i];
+                                                const entry = itemData.webkitGetAsEntry && itemData.webkitGetAsEntry();
+                    
+                                                if (itemData.kind === 'file') {
+                                                    if (entry && entry.isDirectory) {
+                                                        // 暂不支持拖放文件夹
+                                                        MessageMark.report("暂不支持拖放文件夹");
+                                                        return;
+                                                    } else {
+                                                        const file = itemData.getAsFile();
+                                                        if (file) {
+                                                            let name = normalizeName(file.name);
+                                                            if (!name) continue;
+                    
+                                                            // 检查文件类型是否允许
+                                                            for (let disallowedUploadElement of disallowed_upload) {
+                                                                if (name.endsWith(disallowedUploadElement)) {
+                                                                    MessageMark.report(`不允许上传：${disallowedUploadElement}`);
+                                                                    return;
+                                                                }
+                                                            }
+                    
+                                                            validFiles.push(file);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                    
+                                            if (validFiles.length > 0) {
+                                                // 根据 drive_settings.auto_upload_on_drop 决定是否显示确认弹窗
+                                                if (drive_settings && drive_settings.auto_upload_on_drop) {
+                                                    // 自动上传模式：直接上传到文件夹
+                                                    for (const file of validFiles) {
+                                                        const task = this.add_upload_task(file, item);
+                                                    }
+                                                } else {
+                                                    // 确认模式：显示确认弹窗
+                                                    MessageMark.confirm(`${validFiles.length}个文件，上传到文件夹"${this.get_item_display_name(item)}"？`, null, null, () => {
+                                                        let first_task = null;
+                                                        for (const file of validFiles) {
+                                                            const task = this.add_upload_task(file, item);
+                                                            if (!first_task) first_task = task;
+                                                        }
+                                                        floatball.look_upload_tasks(first_task);
+                                                    }, MessageMark.colors.blue)
+                                                }
+                                            }
+                                        } else if (dragging_items.length > 0) {
+                                            // 移动文件到文件夹
+                                            // 过滤掉目标文件夹本身（防止移动到自身）
+                                            const items_to_move = dragging_items.filter(dragItem => dragItem !== item);
+                                            if (items_to_move.length === 0) return;
+                    
+                                            this.move_items(items_to_move, item);
+                                        }
+                                    });                    item.summary.addEventListener('dragover', (event) => {
                         const station_element = event.target.closest("summary");
-                        if (!station_element || item === dragging_item) return;
-                        item.summary.classList.remove("active");
-                        // const d = JSON.parse(event.dataTransfer.getData("application/json"));
-                        this.move(dragging_item, item);
-                    });
-                    item.summary.addEventListener('dragover', (event) => {
-                        if (!dragging_item) return;
-                        const station_element = event.target.closest("summary");
-                        if (!station_element || item === dragging_item) return;
-                        event.preventDefault();
-                        item.summary.classList.add("active");
+                        if (!station_element) return;
+
+                        // 检查是否是拖放文件上传
+                        const dataTransferItems = event.dataTransfer.items;
+                        let hasExternalFiles = false;
+
+                        for (let i = 0; i < dataTransferItems.length; i++) {
+                            const itemData = dataTransferItems[i];
+                            if (itemData.kind === 'file') {
+                                hasExternalFiles = true;
+                                break;
+                            }
+                        }
+
+                        // 允许外部文件拖放或移动文件操作
+                        if (hasExternalFiles || dragging_items.length > 0) {
+                            if (dragging_items.length > 0 && dragging_items.includes(item)) return;
+                            event.preventDefault();
+                            event.dataTransfer.dropEffect = dragging_items.length > 0 ? 'move' : 'copy';
+                            item.summary.classList.add("active");
+                        }
                     });
                     item.summary.addEventListener('dragenter', (event) => {
-                        if (!dragging_item) return;
                         const station_element = event.target.closest("summary");
-                        if (!station_element || item === dragging_item) return;
-                        event.preventDefault();
-                        item.summary.classList.add("active");
+                        if (!station_element) return;
+
+                        // 检查是否是拖放文件上传
+                        const dataTransferItems = event.dataTransfer.items;
+                        let hasExternalFiles = false;
+
+                        for (let i = 0; i < dataTransferItems.length; i++) {
+                            const itemData = dataTransferItems[i];
+                            if (itemData.kind === 'file') {
+                                hasExternalFiles = true;
+                                break;
+                            }
+                        }
+
+                        // 允许外部文件拖放或移动文件操作
+                        if (hasExternalFiles || dragging_items.length > 0) {
+                            if (dragging_items.length > 0 && dragging_items.includes(item)) return;
+                            event.preventDefault();
+                            item.summary.classList.add("active");
+                        }
                     });
                     item.summary.addEventListener('dragleave', (event) => {
-                        if (!dragging_item) return;
-                        if (event.target.nodeName === "#text") return;
                         const station_element = event.target.closest("summary");
-                        if (!station_element || item === dragging_item) return;
+                        if (!station_element) return;
                         event.preventDefault();
                         item.summary.classList.remove("active");
                     });
@@ -20092,12 +20590,27 @@
                     if (event.target.tagName !== "SUMMARY") {
                         return;
                     }
-                    dragging_item = item;
+
+                    // 获取所有选中的文件项
+                    const visible_items = this.drive_items.filter(item => !item.summary.classList.contains("hidden"));
+                    const selected_items = visible_items.filter(driveItem => driveItem.raw_header.selecting_checkbox.state === 1);
+
+                    // 如果当前项未被选中，则只拖动当前项
+                    if (item.raw_header.selecting_checkbox.state !== 1) {
+                        dragging_items = [item];
+                    } else {
+                        // 否则拖动所有选中的项
+                        dragging_items = [...selected_items];
+                    }
+
                     // event.dataTransfer.setData("application/json", JSON.stringify());
                     event.dataTransfer.effectAllowed = 'move';
+                    
+                    // 设置数据以便下载按钮能够识别
+                    event.dataTransfer.setData('text/plain', 'drive-file-drag');
                 });
                 item.summary.addEventListener('dragend', (event) => {
-                    dragging_item = null;
+                    dragging_items = [];
                     item.summary.classList.remove('hold')
                 });
 
@@ -20139,9 +20652,45 @@
                 const cb = item.raw_header.selecting_checkbox_input;
                 item.raw_header.selecting_checkbox.state = 0;
                 item.raw_header.selecting_checkbox.addEventListener("click", (event) => {
-                    item.raw_header.selecting_checkbox.state = (item.raw_header.selecting_checkbox.state + 1) % 2;
-                    cb.checked = item.raw_header.selecting_checkbox.state === 1;
-                    cb.indeterminate = item.raw_header.selecting_checkbox.state === 2;
+                    event.stopPropagation(); // 防止触发其他点击事件
+
+                    // 获取可见的文件项列表
+                    const visible_items = this.drive_items.filter(item => !item.summary.classList.contains("hidden"));
+
+                    if (event.shiftKey && this.shift_anchor_item) {
+                        // Shift 连选：从锚点开始选中到当前项之间的所有项，取消其他项
+                        const anchorIndex = visible_items.indexOf(this.shift_anchor_item);
+                        const currentIndex = visible_items.indexOf(item);
+
+                        if (anchorIndex !== -1 && currentIndex !== -1) {
+                            const start = Math.min(anchorIndex, currentIndex);
+                            const end = Math.max(anchorIndex, currentIndex);
+
+                            // 先取消所有项的选中状态
+                            for (const driveItem of visible_items) {
+                                driveItem.raw_header.selecting_checkbox.state = 0;
+                                driveItem.raw_header.selecting_checkbox_input.checked = false;
+                                driveItem.raw_header.selecting_checkbox_input.indeterminate = false;
+                            }
+
+                            // 选中范围内的所有项
+                            for (let i = start; i <= end; i++) {
+                                const targetItem = visible_items[i];
+                                targetItem.raw_header.selecting_checkbox.state = 1;
+                                targetItem.raw_header.selecting_checkbox_input.checked = true;
+                                targetItem.raw_header.selecting_checkbox_input.indeterminate = false;
+                            }
+                        }
+                    } else {
+                        // 普通点击：使用默认复选框逻辑（支持多选）
+                        item.raw_header.selecting_checkbox.state = (item.raw_header.selecting_checkbox.state + 1) % 2;
+                        cb.checked = item.raw_header.selecting_checkbox.state === 1;
+                        cb.indeterminate = item.raw_header.selecting_checkbox.state === 2;
+
+                        // 更新锚点（只有不按 Shift 时才更新）
+                        this.shift_anchor_item = item;
+                    }
+
                     this._update_selecting_checkbox_state();
                 });
                 cb.checked = false;
@@ -20499,7 +21048,7 @@
                 }
             }
 
-            add_upload_task(file) {
+            add_upload_task(file, target_folder_item = null) {
                 // 确保 floatball.dialog 已初始化
                 if (!floatball?.dialog) {
                     console.error('[Drive Upload] FloatBall dialog not available');
@@ -20515,7 +21064,12 @@
                 const t = new FloatBall.tasktypes.Upload(floatball.dialog.tab_content_backtasks, {
                     onfinished: () => {
                         if (this.closed) return;
+                        // 刷新当前显示的目录
                         if (t.args.current_path_item === this.current_path_item()) this.refresh();
+                        // 如果上传到了子文件夹，也刷新父文件夹（因为子文件夹的修改时间会更新）
+                        else if (t.args.current_path_item.attr.type === _drive.path_item_type.folder) {
+                            this.refresh();
+                        }
                     },
                 });
                 floatball.dialog.addTask(t);
@@ -20526,7 +21080,7 @@
                 t.set_name(normalizeName(file.name));
                 t.set_args({
                     file,
-                    current_path_item: this.current_path_item(),
+                    current_path_item: target_folder_item || this.current_path_item(),
                 });
                 floatball.dialog.checkToStartTask();
                 floatball.dialog.checkToHide(t);
@@ -20739,6 +21293,52 @@
                     this.remove_loading_mark()
                     MessageMark.report(error);
                 });
+            }
+
+            move_items(items_to_move, item, root_path_item) {
+                let name2;
+                if (root_path_item) {
+                    for (const mainaction of this.panel.mainactions[0].lis) {
+                        if (mainaction.pagetype.name === this.constructor.name) {
+                            name2 = mainaction.text;
+                            break;
+                        }
+                    }
+                } else {
+                    name2 = this.get_item_display_name(item);
+                }
+
+                const item_names = items_to_move.map((i, index) => `${index + 1}. ${this.get_item_display_name(i)}`).join('\n');
+
+                MessageMark.confirm(`移动以下${items_to_move.length}个文件到"${name2}"？\n\n${item_names}`, null, null, () => {
+                    this._move_items(items_to_move, item, root_path_item);
+                },)
+            }
+
+            _move_items(items_to_move, item, root_path_item) {
+                this.loading_mark.show();
+                
+                // 依次移动每个文件
+                const movePromises = items_to_move.map(dragging_item => {
+                    return this.client.subviews.drive.move(dragging_item.attr.did,
+                        root_path_item ? undefined : item.attr.did,
+                        root_path_item ? this.constructor.name : undefined)
+                        .then(result => {
+                            if (this.closed) return;
+                            this.remove_item(dragging_item);
+                        });
+                });
+
+                Promise.all(movePromises)
+                    .then(() => {
+                        if (this.closed) return;
+                        this.remove_loading_mark();
+                    })
+                    .catch(error => {
+                        if (this.closed) return;
+                        this.remove_loading_mark();
+                        MessageMark.report(error);
+                    });
             }
 
             sharesettings(event, item) {
@@ -21272,6 +21872,11 @@
             <span class="chat-session-header-info-status">正在加载...</span>
         </div>
     </div>
+    <div class="chat-msg-search">
+        <input type="text" class="chat-msg-search-input" placeholder="搜索消息（支持正则）">
+        <button class="chat-msg-search-regex-btn" title="正则搜索">正则</button>
+        <div class="chat-msg-search-results"></div>
+    </div>
     <div class="chat-session-header-actions">
         <button class="chat-session-header-action-more" title="更多"><i class="bi bi-three-dots"></i></button>
         <button class="chat-session-header-action-group-settings" title="群组设置"><i class="bi bi-layout-sidebar-reverse"></i></button>
@@ -21504,6 +22109,266 @@
                 this.e_header_info = this.container.querySelector(":scope div.chat-session-header-info");
                 this.e_header_info_name = this.container.querySelector(":scope span.chat-session-header-info-name");
                 this.e_header_info_status = this.container.querySelector(":scope span.chat-session-header-info-status");
+
+                // 消息搜索功能
+                {
+                    const searchInput = this.container.querySelector(":scope .chat-msg-search-input");
+                    const regexBtn = this.container.querySelector(":scope .chat-msg-search-regex-btn");
+                    const resultsPanel = this.container.querySelector(":scope .chat-msg-search-results");
+                    let isRegexMode = false;
+
+                    const formatTime = (ts) => {
+                        if (!ts) return "";
+                        const d = new Date(ts * 1000);
+                        const pad = n => String(n).padStart(2, "0");
+                        return `${d.getMonth()+1}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                    };
+
+                    const escapeHtml = (s) => s.replace(/[<>"'&]/g, c => ({'<'  : '&lt;', '>'  : '&gt;', '"'  : '&quot;', "'"  : '&#39;', '&'  : '&amp;'}[c]));
+
+                    const highlightInDOM = (root, keyword, isRegex) => {
+                        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+                        const textNodes = [];
+                        while (walker.nextNode()) textNodes.push(walker.currentNode);
+                        for (const node of textNodes) {
+                            const text = node.textContent;
+                            let re;
+                            if (isRegex) {
+                                try { re = new RegExp(keyword, 'gi'); } catch(e) { return; }
+                            } else {
+                                re = new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+                            }
+                            if (!re.test(text)) continue;
+                            re.lastIndex = 0;
+                            const frag = document.createDocumentFragment();
+                            let last = 0, m;
+                            while ((m = re.exec(text)) !== null) {
+                                if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+                                const mark = document.createElement('mark');
+                                mark.textContent = m[0];
+                                frag.appendChild(mark);
+                                last = re.lastIndex;
+                            }
+                            if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+                            node.parentNode.replaceChild(frag, node);
+                        }
+                    };
+
+                    const buildPreviewEl = (rawText, keyword, isRegex, isHtml = false) => {
+                        const div = document.createElement('div');
+                        div.className = 'chat-msg-search-result-text';
+
+                        // 如果输入已经是HTML（markdown渲染后的），直接使用
+                        if (isHtml) {
+                            // 提取纯文本用于长度检查和搜索
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = rawText;
+                            const plainText = tempDiv.textContent || tempDiv.innerText || '';
+
+                            if (plainText.length <= 100) {
+                                div.innerHTML = rawText.replace(/\n/g, ' ');
+                                highlightInDOM(div, keyword, isRegex);
+                                return div;
+                            }
+
+                            const idx = plainText.toLowerCase().indexOf(keyword.toLowerCase());
+
+                            if (idx === -1) {
+                                // 如果没有找到匹配，截取前100个字符的HTML（简化处理）
+                                div.innerHTML = rawText;
+                                // 限制显示的文本长度
+                                const textNodes = [];
+                                const walker = document.createTreeWalker(div, NodeFilter.SHOW_TEXT, null, false);
+                                let totalLength = 0;
+                                let node;
+                                while ((node = walker.nextNode()) && totalLength < 100) {
+                                    textNodes.push(node);
+                                    totalLength += node.textContent.length;
+                                }
+                                // 移除超过长度限制的节点
+                                walker.currentNode = div;
+                                while ((node = walker.nextNode())) {
+                                    if (!textNodes.includes(node)) {
+                                        node.textContent = '';
+                                    }
+                                }
+                                const ell = document.createElement('span');
+                                ell.className = 'chat-msg-search-result-ellipsis';
+                                ell.textContent = '…';
+                                div.appendChild(ell);
+                                return div;
+                            }
+
+                            // 找到匹配项，高亮显示
+                            div.innerHTML = rawText;
+                            highlightInDOM(div, keyword, isRegex);
+                            return div;
+                        }
+
+                        // 原有的纯文本处理逻辑
+                        const hasHtml = /<[a-z][\s\S]*?>/i.test(rawText);
+                        const plainText = rawText.replace(/<[^>]+>/g, '').replace(/\n/g, ' ');
+
+                        if (plainText.length <= 100) {
+                            div.innerHTML = rawText.replace(/\n/g, ' ');
+                            highlightInDOM(div, keyword, isRegex);
+                            return div;
+                        }
+
+                        const idx = plainText.toLowerCase().indexOf(keyword.toLowerCase());
+
+                        if (hasHtml) {
+                            div.innerHTML = rawText.replace(/\n/g, ' ');
+                            highlightInDOM(div, keyword, isRegex);
+                            return div;
+                        }
+
+                        if (idx === -1) {
+                            div.textContent = plainText.substring(0, 100);
+                            const ell = document.createElement('span');
+                            ell.className = 'chat-msg-search-result-ellipsis';
+                            ell.textContent = '…';
+                            div.appendChild(ell);
+                            return div;
+                        }
+
+                        const prefixLen = 30, ctxLen = 20, suffixLen = 10;
+                        const p1 = plainText.substring(0, prefixLen);
+                        const ctxStart = Math.max(0, idx - ctxLen);
+                        const ctxEnd = Math.min(plainText.length, idx + keyword.length + ctxLen);
+                        const pCtx = plainText.substring(ctxStart, ctxEnd);
+                        const p2 = plainText.substring(Math.min(plainText.length, ctxEnd), Math.min(plainText.length, ctxEnd + suffixLen));
+
+                        let preview = p1;
+                        const ell = document.createElement('span');
+                        ell.className = 'chat-msg-search-result-ellipsis';
+                        ell.textContent = '…';
+
+                        div.textContent = preview;
+                        div.appendChild(ell.cloneNode(true));
+                        if (ctxStart > prefixLen) {
+                            div.appendChild(ell.cloneNode(true));
+                        }
+
+                        const ctxDiv = document.createElement('span');
+                        ctxDiv.textContent = pCtx;
+                        highlightInDOM(ctxDiv, keyword, isRegex);
+                        div.appendChild(ctxDiv);
+
+                        div.appendChild(ell.cloneNode(true));
+                        if (p2) {
+                            div.appendChild(document.createTextNode(p2));
+                        }
+
+                        return div;
+                    };
+
+                    const buildPreviewHTML = (rawText, keyword, isRegex, isHtml = false) => {
+                        const el = buildPreviewEl(rawText, keyword, isRegex, isHtml);
+                        return el.innerHTML;
+                    };
+
+                    const doSearch = () => {
+                        const keyword = searchInput.value.trim();
+                        if (!keyword) {
+                            resultsPanel.style.display = "none";
+                            resultsPanel.innerHTML = "";
+                            return;
+                        }
+
+                        let matcher;
+                        if (isRegexMode) {
+                            try {
+                                const re = new RegExp(keyword, 'i');
+                                matcher = (text) => re.test(text) ? text.match(new RegExp(keyword, 'gi'))[0] : null;
+                            } catch (e) {
+                                resultsPanel.style.display = "block";
+                                resultsPanel.innerHTML = `<div class="chat-msg-search-result-empty">正则表达式无效</div>`;
+                                return;
+                            }
+                        } else {
+                            const lower = keyword.toLowerCase();
+                            matcher = (text) => text.toLowerCase().includes(lower) ? keyword : null;
+                        }
+
+                        const msgs = this.li.bindmap.msgs || [];
+                        const results = [];
+                        for (let i = msgs.length - 1; i >= 0; i--) {
+                            const msg = msgs[i];
+                            if (!msg.plain_data_text) continue;
+                            const matched = matcher(msg.plain_data_text);
+                            if (matched) {
+                                results.push(msg);
+                                if (results.length >= 50) break;
+                            }
+                        }
+
+                        if (results.length === 0) {
+                            resultsPanel.style.display = "block";
+                            resultsPanel.innerHTML = `<div class="chat-msg-search-result-empty">未找到匹配消息</div>`;
+                            return;
+                        }
+
+                        let html = `<div class="chat-msg-search-result-count">找到 ${results.length} 条消息</div>`;
+                        for (const msg of results) {
+                            const sender = msg.sender || "未知";
+                            const time = formatTime(msg.sent_time);
+                            // 优先使用渲染后的markdown HTML，如果没有则使用纯文本
+                            const contentHtml = msg.plain_data_markdown || msg.plain_data_text;
+                            const preview = buildPreviewHTML(contentHtml, keyword, isRegexMode, true);
+
+                            html += `<div class="chat-msg-search-result-item" data-msg-id="${msg.id}">
+                                <div class="chat-msg-search-result-sender"><span class="search-sender-name">${escapeHtml(sender)}</span> <span class="search-msg-time">${time}</span></div>
+                                <div class="chat-msg-search-result-text">${preview}</div>
+                            </div>`;
+                        }
+                        resultsPanel.style.display = "block";
+                        resultsPanel.innerHTML = html;
+                    };
+
+                    searchInput.addEventListener("input", doSearch);
+
+                    regexBtn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        isRegexMode = !isRegexMode;
+                        regexBtn.classList.toggle("active", isRegexMode);
+                        if (searchInput.value.trim()) doSearch();
+                    });
+
+                    resultsPanel.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        const item = e.target.closest(".chat-msg-search-result-item");
+                        if (!item) return;
+                        const msgId = parseInt(item.dataset.msgId);
+                        if (!msgId) return;
+
+                        const msgFlow = this.e_msgflow;
+                        if (!msgFlow) return;
+                        const allEls = msgFlow.querySelectorAll(":scope .chat-message");
+                        for (const el of allEls) {
+                            const elId = el.msgobj?.msgattr?.id;
+                            if (elId && elId == msgId) {
+                                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                                el.classList.add("msg-highlight");
+                                setTimeout(() => el.classList.remove("msg-highlight"), 2000);
+                                break;
+                            }
+                        }
+                    });
+
+                    searchInput.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        if (searchInput.value.trim()) {
+                            resultsPanel.style.display = "block";
+                        }
+                    });
+
+                    document.addEventListener("click", (e) => {
+                        if (!searchInput.contains(e.target) && !resultsPanel.contains(e.target) && !regexBtn.contains(e.target)) {
+                            resultsPanel.style.display = "none";
+                        }
+                    });
+                }
 
                 this.e_header_actions = this.container.querySelector(":scope div.chat-session-header-actions");
 
@@ -22511,6 +23376,7 @@
                 this.writeboard_initialized = false; // 防止重复初始化
                 this.pen_size = 4; // 画笔默认尺寸
                 this.eraser_size = 6; // 橡皮默认尺寸
+                this.writeboard_typing_timer = null; // 写字板typing状态定时器
 
                 // 初始化写字板
                 this.init_writeboard = () => {
@@ -22844,6 +23710,13 @@
                     // 清空撤销/恢复历史记录
                     this.write_history = [];
                     this.write_history_index = -1;
+                    // 清除typing定时器
+                    if (this.writeboard_typing_timer) {
+                        clearInterval(this.writeboard_typing_timer);
+                        this.writeboard_typing_timer = null;
+                    }
+                    // 清除typing状态
+                    this.update_activity(dashboardwrappers.ChatDashboardWrapper.activity_type.none);
                 });
 
                 // 确定按钮（生成图片并发送，在 init_writeboard 外部绑定，避免重复绑定）
@@ -22878,12 +23751,25 @@
                         // 清空撤销/恢复历史记录
                         this.write_history = [];
                         this.write_history_index = -1;
+                        // 清除typing定时器
+                        if (this.writeboard_typing_timer) {
+                            clearInterval(this.writeboard_typing_timer);
+                            this.writeboard_typing_timer = null;
+                        }
+                        // 清除typing状态
+                        this.update_activity(dashboardwrappers.ChatDashboardWrapper.activity_type.none);
                     }, "image/jpg");
                 });
 
                 // 点击按钮打开写字板
                 this.e_writeboard_btn.addEventListener("click", () => {
                     this.e_writeboard.classList.remove("hidden");
+                    // 立即发送typing状态，让其他用户知道正在使用写字板
+                    this.update_activity(dashboardwrappers.ChatDashboardWrapper.activity_type.typing);
+                    // 启动定时器，每4秒发送一次typing状态（小于update_activity的5秒防抖时间）
+                    this.writeboard_typing_timer = setInterval(() => {
+                        this.update_activity(dashboardwrappers.ChatDashboardWrapper.activity_type.typing);
+                    }, 4000);
                     // 重置工具状态为画笔
                     this.write_tool_type = 'pen';
                     this.e_writeboard_tool_toggle.innerHTML = '<i class="bi bi-eraser"></i> 橡皮';
@@ -23421,7 +24307,7 @@
                 const ws_isopen = false;
                 checkin.subviews.chat.send_text(ws_isopen ? (args) => {
                     this.panel.wrapper.ws_send(args.body, {onfetchload, onfetcherror});
-                } : null, contact_type, xxid, ceid, msg.sender_rand, msg.plain_text,)
+                } : null, contact_type, xxid, ceid, msg.sender_rand, msg.plain_text, msg.cite_message_id)
                     .then(result => {
                         if (ws_isopen) return;
                         onfetchload(result);
@@ -24284,6 +25170,17 @@
 						    const selectAllCheckbox =
 						        row_custom.input_element.querySelector(".forward-select-all");
 
+						    /* ========= 搜索框 ========= */
+						    const searchHtml = `
+						        <div class="fmic-search-box">
+						            <input type="text" class="fmic-search-input" placeholder="搜索联系人或群组...">
+						        </div>
+						    `;
+						    row_custom.input_element.insertAdjacentHTML("beforeend", searchHtml);
+
+						    const searchInput =
+						        row_custom.input_element.querySelector(".fmic-search-input");
+
 						    /* ========= 普通联系人 ========= */
 						    for (const mainaction of this.panel.wrapper.contact_items()) {
 						        if (mainaction === this.li.bindmap) continue;
@@ -24329,6 +25226,19 @@
 						                row_custom.subs.every(s => s.checkbox.checked);
 						        });
 						    }
+
+						    /* ========= 搜索筛选功能 ========= */
+						    searchInput.addEventListener("input", (e) => {
+						        const keyword = e.target.value.toLowerCase();
+						        for (const sub of row_custom.subs) {
+						            const text = sub.column.querySelector("label").textContent.toLowerCase();
+						            if (text.includes(keyword)) {
+						                sub.column.style.display = "block";
+						            } else {
+						                sub.column.style.display = "none";
+						            }
+						        }
+						    });
 						},
 
 						collect_data: (fm, row_custom) => {
@@ -25939,6 +26849,64 @@
                                         }
                                     }
                                 }
+                            }
+                        }
+
+                        {
+                            const blockquotes = this.e_mcr_span.querySelectorAll(":scope .md-line-blockquote");
+                            for (const bq of blockquotes) {
+                                const nameSpan = bq.querySelector(":scope .md-line .md-text-bold .md-text");
+                                if (!nameSpan) continue;
+
+                                const contentSpans = bq.querySelectorAll(":scope .md-line > .md-text");
+                                let quoteContent = "";
+                                for (const cs of contentSpans) {
+                                    if (cs !== nameSpan && !nameSpan.contains(cs)) {
+                                        quoteContent += cs.textContent.trim();
+                                    }
+                                }
+
+                                nameSpan.addEventListener("click", (e) => {
+                                    e.stopPropagation();
+                                    if (!this.contentpage.e_msgflow) return;
+
+                                    let targetMsg = null;
+                                    const citeId = this.msgattr.cite_message_id;
+
+                                    if (citeId) {
+                                        targetMsg = this.contentpage.li.bindmap.msgs.find(m => m.id === citeId);
+                                    }
+
+                                    if (!targetMsg && quoteContent.length > 0) {
+                                        for (let i = this.contentpage.li.bindmap.msgs.length - 1; i >= 0; i--) {
+                                            const msg = this.contentpage.li.bindmap.msgs[i];
+                                            if (msg.id === this.msgattr.id) continue;
+                                            if (msg.plain_data_text && msg.plain_data_text.includes(quoteContent)) {
+                                                targetMsg = msg;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if (targetMsg) {
+                                        const allMsgElements = this.contentpage.e_msgflow.querySelectorAll(":scope .chat-message");
+                                        let targetEl = null;
+                                        for (const el of allMsgElements) {
+                                            const elMsgId = el.msgobj?.msgattr?.id;
+                                            if (elMsgId && elMsgId == targetMsg.id) {
+                                                targetEl = el;
+                                                break;
+                                            }
+                                        }
+                                        if (targetEl && document.body.contains(targetEl)) {
+                                            targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+                                            targetEl.classList.add("msg-highlight");
+                                            setTimeout(() => {
+                                                targetEl.classList.remove("msg-highlight");
+                                            }, 2000);
+                                        }
+                                    }
+                                });
                             }
                         }
 
