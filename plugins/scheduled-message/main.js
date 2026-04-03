@@ -10,7 +10,7 @@ class ScheduledMessagePlugin {
             up: `
                 CREATE TABLE IF NOT EXISTS "plugin_scheduled-message_tasks" (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    message TEXT NOT NULL,
+                    encrypted_message TEXT NOT NULL,
                     contact_type INTEGER NOT NULL,
                     xxid TEXT NOT NULL,
                     ceid INTEGER,
@@ -25,6 +25,18 @@ class ScheduledMessagePlugin {
                 )
             `,
             down: `DROP TABLE IF EXISTS "plugin_scheduled-message_tasks"`
+        },
+        2: {
+            up: `
+                ALTER TABLE "plugin_scheduled-message_tasks" ADD COLUMN encrypted_message TEXT
+            `,
+            down: ``
+        },
+        3: {
+            up: `
+                ALTER TABLE "plugin_scheduled-message_tasks" DROP COLUMN message
+            `,
+            down: ``
         }
     };
 
@@ -40,6 +52,9 @@ class ScheduledMessagePlugin {
 
         // 按钮引用
         this.scheduleBtn = null;
+
+        // 加密密钥（从 API 获取）
+        this.encryptionKey = null;
 
         // 重复类型
         this.REPEAT_TYPES = {
@@ -85,13 +100,13 @@ class ScheduledMessagePlugin {
         // 启动自动清理检查
         this.startCleanupCheck();
 
-        // 初始检查一次
-        this.checkAndSendMessages();
-
         // 延迟执行耗时操作，避免阻塞插件注册
         // 使用 setTimeout 将这些操作放到下一个事件循环
         setTimeout(async () => {
             try {
+                // 初始化加密密钥（从 API 获取）
+                await this.initEncryptionKey();
+
                 // 初始化数据库表
                 await this.initDatabase();
 
@@ -101,12 +116,30 @@ class ScheduledMessagePlugin {
                 // 加载定时消息列表
                 await this.loadScheduledMessages();
 
+                // 初始检查一次（在数据库和配置加载完成后）
+                this.checkAndSendMessages();
+
                 // 添加定时消息按钮到聊天输入区（延迟检测）
                 this.tryAddScheduleButton();
             } catch (error) {
                 console.error('定时消息插件初始化失败:', error);
             }
         }, 0);
+    }
+
+    /**
+     * 初始化加密密钥（从 API 获取）
+     */
+    async initEncryptionKey() {
+        try {
+            const basePath = typeof top_level_path !== 'undefined' ? top_level_path : '';
+            const response = await this.api.http.get(basePath + '/api/get_encryption_key');
+            this.encryptionKey = response.key;
+            console.log('✓ 加密密钥初始化成功（使用系统固定密钥）');
+        } catch (error) {
+            console.error('获取加密密钥失败:', error);
+            throw error;
+        }
     }
 
     /**
@@ -271,7 +304,7 @@ class ScheduledMessagePlugin {
             // 转换数据库格式为插件格式
             this.scheduledMessages = results.map(row => ({
                 id: row.id.toString(),
-                message: row.message,
+                encryptedMessage: row.encrypted_message, // 只加载加密后的消息
                 contactType: row.contact_type === 2 ? 'group' : 'user',
                 xxid: row.xxid,
                 ceid: row.ceid,
@@ -467,20 +500,27 @@ class ScheduledMessagePlugin {
     /**
      * 显示定时消息弹窗
      */
-    showScheduleModal(editMessage = null) {
+    async showScheduleModal(editMessage = null) {
         const contactInfo = this.getCurrentContactInfo();
         if (!contactInfo) {
             this.api.ui.showToast('请先选择一个聊天会话', 'warning');
             return;
         }
-        
+
         // 获取当前输入的消息内容
         const textarea = document.querySelector('.chat-session-inputarea-textarea');
         const currentText = textarea ? textarea.value.trim() : '';
-        
-        // 如果是编辑模式，使用编辑的消息内容
-        const initialText = editMessage ? editMessage.message : currentText;
-        
+
+        // 如果是编辑模式，使用系统的解密函数解密消息内容
+        let initialText = currentText;
+        if (editMessage && editMessage.encryptedMessage) {
+            try {
+                initialText = await encryptors.decrypt2string(editMessage.encryptedMessage);
+            } catch (e) {
+                initialText = '[解密失败，无法编辑]';
+            }
+        }
+
                 // 生成时间选择器的默认值（当前北京时间）
 
         const defaultTime = editMessage
@@ -492,7 +532,7 @@ class ScheduledMessagePlugin {
         // 默认截止日期（3个月后）
         const defaultUntil = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
         const defaultUntilStr = this.formatDateTimeLocal(defaultUntil);
-        
+
         const modalContent = `
             <div class="scheduled-message-modal">
                 <div class="sm-form-group">
@@ -502,12 +542,12 @@ class ScheduledMessagePlugin {
                     </div>
                     <textarea class="sm-textarea" id="sm-message" placeholder="请输入要发送的消息内容...">${initialText}</textarea>
                 </div>
-                
+
                 <div class="sm-form-group">
                     <label class="sm-label">发送时间</label>
                     <input type="datetime-local" class="sm-input" id="sm-time" value="${defaultTimeStr}" min="${this.formatDateTimeLocal(new Date())}">
                 </div>
-                
+
                 <div class="sm-form-group">
                     <label class="sm-label">重复设置</label>
                     <select class="sm-select" id="sm-repeat">
@@ -517,12 +557,12 @@ class ScheduledMessagePlugin {
                         <option value="monthly" ${editMessage?.repeat?.type === 'monthly' ? 'selected' : ''}>每月</option>
                     </select>
                 </div>
-                
+
                 <div class="sm-form-group sm-repeat-until-group" style="display: ${editMessage?.repeat?.type && editMessage.repeat.type !== 'none' ? 'flex' : 'none'}">
                     <label class="sm-label">截止时间</label>
                     <input type="datetime-local" class="sm-input" id="sm-until" value="${editMessage?.repeat?.until ? this.formatDateTimeLocal(new Date(editMessage.repeat.until)) : defaultUntilStr}">
                 </div>
-                
+
                 <div class="sm-actions">
                     ${editMessage ? `
                         <button class="sm-btn sm-btn-secondary" id="sm-cancel-edit">取消编辑</button>
@@ -534,14 +574,14 @@ class ScheduledMessagePlugin {
                 </div>
             </div>
         `;
-        
+
         const modal = this.api.ui.showModal({
             title: editMessage ? '编辑定时消息' : '创建定时消息',
             content: modalContent,
             width: '450px',
             height: 'auto'
         });
-        
+
         // 绑定事件
         this.bindModalEvents(modal, contactInfo, editMessage);
     }
@@ -615,12 +655,15 @@ class ScheduledMessagePlugin {
                 const contactType = contactInfo.contactType === 'group' ? 2 : 1;
                 const repeatUntil = repeatType !== 'none' ? new Date(untilStr).toISOString() : null;
 
+                // 立即加密消息内容（使用系统加密密钥）
+                const encryptedMessage = await this.encryptWithDefaultKey(message);
+
                 const results = await this.api.database.query(
                     `INSERT INTO "plugin_scheduled-message_tasks"
-                     (message, contact_type, xxid, ceid, contact_name, scheduled_time, status, repeat_type, repeat_until)
+                     (encrypted_message, contact_type, xxid, ceid, contact_name, scheduled_time, status, repeat_type, repeat_until)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                     [
-                        message,
+                        encryptedMessage, // 只存储加密后的消息
                         contactType,
                         contactInfo.xxid,
                         contactInfo.ceid || null,
@@ -709,11 +752,14 @@ class ScheduledMessagePlugin {
                 const repeatUntil = repeatType !== 'none' ? this.parseDateTimeLocal(untilStr).toISOString() : null;
                 const scheduledTime = this.parseDateTimeLocal(timeStr).toISOString();
 
+                // 重新加密消息内容
+                const encryptedMessage = await this.encryptWithDefaultKey(message);
+
                 await this.api.database.query(
                     `UPDATE "plugin_scheduled-message_tasks"
-                     SET message = ?, scheduled_time = ?, repeat_type = ?, repeat_until = ?, updated_time = ?
+                     SET encrypted_message = ?, scheduled_time = ?, repeat_type = ?, repeat_until = ?, updated_time = ?
                      WHERE id = ?`,
-                    [message, scheduledTime, repeatType, repeatUntil, new Date().toISOString(), messageId]
+                    [encryptedMessage, scheduledTime, repeatType, repeatUntil, new Date().toISOString(), messageId]
                 );
 
                 // 重新加载列表
@@ -766,9 +812,9 @@ class ScheduledMessagePlugin {
             if (pendingMessages.length > 0) {
                 listHtml += '<div class="sm-section"><h4 class="sm-section-title">待发送</h4>';
                 listHtml += '<div class="sm-message-list">';
-                pendingMessages.forEach(msg => {
-                    listHtml += this.renderMessageItem(msg);
-                });
+                for (const msg of pendingMessages) {
+                    listHtml += await this.renderMessageItem(msg);
+                }
                 listHtml += '</div></div>';
             }
 
@@ -776,9 +822,9 @@ class ScheduledMessagePlugin {
             if (sentMessages.length > 0) {
                 listHtml += '<div class="sm-section"><h4 class="sm-section-title">已发送</h4>';
                 listHtml += '<div class="sm-message-list">';
-                sentMessages.slice(-10).reverse().forEach(msg => {
-                    listHtml += this.renderMessageItem(msg, true);
-                });
+                for (const msg of sentMessages.slice(-10).reverse()) {
+                    listHtml += await this.renderMessageItem(msg, true);
+                }
                 listHtml += '</div></div>';
             }
         }
@@ -959,10 +1005,20 @@ class ScheduledMessagePlugin {
     /**
      * 渲染消息项
      */
-    renderMessageItem(msg, isSent = false) {
+    async renderMessageItem(msg, isSent = false) {
         const repeatText = this.getRepeatText(msg.repeat);
         const timeStr = this.formatDisplayTime(new Date(msg.scheduledTime));
-        
+
+        // 使用系统的解密函数解密消息内容
+        let displayText = '';
+        if (msg.encryptedMessage) {
+            try {
+                displayText = await encryptors.decrypt2string(msg.encryptedMessage);
+            } catch (e) {
+                displayText = '[需要登录后查看消息内容]';
+            }
+        }
+
         return `
             <div class="sm-message-item ${isSent ? 'sm-sent' : ''}" data-id="${msg.id}">
                 <div class="sm-message-header">
@@ -976,7 +1032,7 @@ class ScheduledMessagePlugin {
                         ${repeatText ? `<span class="sm-repeat-badge">${repeatText}</span>` : ''}
                     </span>
                 </div>
-                <div class="sm-message-content">${this.escapeHtml(msg.message)}</div>
+                <div class="sm-message-content">${this.escapeHtml(displayText)}</div>
                 <div class="sm-message-actions">
                     ${!isSent ? `
                         <button class="sm-action-btn sm-edit" title="编辑"><i class="bi bi-pencil"></i></button>
@@ -1251,7 +1307,7 @@ class ScheduledMessagePlugin {
                         // 转换为插件格式
                         const pluginMsg = {
                             id: msg.id.toString(),
-                            message: msg.message,
+                            encryptedMessage: msg.encrypted_message,  // 使用加密消息字段
                             contactType: msg.contact_type === 2 ? 'group' : 'user',
                             xxid: msg.xxid,
                             ceid: msg.ceid,
@@ -1346,10 +1402,10 @@ class ScheduledMessagePlugin {
         try {
             // contact_type: 1=私聊(user), 2=群聊(group)
             const contactType = msg.contactType === 'group' ? 2 : 1;
-            
-            // 使用系统默认密钥加密消息
-            const dataText = await this.encryptWithDefaultKey(msg.message);
-            
+
+            // 直接使用已加密的消息
+            const dataText = msg.encryptedMessage;
+
             // 构建请求体
             const body = {
                 contact_type: contactType,
@@ -1357,18 +1413,18 @@ class ScheduledMessagePlugin {
                 type: 1, // 文本消息
                 data_text: dataText
             };
-            
+
             if (msg.contactType === 'group') {
                 body.gid = msg.xxid;
             } else {
                 body.uid = msg.xxid;
             }
             body.ceid = msg.ceid;
-            
+
             // 发送请求（使用正确的路径）
             // 在本地开发环境中，top_level_path 可能未定义，使用默认值
-            const top_level_path = (typeof window.top_level_path !== 'undefined' && window.top_level_path !== null && window.top_level_path !== '') 
-                ? window.top_level_path 
+            const top_level_path = (typeof window.top_level_path !== 'undefined' && window.top_level_path !== null && window.top_level_path !== '')
+                ? window.top_level_path
                 : '/code';
             const response = await fetch(`${top_level_path}/chat/api/send`, {
                 method: 'POST',
@@ -1376,14 +1432,14 @@ class ScheduledMessagePlugin {
                 credentials: 'same-origin',
                 body: JSON.stringify(body)
             });
-            
+
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`发送失败: ${response.status} - ${errorText}`);
             }
-            
+
             console.log(`✓ 定时消息已发送给 ${msg.contactName}`);
-            
+
         } catch (error) {
             console.error('发送定时消息失败:', error);
             throw error;
@@ -1391,19 +1447,26 @@ class ScheduledMessagePlugin {
     }
 
     /**
-     * 使用系统默认密钥加密消息
-     * default_key 是系统中预定义的默认加密密钥，用于不需要用户密钥的场景
+     * 使用系统加密密钥加密消息
+     * 与系统加密算法保持一致：PBKDF2 派生密钥 + AES-GCM 加密
      */
     async encryptWithDefaultKey(text) {
-        // 使用与系统相同的加密算法
-        const defaultKey = "C******"; // 系统默认密钥
+        if (!this.encryptionKey) {
+            throw new Error('加密密钥未初始化');
+        }
+
+        // 使用与系统相同的加密算法（参考 checkin-v4release.html 中的 Encryptors 类）
+        // 系统使用 PBKDF2 派生密钥，而不是 SHA-256
+        const encoder = new TextEncoder();
         
-        // 派生密钥
-        const passwordSalt = new Uint8Array([123, 148, 39, 173, 6, 29, 41, 39, 216, 104, 177, 152, 227, 38, 73, 104]);
+        // 固定的 salt（与系统一致）
+        const password_salt = new Uint8Array([123, 148, 39, 173, 6, 29, 41, 39, 216, 104, 177, 152, 227, 38, 73, 104]);
+        
+        // 1. 使用 PBKDF2 派生密钥（与系统一致：1000 次迭代，SHA-256）
         const keyMaterial = await crypto.subtle.importKey(
             'raw',
-            new TextEncoder().encode(defaultKey),
-            { name: 'PBKDF2' },
+            encoder.encode(this.encryptionKey),
+            {name: 'PBKDF2'},
             false,
             ['deriveKey']
         );
@@ -1411,35 +1474,33 @@ class ScheduledMessagePlugin {
         const key = await crypto.subtle.deriveKey(
             {
                 name: 'PBKDF2',
-                salt: passwordSalt,
-                iterations: 1_000,
+                salt: password_salt,
+                iterations: 1000,
                 hash: 'SHA-256'
             },
             keyMaterial,
-            { name: 'AES-GCM', length: 128 },
+            {name: 'AES-GCM', length: 128}, // 系统使用 128 位密钥
             false,
             ['encrypt']
         );
         
-        // 加密
+        // 2. 生成 12 字节随机 IV
         const iv = crypto.getRandomValues(new Uint8Array(12));
-        const encryptedBytes = await crypto.subtle.encrypt(
+        
+        // 3. 加密
+        const encryptedBuffer = await crypto.subtle.encrypt(
             { name: 'AES-GCM', iv },
             key,
-            new TextEncoder().encode(text)
+            encoder.encode(text)
         );
         
-        // 合并 IV 和密文
-        const combined = new Uint8Array(iv.length + encryptedBytes.byteLength);
+        // 4. 合并 IV 和密文
+        const combined = new Uint8Array(iv.length + encryptedBuffer.byteLength);
         combined.set(iv);
-        combined.set(new Uint8Array(encryptedBytes), iv.length);
+        combined.set(new Uint8Array(encryptedBuffer), iv.length);
         
-        // 转换为 Base64
-        let binary = '';
-        for (let i = 0; i < combined.length; i++) {
-            binary += String.fromCharCode(combined[i]);
-        }
-        return btoa(binary);
+        // 5. 转换为 Base64
+        return btoa(String.fromCharCode(...combined));
     }
 
     /**
