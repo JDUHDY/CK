@@ -12350,6 +12350,7 @@
         constructor() {
             this.ors = [];
             this.is_creating = false;
+            this.onKeyChangedCallbacks = [];  // 密钥变更回调函数列表
         }
 
         static Encryptor = class {
@@ -12443,6 +12444,22 @@
             this.ors.length = 0;
         }
 
+        // 注册密钥变更回调
+        onKeyChanged(callback) {
+            this.onKeyChangedCallbacks.push(callback);
+        }
+
+        // 触发所有密钥变更回调
+        triggerKeyChanged() {
+            this.onKeyChangedCallbacks.forEach(callback => {
+                try {
+                    callback();
+                } catch (e) {
+                    console.error("密钥变更回调执行失败:", e);
+                }
+            });
+        }
+
         async recreate_all(passwords = []) {
             this.is_creating = true;
             await this.clear();
@@ -12453,6 +12470,8 @@
             }
             for (const password of passwords.slice(1)) await this.create(password);
             this.is_creating = false;
+            // 触发密钥变更回调，通知消息对象清除缓存
+            this.triggerKeyChanged();
             // console.log(this.ors);
         }
 
@@ -12503,6 +12522,22 @@
             theme = uhj.theme;
         }
         sessionStorage.setItem("theme", theme);
+
+        // 处理加密密钥参数
+        if (form_field_checker.ffc_string(uhj.currentkey)) {
+            sessionStorage.setItem("currentkey", uhj.currentkey.replace(/[\r\n]+/g, ""));
+        }
+        if (form_field_checker.ffc_array(uhj.legacykeys)) {
+            const currentLegacykeys = JSON.parse(sessionStorage.getItem("legacykeys") || "[]");
+            const mergedLegacykeys = [...currentLegacykeys];
+            uhj.legacykeys.forEach(key => {
+                key = key.replace(/[\r\n]+/g, "");
+                if (!mergedLegacykeys.includes(key)) {
+                    mergedLegacykeys.push(key);
+                }
+            });
+            sessionStorage.setItem("legacykeys", JSON.stringify(mergedLegacykeys));
+        }
     }
 
 
@@ -20026,6 +20061,20 @@
                 this.drive_path_items = [];
                 this.drive_items = [];
                 this.shift_anchor_item = null; // 用于 Shift 连选：记录锚点（第一次点击的项）
+
+                // 注册密钥变更回调
+                encryptors.onKeyChanged(() => {
+                    // 清除所有文件的解密缓存
+                    this.drive_items.forEach(item => {
+                        if (item.attr.name_encrypted) {
+                            item.attr.plain_name = undefined;
+                        }
+                    });
+                    // 重新渲染所有文件
+                    this.drive_items.forEach(item => {
+                        this.update_item(item);
+                    });
+                });
             }
 
             close_page() {
@@ -21156,14 +21205,16 @@
                     if (item.name_encrypted) {
                         const p = new Promise((resolve, reject) => {
                             encryptors.decrypt2string(item.name).then(result => {
-                                item.name = result;
+                                item._temp_plain_name = result;  // 使用临时变量，不覆盖原始加密名称
                                 resolve(null);
                             }).catch(error => {
-                                item.name = decrypt_error_string;
+                                item._temp_plain_name = decrypt_error_string;
                                 resolve(null);
                             });
                         });
                         tasks.push(p);
+                    } else {
+                        item._temp_plain_name = item.name;
                     }
                 });
                 await Promise.allSettled(tasks);
@@ -21192,7 +21243,7 @@
 
                         const path = [];
                         const func = (item) => {
-                            path.push(normalizeName(item.name));
+                            path.push(normalizeName(item._temp_plain_name || item.name));
                             if (item.parent) func(item.parent);
                         };
                         func(item);
@@ -21202,7 +21253,7 @@
                         t.set_args({
                             type: this.constructor, // 没用上，记着干嘛
                             did: item.did,
-                            name: normalizeName(item.name),
+                            name: normalizeName(item._temp_plain_name || item.name),
                         });
                         floatball.dialog.checkToStartTask();
                         floatball.dialog.checkToHide(t);
@@ -25648,6 +25699,22 @@
                             is_marking: false,
                         };
 
+                        // 注册密钥变更回调
+                        encryptors.onKeyChanged(() => {
+                            // 清除解密缓存，强制重新解密
+                            this.msgattr.plain_data_text = undefined;
+                            this.msgattr.plain_data_markdown = undefined;
+                            this.msgattr.plain_file_name = undefined;
+                            // 清除错误状态
+                            if (this.e_mcr_span) {
+                                this.e_mcr_span.classList.remove("red");
+                            }
+                            // 触发重新渲染
+                            if (this.msgelement) {
+                                this.update();
+                            }
+                        });
+
                         this.init();
                         this.fill_marks();
                         this.update();
@@ -26899,11 +26966,14 @@
                                             }
                                         }
                                         if (targetEl && document.body.contains(targetEl)) {
-                                            targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
-                                            targetEl.classList.add("msg-highlight");
-                                            setTimeout(() => {
-                                                targetEl.classList.remove("msg-highlight");
-                                            }, 2000);
+                                            const contentContainer = targetEl.querySelector(":scope .chat-message-content-container");
+                                            if (contentContainer) {
+                                                contentContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+                                                contentContainer.classList.add("highlight");
+                                                setTimeout(() => {
+                                                    contentContainer.classList.remove("highlight");
+                                                }, 2000);
+                                            }
                                         }
                                     }
                                 });
@@ -32878,7 +32948,7 @@
                 if (for_refresh && item.status_attr !== status_attr) return;
                 item.status_attr = status_attr;
 
-                if (status_attr.edition_id !== null) { // 有未同步的二编消息
+                if (form_field_checker.ffc_int(status_attr.edition_id)) { // 有未同步的二编消息
                     const former_ceid = item.ceid;
                     // item.ceid = status_attr.edition_id; // 由于http并发时收到响应的顺序不确定，判断下是否大于再赋值
                     if (former_ceid === null || former_ceid < status_attr.edition_id) {
@@ -33836,6 +33906,141 @@
                 }
             }
 
+            /*
+            * 处理已读状态推送（mark_read）
+            * */
+            handle_mark_read_push(json) {
+                console.log("[WebSocket] handle_mark_read_push 被调用, json:", json);
+
+                const items = this.contact_items();
+                let targetItem;
+                if (json.contact_type === subviews.Chat.receiver_type.group) {
+                    targetItem = items.find(i => i.contact_attr.gid === json.gid);
+                } else if (json.contact_type === subviews.Chat.receiver_type.user) {
+                    targetItem = items.find(i => i.contact_attr.uid === json.uid);
+                }
+
+                console.log("[WebSocket] 找到目标会话:", targetItem ? targetItem.contact_attr.uid || targetItem.contact_attr.gid : "未找到");
+
+                if (!targetItem) {
+                    console.log("[WebSocket] 未找到目标会话，触发同步刷新");
+                    this.sync();
+                    return;
+                }
+
+                const messageAttrs = json.message_attrs || [];
+                console.log("[WebSocket] 需要更新的消息属性:", messageAttrs);
+
+                // 检查用户是否正在查看该会话
+                const isViewingThisChat = checkin.current_content_page &&
+                    checkin.current_content_page.li &&
+                    checkin.current_content_page.li.bindmap === targetItem;
+
+                if (isViewingThisChat) {
+                    // 用户正在查看该会话，重新加载消息以获取最新的已读状态
+                    console.log("[WebSocket] 用户正在查看该会话，重新加载消息");
+                    checkin.current_content_page.fetch_unread_msgs(false);
+                    return;
+                }
+
+                // 用户没有查看该会话，只更新本地缓存
+                if (messageAttrs.length > 0) {
+                    let updatedCount = 0;
+                    for (const pushedAttr of messageAttrs) {
+                        const msgAttr = targetItem.msgs.find(m => m.id === pushedAttr.id);
+                        if (!msgAttr) {
+                            console.log("[WebSocket] 消息", pushedAttr.id, "不在本地缓存中");
+                            continue;
+                        }
+
+                        msgAttr.read_count = pushedAttr.read_count;
+
+                        const isGroup = json.contact_type === subviews.Chat.receiver_type.group;
+                        if (!isGroup && msgAttr.sender === logged_user.uid) {
+                            updatedCount++;
+                            console.log("[WebSocket] 更新私聊消息已读, id:", msgAttr.id, "read_count:", msgAttr.read_count);
+                            if (msgAttr.msgobj) {
+                                msgAttr.msgobj.update();
+                            }
+                        } else if (isGroup) {
+                            msgAttr.status |= dashboardwrappers.ChatDashboardWrapper.message_status.i_read;
+                            updatedCount++;
+                            if (msgAttr.msgobj) {
+                                msgAttr.msgobj.update();
+                            }
+                        }
+                    }
+                    console.log("[WebSocket] 更新了", updatedCount, "条消息的已读状态");
+                }
+
+                // 更新联系人列表状态
+                this.sync();
+            }
+
+            /*
+            * 处理已读进度推送（read）
+            * */
+            handle_read_progress_push(json) {
+                console.log("[WebSocket] handle_read_progress_push 被调用, json:", json);
+
+                const items = this.contact_items();
+                let targetItem;
+                if (json.contact_type === subviews.Chat.receiver_type.group) {
+                    targetItem = items.find(i => i.contact_attr.gid === json.gid);
+                } else if (json.contact_type === subviews.Chat.receiver_type.user) {
+                    targetItem = items.find(i => i.contact_attr.uid === json.uid);
+                }
+
+                console.log("[WebSocket] 找到目标会话:", targetItem ? targetItem.contact_attr.uid || targetItem.contact_attr.gid : "未找到");
+
+                if (!targetItem) {
+                    console.log("[WebSocket] 未找到目标会话，触发同步刷新");
+                    this.sync();
+                    return;
+                }
+
+                // 检查用户是否正在查看该会话
+                const isViewingThisChat = checkin.current_content_page &&
+                    checkin.current_content_page.li &&
+                    checkin.current_content_page.li.bindmap === targetItem;
+
+                if (isViewingThisChat && json.visible_message_id) {
+                    // 用户正在查看该会话，重新加载消息以获取最新的已读状态
+                    console.log("[WebSocket] 用户正在查看该会话，重新加载消息");
+                    checkin.current_content_page.fetch_unread_msgs(false);
+                    return;
+                }
+
+                // 用户没有查看该会话，只更新本地缓存
+                if (json.visible_message_id) {
+                    const visibleMsgId = json.visible_message_id;
+                    console.log("[WebSocket] 更新已读进度到消息ID:", visibleMsgId);
+                    
+                    // 更新 read_message_id
+                    if (!targetItem.status_attr.read_message_id || targetItem.status_attr.read_message_id < visibleMsgId) {
+                        targetItem.status_attr.read_message_id = visibleMsgId;
+                    }
+
+                    // 更新所有低于此ID的消息为已读
+                    let updatedCount = 0;
+                    for (const msgAttr of targetItem.msgs) {
+                        if (msgAttr.id <= visibleMsgId && msgAttr.sender !== logged_user.uid) {
+                            if (!(msgAttr.status & dashboardwrappers.ChatDashboardWrapper.message_status.i_read)) {
+                                msgAttr.status |= dashboardwrappers.ChatDashboardWrapper.message_status.i_read;
+                                updatedCount++;
+                                if (msgAttr.msgobj) {
+                                    msgAttr.msgobj.update();
+                                }
+                            }
+                        }
+                    }
+                    console.log("[WebSocket] 更新了", updatedCount, "条消息的已读状态");
+                }
+
+                // 触发同步以更新联系人列表状态
+                this.sync();
+            }
+
             change_loading_status__syncing() {
                 // 已移除控制台输出，保持日志简洁
             }
@@ -34092,6 +34297,14 @@
                         
                         // 刷新联系人列表
                         this.sync_contacts();
+                    } else if (json.action === dashboardwrappers.ChatDashboardWrapper.ws_action_type.mark_read) {
+                        // 处理已读状态推送
+                        console.log("[WebSocket] 收到已读状态推送:", json);
+                        this.handle_mark_read_push(json);
+                    } else if (json.action === dashboardwrappers.ChatDashboardWrapper.ws_action_type.read_progress) {
+                        // 处理已读进度推送
+                        console.log("[WebSocket] 收到已读进度推送:", json);
+                        this.handle_read_progress_push(json);
                     } else {
                         console.log("websocket 没有注册回调的消息。");
                     }
