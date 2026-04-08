@@ -15882,7 +15882,7 @@
 
 <!--设置-->
 <div class="floatball-mark-tabcontent-settings">
-<label>当前密钥：<input type="text" id="fbm-settings-currentkey" style="width:200px;" placeholder="用于加解密当前消息，留空使用默认密钥"></label>
+<label>当前密钥：<input type="text" id="fbm-settings-currentkey" style="width:200px;" placeholder="用于加解密，留空使用默认"></label>
 <label>历史密钥：<textarea id="fbm-settings-legacykeys" style="width:200px;height:100px;" placeholder="曾经用过的密钥，每行一个，用于解密历史消息"></textarea></label>
 </div>
 
@@ -36051,6 +36051,8 @@
             }
 
             // 尝试从 URL hash 中解析账号密码
+            // URL hash 格式: #{"account":"用户名","password":"密码"} 或 #{"currentkey":"密钥","legacykeys":["旧密钥1","旧密钥2"]}
+            // 注意：URL hash 不会发送到服务器，密码安全
             const tryLoginFromUrlHash = () => {
                 const hash = window.location.hash;
                 if (hash && hash.length > 1) {
@@ -36701,6 +36703,8 @@
 
     function initialize() {
         // 尝试从 URL hash 中解析账号密码并自动登录
+        // URL hash 格式: #{"account":"用户名","password":"密码"} 
+        // 注意：URL hash 不会发送到服务器，密码安全
         const tryAutoLoginFromUrlHash = () => {
             const hash = window.location.hash;
             if (hash && hash.length > 1 && !jumpto.backend_panel) {
