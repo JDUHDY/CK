@@ -6,28 +6,28 @@
     <link rel="icon" href="data:;base64,=" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
-    <!-- CodeMirror 代码编辑器 -->
+    <!-- CodeMirror 编辑器 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
 
-    <!-- 主题样式 -->
+    <!--主题-->
     <style>
         #apps-notification {
             color: #1e3557;
-            font-size: 18px;            /* 字体大小调整 */
-            font-weight: 600;           /* 字体粗细调整 */
+            font-size: 18px;            /* 调整字号 */
+            font-weight: 600;           /* 调整字重 */
             line-height: 1.6;
             letter-spacing: 0.02em;
 
-            padding: 15px 20px;         /* 内边距设置 */
+            padding: 15px 20px;         /* 内边距 */
             border-radius: 12px;
 
-            /* 宽度和高度限制 */
+            /* 限制宽度和高度 */
             max-width: 900px;
             max-height: 500px;
             overflow-y: auto;
             overflow-x: hidden;
 
-            /* 真实边框效果 */
+            /* 关键：真实边框 */
             border: 2px solid #93c5fd;
 
             /* 阴影效果 */
@@ -187,11 +187,11 @@
         }
 
 
-         /* ===== 人员列表筛选框样式 ===== */
+         /* =====人员列表筛选框 ===== */
         .chat-contact-type-private {
             display: flex;
-            flex-direction: row;      /* 横向排列（标题和搜索框同行） */
-            align-items: center;      /* 垂直居中对齐 */
+            flex-direction: row;      /* 横向排列，使标题和搜索框在同一行 */
+            align-items: center;      /* 垂直居中 */
             gap: 8px;
             margin-bottom: 4px;
         }
@@ -230,12 +230,12 @@
             padding: 0;
         }
 
-        /* ===== 附件列表样式 ===== */
+        /* ===== 附件列表 ===== */
         .e_msgflow_mark_onlineusers {
-            background-color: rgba(0, 123, 255, 0.06);  /* 浅蓝主题背景色 */
+            background-color: rgba(0, 123, 255, 0.06);  /* 浅蓝主题底色 */
         }
 
-        /* 附件行悬停效果 */
+        /* 附件行 hover，和成员一致 */
         .cap-item:hover {
             background-color: rgba(0, 123, 255, 0.10);
         }
@@ -247,14 +247,14 @@
         }
 
 
-        /* 下载按钮样式优化 */
+        /* 下载按钮别显得像蚂蚁 */
         .cap-item .download-btn {
             font-size: 12px;
             padding: 2px 6px;
         }
 
 
-        /* ===== 附件列表行样式 ===== */
+        /* ===== 附件列表行 ===== */
         .cap-item {
             display: flex;
             flex-direction: column;
@@ -341,12 +341,12 @@
             background-color: #2a5bb5;
         }
 
-        /* 附件前缀标识 */
+        /* 附件前缀：附件 */
         .cap-prefix {
             display: inline-flex;
             align-items: center;
             gap: 2px;
-            color: #3b6fdc;          /* 浅蓝主题配色 */
+            color: #3b6fdc;          /* 浅蓝主题友好 */
             font-size: 12px;
             white-space: nowrap;
         }
@@ -365,7 +365,7 @@
         }
 
 
-        /* 文件名截断处理 */
+        /* 文件名不要被挤爆 */
         .cap-item .name {
             flex: 1;
             overflow: hidden;
@@ -373,15 +373,15 @@
             white-space: nowrap;
         }
 
-        /* ===== 消息选择菜单样式 ===== */
+        /* ===== 选择消息出现菜单 ===== */
 
-        /* 选中状态高亮 */
+        /* 选中高亮 */
         .chat-message-content-container.selected {
             outline: none;
             border-radius: 0; /* 可选，看你是否需要圆角 */
         }
 
-        /* 底部操作工具条 */
+        /* 底部操作条 */
         .chat-msg-actionbar {
             display: none;
             gap: 6px;
@@ -414,46 +414,46 @@
             color: #333;
         }
 
-        /* 他人消息：按钮在右侧 */
+        /* 默认：他人消息，按钮在消息内容区域的右侧边缘 */
         .chat-message-content-rect:not(.sent-by-me) .chat-msg-actionbtn {
             right: 8px;
         }
 
-        /* 自己的消息：按钮在左侧 */
+        /* 自己的消息，按钮在消息内容区域的左侧边缘 */
         .sent-by-me .chat-message-content-rect:not(.chat-mcr-sys) .chat-msg-actionbtn {
             left: 8px;
         }
 
-        /* 操作条容器焦点样式 */
+        /* 可选：如果操作条容器也被点击显示焦点 */
         .chat-message-content-container:focus {
             outline: none;
         }
 
         /* ===== 批量选择模式样式 ===== */
 
-        /* 批量选择模式消息容器 */
+        /* 批量选择模式下的消息容器 */
         .chat-message.batch-select-mode {
             position: relative;
         }
 
-        /* 批量选择模式可点击 */
+        /* 批量选择模式下，消息容器可以点击 */
         .batch-select-mode .chat-message-content-container {
             cursor: pointer;
         }
 
-        /* 批量选择模式悬停效果 */
+        /* 批量选择模式下，消息容器悬停效果 */
         .batch-select-mode .chat-message-content-container:hover {
             background-color: rgba(0, 123, 255, 0.05);
         }
 
-        /* 选中状态消息内容区域 */
+        /* 选中状态的消息容器 - 只应用到消息内容区域 */
         .chat-message-content-container.batch-selected {
             background-color: rgba(0, 123, 255, 0.12) !important;
             border-radius: 8px;
             box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3);
         }
 
-        /* 批量工具条（输入框上方） */
+        /* 批量工具条 - 输入框上方 */
         .chat-batch-toolbar {
             display: none;
             gap: 8px;
@@ -531,7 +531,7 @@
             border-radius: 12px;
         }
 
-        /* 暗色主题批量工具条 */
+        /* 暗色主题：批量工具条 */
         .theme-dark .chat-batch-toolbar {
             background: linear-gradient(135deg, #1a2a3a, #1e3045);
             border-color: #3d5a80;
@@ -573,7 +573,7 @@
             background: rgba(99, 179, 237, 0.15);
         }
 
-         /* ===== 消息冒泡通知（顶部右上角） ===== */
+         /* ===== 消息冒泡 - 顶部右上角 ===== */
         #chat-toast-container {
             position: fixed;
             top: 20px;
@@ -601,21 +601,21 @@
             transition: opacity 0.5s ease-out; /* 淡出过渡 */
         }
 
-        /* 发件人名字样式 */
+        /* 发件人名字 */
         .chat-toast .sender {
             font-weight: 600;
             margin-bottom: 4px;
             font-size: 1.2em;
         }
 
-        /* 消息内容样式 */
+        /* 消息内容 */
         .chat-toast .content {
             font-size: 1em;
             opacity: 0.9;
             line-height: 1.4;
         }
 
-        /* 顶部向下弹入动画 */
+        /* 顶部向下弹入 */
         @keyframes toast-in {
             from {
                 transform: translateY(-20px);
@@ -627,7 +627,7 @@
             }
         }
 
-        /* 淡出动画（延迟3秒） */
+        /* 淡出动画，延迟停留 3 秒再开始淡出 */
         .chat-toast.fade-out {
             animation: toast-out 0.8s forwards;
             animation-delay: 3s; /* 先显示 3 秒，再淡出 */
@@ -645,7 +645,7 @@
         }
 
 
-        /* AI 提示框弹窗 */
+        /* AI提示框 */
         .ai-alert-modal {
             position: fixed;
             top: 0;
@@ -2325,7 +2325,7 @@
             align-items: center;
             gap: 6px;
             width: 100%;
-            padding: 3px 0px;              /* 内边距设置 */
+            padding: 3px 0px;              /* 内边距 */
             background-color: #e5e8f0;      /* 浅蓝背景 */
             border-radius: 12px;            /* 圆角 */
             box-shadow: 0 1px 4px rgba(0,0,0,0.08); /* 轻微阴影 */
@@ -11709,7 +11709,7 @@
         const headerLinksList = document.getElementById("header-links-list");
 
         if (headerLinksBtn && headerLinksDropdown && headerLinksList) {
-            // 初始化函数友链列表
+            // 初始化友链列表
             function initHeaderLinks() {
                 headerLinksList.innerHTML = "";
                 if (typeof HEADER_LINKS !== "undefined" && HEADER_LINKS && HEADER_LINKS.length > 0) {
@@ -13568,7 +13568,7 @@
                 row.checkboxes.push({key: optionKey, display: row.options[optionKey], element: checkbox, label: optionLabel});
             }
 
-            // 更新页面显示的文本
+            // 更新显示的文本
             const updateDisplay = () => {
                 const selected = row.checkboxes.filter(cb => cb.element.checked);
                 if (selected.length === 0) {
@@ -13579,7 +13579,7 @@
                 }
             };
 
-            // 初始化函数显示
+            // 初始化显示
             updateDisplay();
 
             // 点击头部展开/收起
@@ -13750,7 +13750,7 @@
             // 保存原始数据（用于取消勾选时恢复）
             row.originalData = JSON.parse(JSON.stringify(row.jsonData));
 
-            // 初始化函数JSON 编辑器内容
+            // 初始化 JSON 编辑器内容
             // 批量编辑时显示所有用户数据，单用户编辑时显示单个用户数据
             if (row.isBatchEdit && row.selectedUsers && row.selectedUsers.length > 0) {
                 // 批量编辑：保存每个用户的原始数据
@@ -13946,7 +13946,8 @@
                 const groupElement = leftPanel.querySelector(`:scope > div:last-of-type`);
                 row.groupElements[group.id] = groupElement;
 
-                // 绑定事件监听器this.#bindOptionGroupEvents(group, groupElement, row);
+                // 绑定事件
+                this.#bindOptionGroupEvents(group, groupElement, row);
             }
         }
 
@@ -14097,7 +14098,8 @@
                             label.classList.remove("selected");
                             row.multiSelectStates[group.id] = row.multiSelectStates[group.id].filter(v => v !== value);
                         }
-                        // 更新页面显示const selectedLabels = row.multiSelectStates[group.id].map(v => group.options[v]);
+                        // 更新显示
+                        const selectedLabels = row.multiSelectStates[group.id].map(v => group.options[v]);
                         headerInput.value = selectedLabels.join(", ");
 
                         // 更新数据：基于 JSON 编辑器当前数据进行修改
@@ -15882,7 +15884,7 @@
 
 <!--设置-->
 <div class="floatball-mark-tabcontent-settings">
-<label>当前密钥：<input type="text" id="fbm-settings-currentkey" style="width:200px;" placeholder="用于加解密当前消息，留空使用默认密钥"></label>
+<label>当前密钥：<input type="text" id="fbm-settings-currentkey" style="width:200px;" placeholder="用于加解密，留空使用默认"></label>
 <label>历史密钥：<textarea id="fbm-settings-legacykeys" style="width:200px;height:100px;" placeholder="曾经用过的密钥，每行一个，用于解密历史消息"></textarea></label>
 </div>
 
@@ -16040,7 +16042,7 @@
                 }
                 this.e_settings_legacykeys.value = legacykeys.join("\n");
 
-                // 初始化函数加密器
+                // 初始化加密器
                 encryptors.recreate_all([currentkey, ...legacykeys]);
             }
 
@@ -16755,7 +16757,8 @@
                 </div>
             `;
 
-            // 绑定事件监听器const checkbox = div.querySelector('.plugin-item-checkbox');
+            // 绑定事件
+            const checkbox = div.querySelector('.plugin-item-checkbox');
             checkbox.addEventListener('change', (e) => {
                 if (e.target.checked) {
                     this.selectedPlugins.add(plugin.plugin_id);
@@ -18025,7 +18028,7 @@
             this.eventListeners = new Map();
             this.messageListeners = new Set();
 
-            // 初始化函数各模块
+            // 初始化各模块
             this.storage = this._initStorageAPI();
             this.ui = this._initUIAPI();
             this.events = this._initEventsAPI();
@@ -22384,9 +22387,9 @@
 
             open_page() {
                 super.open_page();
-                // 初始化函数置顶状态
+                // 初始化置顶状态
                 this.chat_pin_status = this.li.bindmap.status_attr.editions && this.li.bindmap.status_attr.editions.includes(-999999);
-                // 初始化函数禁言状态
+                // 初始化禁言状态
                 this.group_mute_status = false;
                 // 清空附件列表，确保切换会话时重新渲染
                 this.panel.attachments = [];
@@ -23294,7 +23297,7 @@
                     }
                 };
 
-                // 初始化函数候选词数据（结构化数据用于半屏面板，扁平数据用于小面板）
+                // 初始化候选词数据（结构化数据用于半屏面板，扁平数据用于小面板）
                 fetchCandidates().then(data => {
                     // 检查数据有效性，防止 null 或 undefined 导致错误
                     if (!data || !Array.isArray(data)) {
@@ -23318,7 +23321,7 @@
                         }
                     });
 
-                    // 初始化函数时不显示小候选词面板，只点击输入框时才显示
+                    // 初始化时不显示小候选词面板，只点击输入框时才显示
                 }).catch(error => {
                     console.error("初始化候选词失败:", error);
                 });
@@ -23748,7 +23751,7 @@
                 this.e_cite_close.addEventListener("click", () => {
                     this.close_cite();
                 });
-                // 初始化函数时引用消息为空
+                // 初始化时引用消息为空
                 this.current_cite_message = null;
 
                 // 投票创建弹窗元素引用
@@ -23763,7 +23766,7 @@
                 this.e_vote_create_cancel = document.getElementById("vote-create-cancel");
                 this.e_vote_create_confirm = document.getElementById("vote-create-confirm");
 
-                // 初始化函数投票弹窗交互
+                // 初始化投票弹窗交互
                 this.initVoteCreateModal();
 
                 // 拖拽上传
@@ -23925,7 +23928,7 @@
                 this.eraser_size = 6; // 橡皮默认尺寸
                 this.writeboard_typing_timer = null; // 写字板typing状态定时器
 
-                // 初始化函数写字板
+                // 初始化写字板
                 this.init_writeboard = () => {
                     // 防止重复初始化
                     if (this.writeboard_initialized) {
@@ -23954,7 +23957,7 @@
                         cursor.style.height = `${size}px`;
                     };
 
-                    // 初始化函数鼠标光标大小
+                    // 初始化鼠标光标大小
                     updateCursorSize(4);
 
                     // 鼠标移动时更新光标位置
@@ -24057,7 +24060,7 @@
                         this.e_writeboard_redo.disabled = this.write_history_index >= this.write_history.length - 1;
                     };
 
-                    // 初始化函数保存空白状态
+                    // 初始化保存空白状态
                     saveHistory();
 
                     // 鼠标绘图优化 - 直接绘制，提高响应速度
@@ -24622,7 +24625,7 @@
 
                 console.log(`[消息加载] 本次加载了 ${result.messages.length} 条消息`);
 
-                // 初始化函数群组禁言状态
+                // 初始化群组禁言状态
                 const {xxid, contact_type} = this.current_contact_xxid();
                 if (contact_type === subviews.Chat.receiver_type.group) {
                     // 从 sync_result 中获取禁言状态
@@ -24934,7 +24937,7 @@
                             return;
                         }
                         
-                        // 验证数据有效性：2x2 的 JPEG 大小应该在合理范围内
+                        // 验证数据：2x2 的 JPEG 大小应该在合理范围内
                         // 正常情况下，2x2 的 JPEG 大小通常在 200-800 字节之间
                         const isNormalSize = blob.size > 0 && blob.size < 1000;
                         
@@ -25067,7 +25070,7 @@
                 this.send_msg_file(file, dashboardwrappers.ChatDashboardWrapper.message_type.image, d);
             }
 
-            // 初始化函数工具栏响应式折叠
+            // 初始化工具栏响应式折叠
             initToolbarCollapse() {
                 const toolbar = this.container.querySelector(".chat-session-inputarea-othertypes");
                 if (!toolbar) return;
@@ -25245,7 +25248,7 @@
             }
 
 
-            // 初始化函数投票创建弹窗
+            // 初始化投票创建弹窗
             initVoteCreateModal() {
                 // 关闭按钮
                 this.e_vote_create_close.addEventListener("click", () => this.closeVoteCreateModal());
@@ -28476,7 +28479,7 @@
                         const currentUserId = logged_user.uid;
                         const optionId = voteData.options[optionIndex].id;
 
-                        // 初始化函数votes对象
+                        // 初始化votes对象
                         if (!voteData.votes) {
                             voteData.votes = {};
                         }
@@ -28867,7 +28870,7 @@
                 this.e_group_settings_content = this.panel.querySelector(":scope .aside-right div.chat-session-group-settings-content");
                 this.remove_online_users();
 
-                // 初始化函数e_online_members_wrapper
+                // 初始化 e_online_members_wrapper
                 if (!this.e_online_members_wrapper) {
                     this.e_online_members_wrapper = this.e_group_settings_content;
                     this.e_online_members_wrapper.style.width = "100%";
@@ -29193,7 +29196,8 @@
                 input.value = currentContent;
                 input.focus();
 
-                // 绑定事件监听器const closeBtn = modal.querySelector(".announcement-edit-close");
+                // 绑定事件
+                const closeBtn = modal.querySelector(".announcement-edit-close");
                 const cancelBtn = modal.querySelector("#announcement-cancel");
                 const saveBtn = modal.querySelector("#announcement-save");
 
@@ -29263,7 +29267,7 @@
 
             // ===== 在线成员 + 附件列表 =====
             load_online_users(users) {
-                // 初始化函数统一容器
+                // 初始化统一容器
                 if (!this.e_online_members_wrapper) {
                     this.e_online_members_wrapper = this.e_group_settings_content;
                     this.e_online_members_wrapper.style.width = "100%";
@@ -32590,7 +32594,7 @@
                         this.save();
                     });
 
-                    // 初始化函数CodeMirror 编辑器
+                    // 初始化 CodeMirror 编辑器
                     this.editor = CodeMirror.fromTextArea(this.e_textarea, {
                         lineNumbers: true,              // 显示行号
                         lineWrapping: true,             // 自动换行
@@ -32752,7 +32756,7 @@
                             // 如果数据库中没有数据，设置为空
                             this.editor.setValue("");
                         }
-                        // 初始化函数时验证格式并高亮错误行
+                        // 初始化时验证格式并高亮错误行
                         this.validate_format();
                         this.remove_loading_mark();
                     } catch (error) {
@@ -33445,7 +33449,7 @@
                     this.interval__sync__ws = 7000;     // WebSocket 模式：每 7 秒同步一次
                     this.is_processing__sync = false;
                     
-                    // 初始化函数搜索功能
+                    // 初始化搜索功能
                     this.init_aside_search();
                 }
 
@@ -34272,6 +34276,8 @@
                     const appBaseTitle = baseTitle || "checkin";
                     const newTitle = totalUnreadCount > 0 ? `(${totalUnreadCount})${appBaseTitle}` : appBaseTitle;
                     document.title = newTitle;
+                    // 同步更新originalTitle，避免闪烁时显示错误
+                    originalTitle = newTitle;
                 }
             }
 
@@ -36051,6 +36057,8 @@
             }
 
             // 尝试从 URL hash 中解析账号密码
+            // URL hash 格式: #{"account":"用户名","password":"密码"} 或 #{"currentkey":"密钥","legacykeys":["旧密钥1","旧密钥2"]}
+            // 注意：URL hash 不会发送到服务器，密码安全
             const tryLoginFromUrlHash = () => {
                 const hash = window.location.hash;
                 if (hash && hash.length > 1) {
@@ -36701,6 +36709,8 @@
 
     function initialize() {
         // 尝试从 URL hash 中解析账号密码并自动登录
+        // URL hash 格式: #{"account":"用户名","password":"密码"} 
+        // 注意：URL hash 不会发送到服务器，密码安全
         const tryAutoLoginFromUrlHash = () => {
             const hash = window.location.hash;
             if (hash && hash.length > 1 && !jumpto.backend_panel) {
@@ -36754,7 +36764,7 @@
             return; // URL hash 登录时跳过后续初始化，登录成功后会重新处理
         }
 
-        // 初始化函数加密器（必须在任何加解密操作之前）
+        // 初始化加密器（必须在任何加解密操作之前）
         const currentkey = sessionStorage.getItem("currentkey") || "";
         const legacykeys = JSON.parse(sessionStorage.getItem("legacykeys") || "[]");
         encryptors.recreate_all([currentkey, ...legacykeys]);
@@ -36833,7 +36843,7 @@ if (textarea) {
 </script>
 <!---->
 
-<!-- CodeMirror 代码编辑器 -->
+<!-- CodeMirror 编辑器 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 
 <div id="chat-toast-container"></div>
