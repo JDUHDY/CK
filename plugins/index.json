@@ -1,14 +1,13 @@
-﻿{
+{
   "base_url": "https://raw.githubusercontent.com/JDUHDY/CK/refs/heads/main/plugins/",
   "plugins": [
     {
       "id": "hello-world",
       "name": "Hello World",
       "version": "1.0.0",
-      "admin_only": true,
       "description": "【管理员专用】一个简单的测试插件，在页面顶部显示欢迎横幅。",
       "author": "CC 团队",
-      "manifest_url": "./hello-world/manifest.json",
+      "manifest_url": "./hello-world/manifest.json"
       "admin_only": true
     },
     {
@@ -22,10 +21,18 @@
     {
       "id": "scheduled-message",
       "name": "定时消息",
-      "version": "2.0.0",
+      "version": "1.0.0",
       "description": "支持定时发送消息，可设置一次性发送或周期重复（每日/每周/每月）。到时间自动发送，支持编辑和取消。",
       "author": "CC 团队",
       "manifest_url": "./scheduled-message/manifest.json"
+    },
+    {
+      "id": "task-manager",
+      "name": "任务管理",
+      "version": "1.0.0",
+      "description": "参考滴答清单设计的任务管理插件，支持个人任务和团队协作",
+      "author": "CC 团队",
+      "manifest_url": "./task-manager/manifest.json"
     },
     {
       "id": "team-collab",
@@ -36,13 +43,12 @@
       "manifest_url": "./team-collab/manifest.json"
     },
     {
-    "id": "shared-storage-test",
-    "name": "协作存储测试",
-    "version": "1.0.0",
-    "description":
-    "用于测试插件协作存储功能的示例插件，支持全局共享和群组共享数据的读写测试。",
-    "author": "CC 团队",
-    "manifest_url": "./shared-storage-test/manifest.json"
+      "id": "batch-file-sender",
+      "name": "批量发文件",
+      "version": "1.0.0",
+      "description": "从总文件夹识别用户子文件夹并批量发送文件，支持全局/单人暂停继续、文件与联系人移除。",
+      "author": "CC 团队",
+      "manifest_url": "./batch-file-sender/manifest.json"
     }
   ]
 }
