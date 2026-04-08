@@ -6,28 +6,28 @@
     <link rel="icon" href="data:;base64,=" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
-    <!-- CodeMirror 编辑器 -->
+    <!-- CodeMirror 代码编辑器 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
 
-    <!--主题-->
+    <!-- 主题样式 -->
     <style>
         #apps-notification {
             color: #1e3557;
-            font-size: 18px;            /* 调整字号 */
-            font-weight: 600;           /* 调整字重 */
+            font-size: 18px;            /* 字体大小调整 */
+            font-weight: 600;           /* 字体粗细调整 */
             line-height: 1.6;
             letter-spacing: 0.02em;
 
-            padding: 15px 20px;         /* 内边距 */
+            padding: 15px 20px;         /* 内边距设置 */
             border-radius: 12px;
 
-            /* 限制宽度和高度 */
+            /* 宽度和高度限制 */
             max-width: 900px;
             max-height: 500px;
             overflow-y: auto;
             overflow-x: hidden;
 
-            /* 关键：真实边框 */
+            /* 真实边框效果 */
             border: 2px solid #93c5fd;
 
             /* 阴影效果 */
@@ -187,11 +187,11 @@
         }
 
 
-         /* =====人员列表筛选框 ===== */
+         /* ===== 人员列表筛选框样式 ===== */
         .chat-contact-type-private {
             display: flex;
-            flex-direction: row;      /* 横向排列，使标题和搜索框在同一行 */
-            align-items: center;      /* 垂直居中 */
+            flex-direction: row;      /* 横向排列（标题和搜索框同行） */
+            align-items: center;      /* 垂直居中对齐 */
             gap: 8px;
             margin-bottom: 4px;
         }
@@ -230,12 +230,12 @@
             padding: 0;
         }
 
-        /* ===== 附件列表 ===== */
+        /* ===== 附件列表样式 ===== */
         .e_msgflow_mark_onlineusers {
-            background-color: rgba(0, 123, 255, 0.06);  /* 浅蓝主题底色 */
+            background-color: rgba(0, 123, 255, 0.06);  /* 浅蓝主题背景色 */
         }
 
-        /* 附件行 hover，和成员一致 */
+        /* 附件行悬停效果 */
         .cap-item:hover {
             background-color: rgba(0, 123, 255, 0.10);
         }
@@ -247,14 +247,14 @@
         }
 
 
-        /* 下载按钮别显得像蚂蚁 */
+        /* 下载按钮样式优化 */
         .cap-item .download-btn {
             font-size: 12px;
             padding: 2px 6px;
         }
 
 
-        /* ===== 附件列表行 ===== */
+        /* ===== 附件列表行样式 ===== */
         .cap-item {
             display: flex;
             flex-direction: column;
@@ -341,12 +341,12 @@
             background-color: #2a5bb5;
         }
 
-        /* 附件前缀：附件 */
+        /* 附件前缀标识 */
         .cap-prefix {
             display: inline-flex;
             align-items: center;
             gap: 2px;
-            color: #3b6fdc;          /* 浅蓝主题友好 */
+            color: #3b6fdc;          /* 浅蓝主题配色 */
             font-size: 12px;
             white-space: nowrap;
         }
@@ -365,7 +365,7 @@
         }
 
 
-        /* 文件名不要被挤爆 */
+        /* 文件名截断处理 */
         .cap-item .name {
             flex: 1;
             overflow: hidden;
@@ -373,15 +373,15 @@
             white-space: nowrap;
         }
 
-        /* ===== 选择消息出现菜单 ===== */
+        /* ===== 消息选择菜单样式 ===== */
 
-        /* 选中高亮 */
+        /* 选中状态高亮 */
         .chat-message-content-container.selected {
             outline: none;
             border-radius: 0; /* 可选，看你是否需要圆角 */
         }
 
-        /* 底部操作条 */
+        /* 底部操作工具条 */
         .chat-msg-actionbar {
             display: none;
             gap: 6px;
@@ -414,46 +414,46 @@
             color: #333;
         }
 
-        /* 默认：他人消息，按钮在消息内容区域的右侧边缘 */
+        /* 他人消息：按钮在右侧 */
         .chat-message-content-rect:not(.sent-by-me) .chat-msg-actionbtn {
             right: 8px;
         }
 
-        /* 自己的消息，按钮在消息内容区域的左侧边缘 */
+        /* 自己的消息：按钮在左侧 */
         .sent-by-me .chat-message-content-rect:not(.chat-mcr-sys) .chat-msg-actionbtn {
             left: 8px;
         }
 
-        /* 可选：如果操作条容器也被点击显示焦点 */
+        /* 操作条容器焦点样式 */
         .chat-message-content-container:focus {
             outline: none;
         }
 
         /* ===== 批量选择模式样式 ===== */
 
-        /* 批量选择模式下的消息容器 */
+        /* 批量选择模式消息容器 */
         .chat-message.batch-select-mode {
             position: relative;
         }
 
-        /* 批量选择模式下，消息容器可以点击 */
+        /* 批量选择模式可点击 */
         .batch-select-mode .chat-message-content-container {
             cursor: pointer;
         }
 
-        /* 批量选择模式下，消息容器悬停效果 */
+        /* 批量选择模式悬停效果 */
         .batch-select-mode .chat-message-content-container:hover {
             background-color: rgba(0, 123, 255, 0.05);
         }
 
-        /* 选中状态的消息容器 - 只应用到消息内容区域 */
+        /* 选中状态消息内容区域 */
         .chat-message-content-container.batch-selected {
             background-color: rgba(0, 123, 255, 0.12) !important;
             border-radius: 8px;
             box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3);
         }
 
-        /* 批量工具条 - 输入框上方 */
+        /* 批量工具条（输入框上方） */
         .chat-batch-toolbar {
             display: none;
             gap: 8px;
@@ -531,7 +531,49 @@
             border-radius: 12px;
         }
 
-         /* ===== 消息冒泡 - 顶部右上角 ===== */
+        /* 暗色主题批量工具条 */
+        .theme-dark .chat-batch-toolbar {
+            background: linear-gradient(135deg, #1a2a3a, #1e3045);
+            border-color: #3d5a80;
+        }
+
+        .theme-dark .chat-batch-toolbar-btn {
+            background: #2d3748;
+            color: #63b3ed;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .theme-dark .chat-batch-toolbar-btn:hover {
+            background: #3182ce;
+            color: #fff;
+        }
+
+        .theme-dark .chat-batch-toolbar-btn:disabled {
+            background: #4a5568;
+            color: #718096;
+        }
+
+        .theme-dark .chat-batch-toolbar-btn.select-all {
+            background: #3182ce;
+            color: #fff;
+        }
+
+        .theme-dark .chat-batch-toolbar-btn.cancel {
+            background: #e53e3e;
+            color: #fff;
+        }
+
+        .theme-dark .chat-batch-toolbar-btn.delete {
+            background: #c53030;
+            color: #fff;
+        }
+
+        .theme-dark .chat-batch-count {
+            color: #63b3ed;
+            background: rgba(99, 179, 237, 0.15);
+        }
+
+         /* ===== 消息冒泡通知（顶部右上角） ===== */
         #chat-toast-container {
             position: fixed;
             top: 20px;
@@ -559,21 +601,21 @@
             transition: opacity 0.5s ease-out; /* 淡出过渡 */
         }
 
-        /* 发件人名字 */
+        /* 发件人名字样式 */
         .chat-toast .sender {
             font-weight: 600;
             margin-bottom: 4px;
             font-size: 1.2em;
         }
 
-        /* 消息内容 */
+        /* 消息内容样式 */
         .chat-toast .content {
             font-size: 1em;
             opacity: 0.9;
             line-height: 1.4;
         }
 
-        /* 顶部向下弹入 */
+        /* 顶部向下弹入动画 */
         @keyframes toast-in {
             from {
                 transform: translateY(-20px);
@@ -585,7 +627,7 @@
             }
         }
 
-        /* 淡出动画，延迟停留 3 秒再开始淡出 */
+        /* 淡出动画（延迟3秒） */
         .chat-toast.fade-out {
             animation: toast-out 0.8s forwards;
             animation-delay: 3s; /* 先显示 3 秒，再淡出 */
@@ -603,7 +645,7 @@
         }
 
 
-        /* AI提示框 */
+        /* AI 提示框弹窗 */
         .ai-alert-modal {
             position: fixed;
             top: 0;
@@ -1753,10 +1795,8 @@
             background: #ffe6e6;
         }
 
-
-
-		/*候选词面板*/
-		.chat-candidate-panel {
+        /*候选词面板*/
+        .chat-candidate-panel {
 			left: 0;
 			right: 0;
 			bottom: calc(100% + 8px);
@@ -2184,7 +2224,6 @@
             color: #fff;
         }
 
-
         /* 网盘和聊天主页面布局 左右布局（网盘左，聊天右）*/
 
         /* =========================
@@ -2230,8 +2269,6 @@
             /* inset 0 1px 0 rgba(255,255,255,0.45); */
         }
 
-
-
         /* =========================
            Hover（不位移，只靠质感）
         ========================= */
@@ -2243,7 +2280,6 @@
                 0 8px 20px rgba(59, 130, 246, 0.18),
                 inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
-
 
         /* =========================
            网盘（次级入口）
@@ -2258,7 +2294,6 @@
             font-weight: 700;
             color: var(--fc-less);
         }
-
 
         /* =========================
            聊天（主入口）
@@ -2290,7 +2325,7 @@
             align-items: center;
             gap: 6px;
             width: 100%;
-            padding: 3px 0px;              /* 内边距 */
+            padding: 3px 0px;              /* 内边距设置 */
             background-color: #e5e8f0;      /* 浅蓝背景 */
             border-radius: 12px;            /* 圆角 */
             box-shadow: 0 1px 4px rgba(0,0,0,0.08); /* 轻微阴影 */
@@ -2565,8 +2600,6 @@
             box-shadow: 0 2px 6px rgba(90, 142, 224, 0.25);
             transform: translateY(0);
         }
-
-
 
       /* 隐藏悬浮球 */\n        .float-ball {\n            display: none !important;\n        }\n\n        /* 默认亮 */
         :root {
@@ -7503,7 +7536,6 @@
         .drive-search {
             display: flex;
             align-items: center;
-            gap: 8px;
             padding: 4px 4px;
             margin-left: auto;
             flex: 1;
@@ -7546,6 +7578,75 @@
 
         .theme-dark .drive-search-count {
             color: #aaa;
+        }
+
+        /* 网盘排序 */
+        .drive-sort {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 0;
+        }
+
+        .drive-sort-select {
+            padding: 6px 8px;
+            font-size: 13px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            background: #fff;
+            color: #333;
+        }
+
+        .drive-sort-select:focus {
+            border-color: #007bff;
+        }
+
+        .theme-dark .drive-sort-select {
+            background: #3d3d3d;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .theme-dark .drive-sort-select:focus {
+            border-color: #63b3ed;
+        }
+
+        .drive-sort-order {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #666;
+        }
+
+        .drive-sort-order:hover {
+            background: #f5f5f5;
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        .theme-dark .drive-sort-order {
+            background: #3d3d3d;
+            border-color: #555;
+            color: #aaa;
+        }
+
+        .theme-dark .drive-sort-order:hover {
+            background: #4a4a4a;
+            border-color: #63b3ed;
+            color: #63b3ed;
+        }
+
+        .drive-sort-order i {
+            font-size: 14px;
         }
 
         /* 聊天消息搜索 */
@@ -7693,7 +7794,7 @@
         }
 
         .chat-msg-search-result-sender {
-            font-size: 12px;
+            font-size: 14px;
             color: #888;
             margin-bottom: 3px;
             display: flex;
@@ -7707,7 +7808,7 @@
         }
 
         .chat-msg-search-result-sender .search-msg-time {
-            color: #bbb;
+            color: #686868;
             font-size: 11px;
         }
 
@@ -7720,7 +7821,7 @@
         }
 
         .chat-msg-search-result-text {
-            font-size: 13px;
+            font-size: 16px;
             color: #333;
             line-height: 1.5;
             word-break: break-all;
@@ -8372,25 +8473,88 @@
                     white-space: nowrap;
                     animation: badgeBreathing 2s ease-in-out infinite, badgeGlow 2s ease-in-out infinite;
                     box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+                }
 
+                span.chat-contact-session-status-bottom-unreadcount.important {
+                    background: transparent;
+                    animation: importantBellShake 0.6s ease-in-out infinite;
+                }
+
+                span.chat-contact-session-status-bottom-unreadcount.important::before {
+                    content: "🔔";
+                    font-size: 14px;
                 }
 
                 @keyframes badgeBreathing {
                     0%, 100% { transform: scale(1); }
                     50% { transform: scale(1.2); }
                 }
+                                @keyframes badgeGlow {
+                                    0%, 100% {
+                                        box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+                                    }
+                                    50% {
+                                        box-shadow: 0 0 20px 10px rgba(244, 67, 54, 0.5);
+                                    }
+                                }
 
-                @keyframes badgeGlow {
-                    0%, 100% {
-                        box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
-                    }
-                    50% {
-                        box-shadow: 0 0 20px 10px rgba(244, 67, 54, 0.5);
-                    }
-                }
+                                @keyframes importantBellShake {
+                                    0%, 100% { transform: rotate(0deg) scale(1); }
+                                    15% { transform: rotate(20deg) scale(1.15); }
+                                    30% { transform: rotate(-20deg) scale(1.15); }
+                                    45% { transform: rotate(15deg) scale(1.15); }
+                                    60% { transform: rotate(-15deg) scale(1.15); }
+                                    75% { transform: rotate(5deg) scale(1.08); }
+                                }
 
-    </style>
+                                @keyframes importantBellShake {
+                                    0%, 100% { transform: rotate(0deg) scale(1); }
+                                    15% { transform: rotate(20deg) scale(1.15); }
+                                    30% { transform: rotate(-20deg) scale(1.15); }
+                                    45% { transform: rotate(15deg) scale(1.15); }
+                                    60% { transform: rotate(-15deg) scale(1.15); }
+                                    75% { transform: rotate(5deg) scale(1.08); }
+                                }
+                                
+                                /* 工具栏 - 重要消息开关按钮 */
+                                button.chat-session-inputarea-othertypes-important {
+                                    color: #888;
+                                    transition: all 0.2s ease;
+                                }
 
+                                .chat-session-inputarea-othertypes button.chat-session-inputarea-othertypes-important[data-active="true"] {
+                                    color: #f00 !important;
+                                    background: rgba(255, 107, 107, 0.15) !important;
+                                    border-color: #f00 !important;
+                                }
+
+                                .chat-session-inputarea-othertypes button.chat-session-inputarea-othertypes-important:hover {
+                                    background: rgba(255, 107, 107, 0.1) !important;
+                                }
+
+                                .theme-dark .chat-session-inputarea-othertypes button.chat-session-inputarea-othertypes-important {
+                                    color: #888;
+                                }
+
+                                .theme-dark .chat-session-inputarea-othertypes button.chat-session-inputarea-othertypes-important[data-active="true"] {
+                                    color: #ff6b6b !important;
+                                    background: rgba(255, 107, 107, 0.2) !important;
+                                    border-color: #ff6b6b !important;
+                                }
+
+                                /* 重要消息气泡 */
+                                .chat-message-bubble.important {
+                                    border-left: 3px solid #ff6b6b;
+                                    background: linear-gradient(90deg, rgba(255, 107, 107, 0.08) 0%, transparent 30%);
+                                }
+
+                                .chat-message-bubble .important-marker {
+                                    color: #ff6b6b;
+                                    font-size: 12px;
+                                    margin-right: 4px;
+                                }
+
+                    </style>
     <!--聊天页面 会话-->
     <style>
         .chat-session-rect {
@@ -8714,9 +8878,13 @@
             background: #f8f9fa;
             padding: 6px 8px;
             border-radius: 4px;
+            position: relative;
+            max-width: 100%;
+            box-sizing: border-box;
+            z-index: 9;
         }
 
-        .chat-session-inputarea-othertypes button:not(.chat-session-inputarea-sendbtn) {
+        .chat-session-inputarea-othertypes button:not(.chat-session-inputarea-sendbtn):not(.chat-session-inputarea-morebtn) {
             padding: 6px 12px;
             height: 35px;
             font-size: 14px;
@@ -8729,9 +8897,83 @@
             transition: all 0.2s;
         }
 
-        .chat-session-inputarea-othertypes button:not(.chat-session-inputarea-sendbtn):hover {
+        .chat-session-inputarea-othertypes button:not(.chat-session-inputarea-sendbtn):not(.chat-session-inputarea-morebtn):hover {
             background: #f0f0f0;
             border-color: #ccc;
+        }
+
+        /* 被折叠隐藏的按钮 */
+        .chat-session-inputarea-othertypes button.collapsed-hidden {
+            display: none !important;
+        }
+
+        /* 更多按钮 */
+        .chat-session-inputarea-morebtn {
+            padding: 6px 10px !important;
+            height: 35px !important;
+            font-size: 14px !important;
+            flex-shrink: 0;
+            background: #fff !important;
+            border: 1px solid #ddd !important;
+            border-radius: 4px !important;
+            color: #333 !important;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: none !important;
+            position: relative;
+        }
+
+        .chat-session-inputarea-morebtn:hover {
+            background: #f0f0f0 !important;
+            border-color: #ccc !important;
+        }
+
+        .chat-session-inputarea-morebtn.visible {
+            display: flex !important;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 更多下拉菜单 */
+        .chat-session-inputarea-more-menu {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            margin-bottom: 4px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 4px 0;
+            min-width: 120px;
+            display: none;
+            z-index: 1000;
+            z-index: 1000;
+        }
+
+        .chat-session-inputarea-more-menu.show {
+            display: block;
+        }
+
+        .chat-session-inputarea-more-menu button {
+            display: flex !important;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 8px 12px !important;
+            height: auto !important;
+            font-size: 14px !important;
+            background: transparent !important;
+            border: none !important;
+            border-radius: 0 !important;
+            color: #333 !important;
+            cursor: pointer;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .chat-session-inputarea-more-menu button:hover {
+            background: #f0f0f0 !important;
         }
 
         /* 确保发送按钮在最右边 */
@@ -8746,15 +8988,39 @@
             background: #2d2d2d;
         }
 
-        .theme-dark .chat-session-inputarea-othertypes button:not(.chat-session-inputarea-sendbtn) {
+        .theme-dark .chat-session-inputarea-othertypes button:not(.chat-session-inputarea-sendbtn):not(.chat-session-inputarea-morebtn) {
             background: #3d3d3d;
             border-color: #555;
             color: #e0e0e0;
         }
 
-        .theme-dark .chat-session-inputarea-othertypes button:not(.chat-session-inputarea-sendbtn):hover {
+        .theme-dark .chat-session-inputarea-othertypes button:not(.chat-session-inputarea-sendbtn):not(.chat-session-inputarea-morebtn):hover {
             background: #4d4d4d;
             border-color: #666;
+        }
+
+        .theme-dark .chat-session-inputarea-morebtn {
+            background: #3d3d3d !important;
+            border-color: #555 !important;
+            color: #e0e0e0 !important;
+        }
+
+        .theme-dark .chat-session-inputarea-morebtn:hover {
+            background: #4d4d4d !important;
+            border-color: #666 !important;
+        }
+
+        .theme-dark .chat-session-inputarea-more-menu {
+            background: #3d3d3d;
+            border-color: #555;
+        }
+
+        .theme-dark .chat-session-inputarea-more-menu button {
+            color: #e0e0e0 !important;
+        }
+
+        .theme-dark .chat-session-inputarea-more-menu button:hover {
+            background: #4d4d4d !important;
         }
 
         .chat-session-inputarea-textarea-row {
@@ -10371,6 +10637,9 @@
     <button id="header-toolbar-btn-auth" class="header-toolbar-btn" title="授权">
         <i class="bi bi-shield-check"></i>
     </button>
+    <button id="header-toolbar-btn-toolbox" class="header-toolbar-btn hidden" title="工具箱">
+        <i class="bi bi-dropbox"></i>
+    </button>
     <button id="header-toolbar-btn-plugins" class="header-toolbar-btn hidden" title="插件">
         <i class="bi bi-puzzle"></i>
     </button>
@@ -10384,6 +10653,17 @@
     <div id="header-links-dropdown" class="header-dropdown hidden">
         <div class="header-dropdown-content">
             <div id="header-links-list" class="header-dropdown-list"></div>
+        </div>
+    </div>
+
+    <!-- 工具箱下拉菜单 -->
+    <div id="header-toolbox-dropdown" class="header-dropdown hidden">
+        <div class="header-dropdown-content">
+            <div id="header-toolbox-list" class="header-dropdown-list">
+                <div class="header-dropdown-item">
+                    <div class="header-dropdown-item-name header-dropdown-item-name-empty">暂无工具</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -11402,13 +11682,34 @@
     // Header 工具栏按钮事件绑定
     document.addEventListener("DOMContentLoaded", function() {
 
+        // 工具箱按钮 - 显示/隐藏下拉菜单
+        const headerToolboxBtn = document.getElementById("header-toolbar-btn-toolbox");
+        const headerToolboxDropdown = document.getElementById("header-toolbox-dropdown");
+        const headerToolboxList = document.getElementById("header-toolbox-list");
+
+        if (headerToolboxBtn && headerToolboxDropdown && headerToolboxList) {
+            // 点击按钮切换下拉菜单显示
+            headerToolboxBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                headerToolboxDropdown.classList.toggle("hidden");
+            });
+
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener("click", function(e) {
+                if (!headerToolboxDropdown.contains(e.target) && e.target !== headerToolboxBtn) {
+                    headerToolboxDropdown.classList.add("hidden");
+                }
+            });
+        }
+
         // 友链按钮 - 显示/隐藏下拉菜单
         const headerLinksBtn = document.getElementById("header-toolbar-btn-links");
         const headerLinksDropdown = document.getElementById("header-links-dropdown");
         const headerLinksList = document.getElementById("header-links-list");
 
         if (headerLinksBtn && headerLinksDropdown && headerLinksList) {
-            // 初始化友链列表
+            // 初始化函数友链列表
             function initHeaderLinks() {
                 headerLinksList.innerHTML = "";
                 if (typeof HEADER_LINKS !== "undefined" && HEADER_LINKS && HEADER_LINKS.length > 0) {
@@ -13267,7 +13568,7 @@
                 row.checkboxes.push({key: optionKey, display: row.options[optionKey], element: checkbox, label: optionLabel});
             }
 
-            // 更新显示的文本
+            // 更新页面显示的文本
             const updateDisplay = () => {
                 const selected = row.checkboxes.filter(cb => cb.element.checked);
                 if (selected.length === 0) {
@@ -13278,7 +13579,7 @@
                 }
             };
 
-            // 初始化显示
+            // 初始化函数显示
             updateDisplay();
 
             // 点击头部展开/收起
@@ -13449,7 +13750,7 @@
             // 保存原始数据（用于取消勾选时恢复）
             row.originalData = JSON.parse(JSON.stringify(row.jsonData));
 
-            // 初始化 JSON 编辑器内容
+            // 初始化函数JSON 编辑器内容
             // 批量编辑时显示所有用户数据，单用户编辑时显示单个用户数据
             if (row.isBatchEdit && row.selectedUsers && row.selectedUsers.length > 0) {
                 // 批量编辑：保存每个用户的原始数据
@@ -13645,8 +13946,7 @@
                 const groupElement = leftPanel.querySelector(`:scope > div:last-of-type`);
                 row.groupElements[group.id] = groupElement;
 
-                // 绑定事件
-                this.#bindOptionGroupEvents(group, groupElement, row);
+                // 绑定事件监听器this.#bindOptionGroupEvents(group, groupElement, row);
             }
         }
 
@@ -13797,8 +14097,7 @@
                             label.classList.remove("selected");
                             row.multiSelectStates[group.id] = row.multiSelectStates[group.id].filter(v => v !== value);
                         }
-                        // 更新显示
-                        const selectedLabels = row.multiSelectStates[group.id].map(v => group.options[v]);
+                        // 更新页面显示const selectedLabels = row.multiSelectStates[group.id].map(v => group.options[v]);
                         headerInput.value = selectedLabels.join(", ");
 
                         // 更新数据：基于 JSON 编辑器当前数据进行修改
@@ -15583,7 +15882,7 @@
 
 <!--设置-->
 <div class="floatball-mark-tabcontent-settings">
-<label>当前密钥：<input type="text" id="fbm-settings-currentkey" style="width:200px;" placeholder="用于加解密，留空使用默认"></label>
+<label>当前密钥：<input type="text" id="fbm-settings-currentkey" style="width:200px;" placeholder="用于加解密当前消息，留空使用默认密钥"></label>
 <label>历史密钥：<textarea id="fbm-settings-legacykeys" style="width:200px;height:100px;" placeholder="曾经用过的密钥，每行一个，用于解密历史消息"></textarea></label>
 </div>
 
@@ -15741,7 +16040,7 @@
                 }
                 this.e_settings_legacykeys.value = legacykeys.join("\n");
 
-                // 初始化加密器
+                // 初始化函数加密器
                 encryptors.recreate_all([currentkey, ...legacykeys]);
             }
 
@@ -16456,8 +16755,7 @@
                 </div>
             `;
 
-            // 绑定事件
-            const checkbox = div.querySelector('.plugin-item-checkbox');
+            // 绑定事件监听器const checkbox = div.querySelector('.plugin-item-checkbox');
             checkbox.addEventListener('change', (e) => {
                 if (e.target.checked) {
                     this.selectedPlugins.add(plugin.plugin_id);
@@ -17727,7 +18025,7 @@
             this.eventListeners = new Map();
             this.messageListeners = new Set();
 
-            // 初始化各模块
+            // 初始化函数各模块
             this.storage = this._initStorageAPI();
             this.ui = this._initUIAPI();
             this.events = this._initEventsAPI();
@@ -19566,7 +19864,7 @@
                 throw new Error(await format_error_response(r));
             }
 
-            async send_text(ws_send, contact_type, xxid, ceid, sender_rand, plain_text, cite_message_id) {
+            async send_text(ws_send, contact_type, xxid, ceid, sender_rand, plain_text, cite_message_id, important = false) {
                 let url = join_path(this.api_url(), "send");
                 let body = {
                     contact_type, ceid,
@@ -19577,6 +19875,9 @@
                 };
                 if (cite_message_id) {
                     body.cite_message_id = cite_message_id;
+                }
+                if (important) {
+                    body.important = true;
                 }
                 if (contact_type === subviews.Chat.receiver_type.group) {
                     body.gid = xxid;
@@ -20093,12 +20394,25 @@
     <button class="drive-action-btn" id="dab-upload">上传文件<input type="file" class="hidden"></button>
     <button class="drive-action-btn" id="dab-newfolder">新建文件夹</button>
     <button class="drive-action-btn hidden-btn" id="dab-batch-download">批量下载</button>
+    <button class="drive-action-btn hidden-btn" id="dab-batch-rename">批量改名</button>
     <button class="drive-action-btn hidden-btn" id="dab-batch-trash">移到垃圾桶</button>
     <button class="drive-action-btn hidden-btn" id="dab-batch-restore">移出垃圾桶</button>
     <button class="drive-action-btn hidden-btn" id="dab-batch-delete">永久删除</button>
     <div class="drive-search">
         <input type="text" class="drive-search-input" placeholder="搜索文件（支持正则）">
         <span class="drive-search-count"></span>
+    </div>
+    <div class="drive-sort">
+        <select class="drive-sort-select" title="排序方式">
+            <option value="create_time">创建时间</option>
+            <option value="update_time">更新时间</option>
+            <option value="name">文件名称</option>
+            <option value="type">文件类型</option>
+            <option value="size">文件大小</option>
+        </select>
+        <button class="drive-sort-order" title="切换升序/降序">
+            <i class="bi bi-arrow-up"></i>
+        </button>
     </div>
 </div>
 <div class="drive-items-wrap">
@@ -20120,6 +20434,23 @@
                 this.drive_search_count = this.drive_actions.querySelector(":scope span.drive-search-count");
                 this.drive_search_input.addEventListener("input", (event) => {
                     this.filter_items();
+                });
+
+                // 排序
+                this.drive_sort_select = this.drive_actions.querySelector(":scope select.drive-sort-select");
+                this.drive_sort_order = this.drive_actions.querySelector(":scope button.drive-sort-order");
+                this.sort_field = "create_time"; // 默认按创建时间
+                this.sort_desc = false; // 默认升序
+                this.drive_sort_select.addEventListener("change", (event) => {
+                    this.sort_field = this.drive_sort_select.value;
+                    this.sort_items();
+                });
+                this.drive_sort_order.addEventListener("click", (event) => {
+                    this.sort_desc = !this.sort_desc;
+                    this.drive_sort_order.innerHTML = this.sort_desc 
+                        ? '<i class="bi bi-arrow-down"></i>' 
+                        : '<i class="bi bi-arrow-up"></i>';
+                    this.sort_items();
                 });
 
                 // 返回键
@@ -20207,6 +20538,10 @@
                 this.drive_action_btn_batch_download = this.drive_actions.querySelector(":scope button#dab-batch-download");
                 this.drive_action_btn_batch_download.addEventListener("click", (event) => {
                     this.download_batch();
+                });
+                this.drive_action_btn_batch_rename = this.drive_actions.querySelector(":scope button#dab-batch-rename");
+                this.drive_action_btn_batch_rename.addEventListener("click", (event) => {
+                    this.rename_batch();
                 });
                 this.drive_action_btn_batch_restore = this.drive_actions.querySelector(":scope button#dab-batch-restore");
                 this.drive_action_btn_batch_restore.addEventListener("click", (event) => {
@@ -20454,6 +20789,8 @@
                         if (this.closed) return;
                         if (result.length === 0) this.element_drive_items_nothings_tip.classList.remove("hidden");
                         for (const resultElement of result) this.add_item(resultElement);
+                        // 加载完成后排序
+                        this.sort_items();
                         this.remove_loading_mark();
                     }).catch(error => {
                     if (this.closed) return;
@@ -20504,25 +20841,25 @@
                 }
                 if (attr.type === subviews.Drive.item_type.folder) {
                     item.summary.addEventListener('drop', async (event) => {
-                                        item.summary.classList.remove("active");
-                                        const station_element = event.target.closest("summary");
-                                        if (!station_element) return;
-                    
-                                        // 检查是否是拖放文件上传（外部文件）
-                                        const dataTransferItems = event.dataTransfer.items;
-                                        let hasExternalFiles = false;
-                    
-                                        for (let i = 0; i < dataTransferItems.length; i++) {
-                                            const itemData = dataTransferItems[i];
-                                            if (itemData.kind === 'file') {
-                                                hasExternalFiles = true;
-                                                break;
-                                            }
-                                        }
-                    
-                                        if (hasExternalFiles && dragging_items.length === 0) {
-                                            // 外部文件拖放上传到文件夹
-                                            event.preventDefault();
+                        item.summary.classList.remove("active");
+                        const station_element = event.target.closest("summary");
+                        if (!station_element) return;
+
+                        // 检查是否是拖放文件上传（外部文件）
+                        const dataTransferItems = event.dataTransfer.items;
+                        let hasExternalFiles = false;
+
+                        for (let i = 0; i < dataTransferItems.length; i++) {
+                            const itemData = dataTransferItems[i];
+                            if (itemData.kind === 'file') {
+                                hasExternalFiles = true;
+                                break;
+                            }
+                        }
+
+                        if (hasExternalFiles && dragging_items.length === 0) {
+                            // 外部文件拖放上传到文件夹
+                            event.preventDefault();
                                             const validFiles = [];
                     
                                             for (let i = 0; i < dataTransferItems.length; i++) {
@@ -21025,6 +21362,62 @@
                 }
             }
 
+            sort_items() {
+                const field = this.sort_field;
+                const desc = this.sort_desc;
+
+                const compareFn = (a, b) => {
+                    let valA, valB;
+
+                    switch (field) {
+                        case "create_time":
+                            valA = a.attr.uploaded_time || 0;
+                            valB = b.attr.uploaded_time || 0;
+                            break;
+                        case "update_time":
+                            valA = a.attr.modified_time || a.attr.uploaded_time || 0;
+                            valB = b.attr.modified_time || b.attr.uploaded_time || 0;
+                            break;
+                        case "name":
+                            valA = this.get_item_display_name(a).toLowerCase();
+                            valB = this.get_item_display_name(b).toLowerCase();
+                            break;
+                        case "type":
+                            // 文件类型：文件夹排前或排后
+                            valA = a.attr.type === subviews.Drive.item_type.folder ? 0 : 1;
+                            valB = b.attr.type === subviews.Drive.item_type.folder ? 0 : 1;
+                            break;
+                        case "size":
+                            valA = a.attr.size || 0;
+                            valB = b.attr.size || 0;
+                            break;
+                        default:
+                            valA = a.attr.uploaded_time || 0;
+                            valB = b.attr.uploaded_time || 0;
+                    }
+
+                    let result;
+                    if (typeof valA === "string" && typeof valB === "string") {
+                        result = valA.localeCompare(valB, "zh-CN");
+                    } else {
+                        result = valA - valB;
+                    }
+
+                    return desc ? -result : result;
+                };
+
+                // 直接排序所有项目
+                this.drive_items.sort(compareFn);
+
+                // 重新排列 DOM 元素（移动 details 元素，而不是 summary）
+                const container = this.element_drive_items;
+                for (const item of this.drive_items) {
+                    if (item.details && container.contains(item.details)) {
+                        container.appendChild(item.details);
+                    }
+                }
+            }
+
             get_item_display_name(item) {
                 if (!item) return "";
                 
@@ -21071,9 +21464,11 @@
                     if (this.constructor.name === contentpages.dashboard_drive.trashcan.name) {
                         this.drive_action_btn_batch_trash.classList.add("hidden-btn");
                         this.drive_action_btn_batch_restore.classList.remove("hidden-btn");
+                        this.drive_action_btn_batch_rename.classList.add("hidden-btn");
                     } else {
                         this.drive_action_btn_batch_trash.classList.remove("hidden-btn");
                         this.drive_action_btn_batch_restore.classList.add("hidden-btn");
+                        this.drive_action_btn_batch_rename.classList.remove("hidden-btn");
                     }
                     this.drive_action_btn_batch_delete.classList.remove("hidden-btn");
                     this.drive_action_btn_batch_download.classList.remove("hidden-btn");
@@ -21083,7 +21478,8 @@
                         this.drive_action_btn_batch_trash.classList.add("hidden-btn");
                         this.drive_action_btn_batch_restore.classList.add("hidden-btn");
                         this.drive_action_btn_batch_delete.classList.add("hidden-btn");
-                    this.drive_action_btn_batch_download.classList.add("hidden-btn");
+                        this.drive_action_btn_batch_download.classList.add("hidden-btn");
+                        this.drive_action_btn_batch_rename.classList.add("hidden-btn");
                     }
 
                 } else {
@@ -21094,6 +21490,7 @@
                     this.drive_action_btn_batch_restore.classList.add("hidden-btn");
                     this.drive_action_btn_batch_delete.classList.add("hidden-btn");
                     this.drive_action_btn_batch_download.classList.add("hidden-btn");
+                    this.drive_action_btn_batch_rename.classList.add("hidden-btn");
                 }
             }
 
@@ -21832,6 +22229,97 @@
                 this.drive_actions.querySelector(":scope input[type=checkbox]").checked = false;
                 this.switch_action_btns__batch();
             }
+
+            rename_batch() {
+                const selected_items = this.get_selected_items();
+                if (selected_items.length === 0) return;
+
+                const operationOptions = {
+                    "prefix": "前缀",
+                    "suffix": "后缀"
+                };
+
+                let form = [
+                    {type: "title", label: `批量改名（${selected_items.length} 个文件）`},
+                    {type: "combobox", label: "操作类型：", options: operationOptions, value: "prefix"},
+                    {type: "linetext", label: "添加内容：", value: ""},
+                ];
+
+                const confirm_callback = (fm) => {
+                    fm.collect_data();
+                    const operation = form[1].value;
+                    const addText = form[2].value;
+
+                    if (!addText) {
+                        MessageMark.report("请输入添加内容", fm.rect);
+                        return;
+                    }
+
+                    this._rename_batch(selected_items, operation, addText, fm);
+                };
+
+                FormMark.get_global_input(form, confirm_callback);
+            }
+
+            _rename_batch(items, operation, addText, fm) {
+                fm.loading_mark = new LoadingMark(fm.rect);
+                fm.loading_mark.show();
+
+                const promises = [];
+                let successCount = 0;
+                let failCount = 0;
+
+                for (const item of items) {
+                    const oldName = normalizeName(this.get_item_display_name(item));
+                    let newName;
+
+                    if (operation === "prefix") {
+                        newName = addText + oldName;
+                    } else if (operation === "suffix") {
+                        newName = oldName + addText;
+                    } else {
+                        newName = oldName;
+                    }
+
+                    if (newName === oldName) {
+                        continue;
+                    }
+
+                    const promise = this.client.subviews.drive.rename(item.attr.did, newName)
+                        .then(result => {
+                            successCount++;
+                            item.attr.name = result.name;
+                            this.update_item(item);
+                        })
+                        .catch(error => {
+                            failCount++;
+                            console.error(`重命名失败: ${oldName}`, error);
+                        });
+
+                    promises.push(promise);
+                }
+
+                Promise.all(promises).finally(() => {
+                    fm.loading_mark.remove();
+                    fm.remove();
+
+                    if (failCount > 0) {
+                        MessageMark.report(`批量改名完成：成功 ${successCount} 个，失败 ${failCount} 个`);
+                    } else if (successCount > 0) {
+                        MessageMark.report(`批量改名完成：成功 ${successCount} 个`);
+                    } else {
+                        MessageMark.report("没有需要改名的文件");
+                    }
+
+                    // 清除选中状态
+                    for (const item of items) {
+                        item.raw_header.selecting_checkbox.state = 0;
+                        item.raw_header.selecting_checkbox_input.checked = false;
+                    }
+                    this.drive_actions.querySelector(":scope input[type=checkbox]").checked = false;
+                    this.switch_action_btns__batch();
+                });
+            }
         }
 
         class _chat extends _ {
@@ -21896,9 +22384,9 @@
 
             open_page() {
                 super.open_page();
-                // 初始化置顶状态
+                // 初始化函数置顶状态
                 this.chat_pin_status = this.li.bindmap.status_attr.editions && this.li.bindmap.status_attr.editions.includes(-999999);
-                // 初始化禁言状态
+                // 初始化函数禁言状态
                 this.group_mute_status = false;
                 // 清空附件列表，确保切换会话时重新渲染
                 this.panel.attachments = [];
@@ -22022,6 +22510,10 @@
         <button class="chat-session-inputarea-othertypes-file">
             <input type="file" class="hidden"><i class="bi bi-file-earmark"></i> 文件
         </button>
+        <!-- 重要消息开关按钮 -->
+        <button id="btn-important-toggle" class="chat-session-inputarea-othertypes-important" data-active="false" title="发送重要消息（点亮后下条消息将标记为重要）">
+            <i class="bi bi-exclamation-triangle"></i> 重要
+        </button>
         <!-- 新增：投票按钮 -->
         <button class="chat-session-inputarea-othertypes-vote">
             <i class="bi bi-check2-square"></i> 投票
@@ -22038,6 +22530,12 @@
             title="让 AI 用通俗的方式一步一步教你解决问题，快捷键ctrl+shift+回车"
             style="display: none;">
             <i class="bi bi-robot"></i> AI咨询
+        </button>
+        <!-- 更多按钮（折叠时显示） -->
+        <button class="chat-session-inputarea-morebtn" type="button">
+            <i class="bi bi-three-dots"></i> 更多
+            <!-- 下拉菜单 -->
+            <div class="chat-session-inputarea-more-menu"></div>
         </button>
         <!-- 发送按钮 -->
         <button class="chat-session-inputarea-sendbtn">发送</button>
@@ -22659,8 +23157,7 @@
                 });
 
                 // 点击 AI 咨询按钮
-
-                                this.e_ai_teacher_btn.addEventListener("click", () => {
+                this.e_ai_teacher_btn.addEventListener("click", () => {
 
                                     const userText = this.e_inputarea_textarea.value.trim();
 
@@ -22684,32 +23181,17 @@
 
                                 });
 
-				// =============================
 				// 半屏候选词：DOM 引用
-				// =============================
-				this.e_candidate_btn = this.container.querySelector(
-					".chat-session-inputarea-othertypes-candidates"
-				);
-
-				this.e_candidate_panel = this.container.querySelector(
-					".chat-candidate-panel"
-				);
-
-				this.e_candidate_panel_body = this.container.querySelector(
-					".chat-candidate-panel-body"
-				);
-
-				this.e_candidate_panel_close = this.container.querySelector(
-					".chat-candidate-panel-close"
-				);
+				this.e_candidate_btn = this.container.querySelector(".chat-session-inputarea-othertypes-candidates");
+				this.e_candidate_panel = this.container.querySelector(".chat-candidate-panel");
+				this.e_candidate_panel_body = this.container.querySelector(".chat-candidate-panel-body");
+				this.e_candidate_panel_close = this.container.querySelector(".chat-candidate-panel-close");
 
 				// 半屏候选词 DOM
-				this.e_candidate_panel_body = this.container.querySelector(".chat-candidate-panel-body");
 				this.e_candidate_prev = this.container.querySelector(".chat-candidate-panel-prev");
 				this.e_candidate_next = this.container.querySelector(".chat-candidate-panel-next");
 				this.e_candidate_filter = this.container.querySelector(".chat-candidate-panel-filter");
 				this.e_candidate_category = this.container.querySelector(".chat-candidate-panel-category");
-				this.e_candidate_panel_close = this.container.querySelector(".chat-candidate-panel-close");
 
 				// 更新按钮状态函数
 				const updateCandidateButtons = () => {
@@ -22812,7 +23294,7 @@
                     }
                 };
 
-                // 初始化候选词数据（结构化数据用于半屏面板，扁平数据用于小面板）
+                // 初始化函数候选词数据（结构化数据用于半屏面板，扁平数据用于小面板）
                 fetchCandidates().then(data => {
                     // 检查数据有效性，防止 null 或 undefined 导致错误
                     if (!data || !Array.isArray(data)) {
@@ -22836,7 +23318,7 @@
                         }
                     });
 
-                    // 初始化时不显示小候选词面板，只点击输入框时才显示
+                    // 初始化函数时不显示小候选词面板，只点击输入框时才显示
                 }).catch(error => {
                     console.error("初始化候选词失败:", error);
                 });
@@ -23213,6 +23695,11 @@
                     });
                 }
 
+                // =============================
+                // 工具栏响应式折叠
+                // =============================
+                this.initToolbarCollapse();
+
 
                 // 其他消息类型
                 this.e_othertypes_image = this.container.querySelector(":scope button.chat-session-inputarea-othertypes-image");
@@ -23246,13 +23733,22 @@
                     this.openVoteCreateModal();
                 });
 
+                // 重要消息开关按钮初始化
+                this.e_important_toggle = this.container.querySelector(":scope button.chat-session-inputarea-othertypes-important");
+                if (this.e_important_toggle) {
+                    this.e_important_toggle.addEventListener("click", () => {
+                        const isActive = this.e_important_toggle.dataset.active === "true";
+                        this.e_important_toggle.dataset.active = isActive ? "false" : "true";
+                    });
+                }
+
                 // 引用消息容器初始化
                 this.e_cite_container = this.container.querySelector(":scope .chat-session-inputarea-cite");
                 this.e_cite_close = this.container.querySelector(":scope .chat-session-inputarea-cite-close");
                 this.e_cite_close.addEventListener("click", () => {
                     this.close_cite();
                 });
-                // 初始化时引用消息为空
+                // 初始化函数时引用消息为空
                 this.current_cite_message = null;
 
                 // 投票创建弹窗元素引用
@@ -23267,7 +23763,7 @@
                 this.e_vote_create_cancel = document.getElementById("vote-create-cancel");
                 this.e_vote_create_confirm = document.getElementById("vote-create-confirm");
 
-                // 初始化投票弹窗交互
+                // 初始化函数投票弹窗交互
                 this.initVoteCreateModal();
 
                 // 拖拽上传
@@ -23429,7 +23925,7 @@
                 this.eraser_size = 6; // 橡皮默认尺寸
                 this.writeboard_typing_timer = null; // 写字板typing状态定时器
 
-                // 初始化写字板
+                // 初始化函数写字板
                 this.init_writeboard = () => {
                     // 防止重复初始化
                     if (this.writeboard_initialized) {
@@ -23458,7 +23954,7 @@
                         cursor.style.height = `${size}px`;
                     };
 
-                    // 初始化鼠标光标大小
+                    // 初始化函数鼠标光标大小
                     updateCursorSize(4);
 
                     // 鼠标移动时更新光标位置
@@ -23561,7 +24057,7 @@
                         this.e_writeboard_redo.disabled = this.write_history_index >= this.write_history.length - 1;
                     };
 
-                    // 初始化保存空白状态
+                    // 初始化函数保存空白状态
                     saveHistory();
 
                     // 鼠标绘图优化 - 直接绘制，提高响应速度
@@ -24126,7 +24622,7 @@
 
                 console.log(`[消息加载] 本次加载了 ${result.messages.length} 条消息`);
 
-                // 初始化群组禁言状态
+                // 初始化函数群组禁言状态
                 const {xxid, contact_type} = this.current_contact_xxid();
                 if (contact_type === subviews.Chat.receiver_type.group) {
                     // 从 sync_result 中获取禁言状态
@@ -24344,6 +24840,14 @@
 
             _send_msg_text(msg) {
                 const {xxid, contact_type, ceid} = this.current_contact_xxid();
+                
+                // 读取重要消息开关状态
+                const isImportant = this.e_important_toggle && this.e_important_toggle.dataset.active === "true";
+                
+                // 如果开启了重要消息，发送后自动关闭开关
+                if (isImportant && this.e_important_toggle) {
+                    this.e_important_toggle.dataset.active = "false";
+                }
 
                 const onfetchload = (result) => {
                     // if (this.closed) return;
@@ -24358,7 +24862,7 @@
                 const ws_isopen = false;
                 checkin.subviews.chat.send_text(ws_isopen ? (args) => {
                     this.panel.wrapper.ws_send(args.body, {onfetchload, onfetcherror});
-                } : null, contact_type, xxid, ceid, msg.sender_rand, msg.plain_text, msg.cite_message_id)
+                } : null, contact_type, xxid, ceid, msg.sender_rand, msg.plain_text, msg.cite_message_id, isImportant)
                     .then(result => {
                         if (ws_isopen) return;
                         onfetchload(result);
@@ -24430,7 +24934,7 @@
                             return;
                         }
                         
-                        // 验证数据：2x2 的 JPEG 大小应该在合理范围内
+                        // 验证数据有效性：2x2 的 JPEG 大小应该在合理范围内
                         // 正常情况下，2x2 的 JPEG 大小通常在 200-800 字节之间
                         const isNormalSize = blob.size > 0 && blob.size < 1000;
                         
@@ -24563,7 +25067,185 @@
                 this.send_msg_file(file, dashboardwrappers.ChatDashboardWrapper.message_type.image, d);
             }
 
-            // 初始化投票创建弹窗
+            // 初始化函数工具栏响应式折叠
+            initToolbarCollapse() {
+                const toolbar = this.container.querySelector(".chat-session-inputarea-othertypes");
+                if (!toolbar) return;
+
+                const moreBtn = toolbar.querySelector(".chat-session-inputarea-morebtn");
+                const moreMenu = toolbar.querySelector(".chat-session-inputarea-more-menu");
+                const sendBtn = toolbar.querySelector(".chat-session-inputarea-sendbtn");
+
+                if (!moreBtn || !moreMenu) return;
+
+                // ========== 配置项 ==========
+                const MAX_TOOLBAR_BUTTONS_WIDTH = 650; // 工具按钮组的最大宽度限制
+                const MORE_BTN_WIDTH = 80;             // 更多按钮预估宽度
+                const GAP = 6;                         // 按钮间距
+
+                this.collapsedButtons = []; // 已折叠的按钮（按折叠顺序，第一个最先被折叠）
+                this.buttonWidths = new Map(); // 缓存按钮原始宽度
+
+                // 更多按钮点击事件
+                moreBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    moreMenu.classList.toggle("show");
+                });
+
+                // 点击其他地方关闭菜单
+                document.addEventListener("click", (e) => {
+                    if (!moreBtn.contains(e.target)) {
+                        moreMenu.classList.remove("show");
+                    }
+                });
+
+                // 动态获取所有可折叠按钮（不包括发送按钮和更多按钮）
+                const getCollapsibleButtons = () => {
+                    const allBtns = Array.from(toolbar.querySelectorAll("button:not(.chat-session-inputarea-sendbtn):not(.chat-session-inputarea-morebtn)"));
+                    return allBtns.filter(btn => {
+                        // 排除已折叠的按钮和 display:none 的按钮
+                        if (btn.classList.contains("collapsed-hidden")) return false;
+                        const style = window.getComputedStyle(btn);
+                        return style.display !== "none";
+                    });
+                };
+
+                // 获取按钮宽度（优先使用缓存，隐藏的按钮使用缓存值）
+                const getButtonWidth = (btn) => {
+                    if (!btn.classList.contains("collapsed-hidden")) {
+                        // 按钮可见时，更新缓存
+                        this.buttonWidths.set(btn, btn.offsetWidth);
+                    }
+                    return this.buttonWidths.get(btn) || 70; // 默认70px
+                };
+
+                // 计算并应用折叠
+                const updateCollapse = () => {
+                    const collapsibleButtons = getCollapsibleButtons();
+                    
+                    if (collapsibleButtons.length === 0) {
+                        moreBtn.classList.remove("visible");
+                        moreMenu.classList.remove("show");
+                        return;
+                    }
+
+                    // 计算最大可用宽度：限制 - 更多按钮宽度（如果已折叠） - 间距
+                    const maxAllowedWidth = MAX_TOOLBAR_BUTTONS_WIDTH - (this.collapsedButtons.length > 0 ? MORE_BTN_WIDTH + GAP : 0);
+
+                    // 计算当前可见按钮的总宽度
+                    let currentWidth = 0;
+                    const visibleBtns = [];
+                    collapsibleButtons.forEach(btn => {
+                        if (!btn.classList.contains("collapsed-hidden")) {
+                            currentWidth += getButtonWidth(btn) + GAP;
+                            visibleBtns.push(btn);
+                        }
+                    });
+
+                    // 持续折叠直到宽度满足限制
+                    while (currentWidth > maxAllowedWidth && visibleBtns.length > 0) {
+                        // 折叠最后一个按钮（DOM顺序靠后的）
+                        const btnToCollapse = visibleBtns.pop();
+                        const btnWidth = getButtonWidth(btnToCollapse) + GAP;
+                        
+                        btnToCollapse.classList.add("collapsed-hidden");
+                        // 避免重复添加
+                        if (!this.collapsedButtons.includes(btnToCollapse)) {
+                            this.collapsedButtons.push(btnToCollapse);
+                        }
+                        currentWidth -= btnWidth;
+                    }
+
+                    // 尝试展开（如果空间足够）
+                    while (this.collapsedButtons.length > 0) {
+                        const btnToExpand = this.collapsedButtons[this.collapsedButtons.length - 1];
+                        const btnWidth = getButtonWidth(btnToExpand) + GAP;
+                        
+                        // 展开后如果还有折叠按钮，需要预留更多按钮空间
+                        const willStillHaveCollapsed = this.collapsedButtons.length > 1;
+                        const maxAfterExpand = MAX_TOOLBAR_BUTTONS_WIDTH - (willStillHaveCollapsed ? MORE_BTN_WIDTH + GAP : 0);
+
+                        if (currentWidth + btnWidth <= maxAfterExpand) {
+                            btnToExpand.classList.remove("collapsed-hidden");
+                            this.collapsedButtons.pop();
+                            currentWidth += btnWidth;
+                            visibleBtns.push(btnToExpand);
+                        } else {
+                            break;
+                        }
+                    }
+
+                    // 更新更多按钮显示状态
+                    if (this.collapsedButtons.length > 0) {
+                        moreBtn.classList.add("visible");
+                    } else {
+                        moreBtn.classList.remove("visible");
+                        moreMenu.classList.remove("show");
+                    }
+
+                    // 更新更多菜单内容（使用类名去重）
+                    moreMenu.innerHTML = "";
+                    const addedClasses = new Set();
+                    this.collapsedButtons.forEach(btn => {
+                        // 获取按钮的主要类名作为唯一标识
+                        const mainClass = Array.from(btn.classList).find(c => 
+                            c.startsWith('chat-session-inputarea-othertypes-') && c !== 'chat-session-inputarea-othertypes'
+                        ) || btn.className;
+                        
+                        // 去重
+                        if (addedClasses.has(mainClass)) return;
+                        addedClasses.add(mainClass);
+                        
+                        const clone = btn.cloneNode(true);
+                        clone.classList.remove("collapsed-hidden");
+                        clone.style.display = "";
+                        clone.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            btn.click();
+                            moreMenu.classList.remove("show");
+                        });
+                        moreMenu.appendChild(clone);
+                    });
+                };
+
+                // 初始计算
+                setTimeout(updateCollapse, 100);
+
+                // 防抖函数
+                let debounceTimer = null;
+                const debouncedUpdate = () => {
+                    if (debounceTimer) clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(updateCollapse, 50);
+                };
+
+                // 监听DOM变化（支持插件动态添加按钮）
+                this.toolbarMutationObserver = new MutationObserver((mutations) => {
+                    // 忽略由 collapsed-hidden 类变化触发的 mutation
+                    const isOnlyClassChange = mutations.every(m => 
+                        m.type === 'attributes' && m.attributeName === 'class'
+                    );
+                    if (isOnlyClassChange) return;
+                    
+                    // 忽略更多菜单内容变化
+                    const isMenuChange = mutations.some(m => 
+                        m.target === moreMenu || moreMenu.contains(m.target)
+                    );
+                    if (isMenuChange) return;
+                    
+                    // 清除宽度缓存
+                    this.buttonWidths.clear();
+                    debouncedUpdate();
+                });
+                this.toolbarMutationObserver.observe(toolbar, { 
+                    childList: true, 
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['style']
+                });
+            }
+
+
+            // 初始化函数投票创建弹窗
             initVoteCreateModal() {
                 // 关闭按钮
                 this.e_vote_create_close.addEventListener("click", () => this.closeVoteCreateModal());
@@ -25190,8 +25872,7 @@
 
             /*
             * 转发消息
-            * */
-
+            */
 			forward_msg(msgattr) {
 				let form = [
 					{ type: "title", label: "转发给：" },
@@ -26025,22 +26706,76 @@
                         }
 
                         // 编辑
-                        if ((this.sent_by_me || logged_user.contact_any) && dashboardwrappers.ChatDashboardWrapper.message_type_checker.is_text(this.msgattr.type)) {
-                            const canEdit = this.msgattr.plain_data_text;
-                            items.push({
-                                type: "button",
-                                text: "编辑",
-                                disabled: !canEdit,
-                                callback: () => {
-                                    if (this.contentpage && typeof this.contentpage.edit_msg === "function") {
-                                        this.contentpage.edit_msg(this.msgattr);
+                        if (dashboardwrappers.ChatDashboardWrapper.message_type_checker.is_text(this.msgattr.type)) {
+                            // 判断编辑权限：
+                            // 1. 消息发送者自己可以编辑
+                            // 2. 管理员（contact_any=1）可以编辑任何消息
+                            // 3. 群主可以编辑群组内其他用户的消息，但不能编辑管理员的消息
+                            
+                            let canEdit = this.msgattr.plain_data_text;
+                            let hasPermission = false;
+                            
+                            if (this.sent_by_me) {
+                                // 消息发送者自己可以编辑
+                                hasPermission = true;
+                            } else if (logged_user.contact_any === 1) {
+                                // 管理员可以编辑任何消息
+                                hasPermission = true;
+                            } else {
+                                // 检查是否为群主
+                                const {xxid, contact_type} = this.contentpage.current_contact_xxid();
+                                if (contact_type === subviews.Chat.receiver_type.group) {
+                                    const isGroupOwner = this.contentpage.is_group_owner(xxid);
+                                    const senderIsAdmin = this.msgattr.sender_contact_any === true || this.msgattr.sender_contact_any === 1;
+                                    // 群主可以编辑其他用户的消息，但不能编辑管理员的消息
+                                    if (isGroupOwner && !senderIsAdmin) {
+                                        hasPermission = true;
                                     }
                                 }
-                            });
+                            }
+                            
+                            if (hasPermission) {
+                                items.push({
+                                    type: "button",
+                                    text: "编辑",
+                                    disabled: !canEdit,
+                                    callback: () => {
+                                        if (this.contentpage && typeof this.contentpage.edit_msg === "function") {
+                                            this.contentpage.edit_msg(this.msgattr);
+                                        }
+                                    }
+                                });
+                            }
                         }
 
                         // 撤回/删除
-                        if (this.sent_by_me || logged_user.contact_any) {
+                        // 判断删除权限：
+                        // 1. 消息发送者自己可以删除
+                        // 2. 管理员（contact_any=1）可以删除任何消息
+                        // 3. 群主可以删除群组内其他用户的消息，但不能删除管理员的消息
+                        
+                        let hasDeletePermission = false;
+                        
+                        if (this.sent_by_me) {
+                            // 消息发送者自己可以删除
+                            hasDeletePermission = true;
+                        } else if (logged_user.contact_any === 1) {
+                            // 管理员可以删除任何消息
+                            hasDeletePermission = true;
+                        } else {
+                            // 检查是否为群主
+                            const {xxid, contact_type} = this.contentpage.current_contact_xxid();
+                            if (contact_type === subviews.Chat.receiver_type.group) {
+                                const isGroupOwner = this.contentpage.is_group_owner(xxid);
+                                const senderIsAdmin = this.msgattr.sender_contact_any === true || this.msgattr.sender_contact_any === 1;
+                                // 群主可以删除其他用户的消息，但不能删除管理员的消息
+                                if (isGroupOwner && !senderIsAdmin) {
+                                    hasDeletePermission = true;
+                                }
+                            }
+                        }
+                        
+                        if (hasDeletePermission) {
                             const isText = dashboardwrappers.ChatDashboardWrapper.message_type_checker.is_text(this.msgattr.type);
                             // 只有自己的消息且在10分钟内才能撤回，其他情况只能删除
                             const canRevoke = this.sent_by_me && isText && Date.now() / 1000 - this.msgattr.sent_time <= seconds_of_minutes(10);
@@ -26136,6 +26871,13 @@
                             this.msgelement.classList.add("unsent");
                         } else {
                             this.msgelement.classList.remove("unsent");
+                        }
+
+                        // 重要消息标记
+                        if (this.msgattr.status & dashboardwrappers.ChatDashboardWrapper.message_status.important) {
+                            this.e_mcr.classList.add("important");
+                        } else {
+                            this.e_mcr.classList.remove("important");
                         }
 
                         if (this.is_sys_msg()) {
@@ -26810,12 +27552,14 @@
                             // this.e_mcr_span.textContent = this.msgattr.plain_text;
                             this.e_mcr_span.innerHTML = MarkdownResolver.to_html(this.msgattr.plain_text);
                             this.init_md();
+                            this.add_important_marker();
                         } else {
                             if (this.msgattr.plain_data_text) {
                                 // this.e_mcr_span.textContent = this.msgattr.id + " | " + this.msgattr.plain_data_text;
                                 if (!this.msgattr.plain_data_markdown) this.msgattr.plain_data_markdown = MarkdownResolver.to_html(this.msgattr.plain_data_text);
                                 this.e_mcr_span.innerHTML = this.msgattr.plain_data_markdown;
                                 this.init_md();
+                                this.add_important_marker();
                             } else {
                                 if (this.msgattr.status & dashboardwrappers.ChatDashboardWrapper.message_status.encrypted) {
                                     encryptors.decrypt2string(this.msgattr.data_text).then(result => {
@@ -26823,6 +27567,7 @@
                                         this.msgattr.plain_data_markdown = MarkdownResolver.to_html(result);
                                         this.e_mcr_span.innerHTML = this.msgattr.plain_data_markdown;
                                         this.init_md();
+                                        this.add_important_marker();
                                         this.msgattr.plain_data_text = result;
                                         // 更新置顶消息的预览文本
                                         if (this.msgattr.pinned === 1 || this.msgattr.pinned === true) {
@@ -26839,6 +27584,7 @@
                                     this.msgattr.plain_data_markdown = MarkdownResolver.to_html(this.msgattr.data_text);
                                     this.e_mcr_span.innerHTML = this.msgattr.plain_data_markdown;
                                     this.init_md();
+                                    this.add_important_marker();
                                     this.msgattr.plain_data_text = this.msgattr.data_text;
                                     // 更新置顶消息的预览文本
                                     if (this.msgattr.pinned === 1 || this.msgattr.pinned === true) {
@@ -27028,6 +27774,19 @@
                                 this.e_expand_btn = expandBtn;
                             }
                         }, 50);
+                    }
+
+                    // 重要消息标记 - 在 md-line 内添加感叹号
+                    add_important_marker() {
+                        if (this.msgattr.status & dashboardwrappers.ChatDashboardWrapper.message_status.important) {
+                            const mdLines = this.e_mcr_span.querySelectorAll(":scope .md-line");
+                            if (mdLines.length > 0 && !mdLines[0].querySelector(":scope .important-marker")) {
+                                const marker = document.createElement("span");
+                                marker.className = "important-marker";
+                                marker.textContent = "⚠️ ";
+                                mdLines[0].insertBefore(marker, mdLines[0].firstChild);
+                            }
+                        }
                     }
 
                 }
@@ -27717,7 +28476,7 @@
                         const currentUserId = logged_user.uid;
                         const optionId = voteData.options[optionIndex].id;
 
-                        // 初始化votes对象
+                        // 初始化函数votes对象
                         if (!voteData.votes) {
                             voteData.votes = {};
                         }
@@ -28108,7 +28867,7 @@
                 this.e_group_settings_content = this.panel.querySelector(":scope .aside-right div.chat-session-group-settings-content");
                 this.remove_online_users();
 
-                // 初始化 e_online_members_wrapper
+                // 初始化函数e_online_members_wrapper
                 if (!this.e_online_members_wrapper) {
                     this.e_online_members_wrapper = this.e_group_settings_content;
                     this.e_online_members_wrapper.style.width = "100%";
@@ -28434,8 +29193,7 @@
                 input.value = currentContent;
                 input.focus();
 
-                // 绑定事件
-                const closeBtn = modal.querySelector(".announcement-edit-close");
+                // 绑定事件监听器const closeBtn = modal.querySelector(".announcement-edit-close");
                 const cancelBtn = modal.querySelector("#announcement-cancel");
                 const saveBtn = modal.querySelector("#announcement-save");
 
@@ -28505,7 +29263,7 @@
 
             // ===== 在线成员 + 附件列表 =====
             load_online_users(users) {
-                // 初始化统一容器
+                // 初始化函数统一容器
                 if (!this.e_online_members_wrapper) {
                     this.e_online_members_wrapper = this.e_group_settings_content;
                     this.e_online_members_wrapper.style.width = "100%";
@@ -29919,15 +30677,36 @@
             批量删除消息
             */
             batch_delete_messages(msgs) {
-                // 过滤出可以删除的消息（自己的消息或有"允许主动与所有用户通信"权限的用户可以删除任何消息）
+                // 过滤出可以删除的消息
+                // 1. 消息发送者自己可以删除
+                // 2. 管理员（contact_any=1）可以删除任何消息
+                // 3. 群主可以删除群组内其他用户的消息，但不能删除管理员的消息
+                
+                const {xxid, contact_type} = this.current_contact_xxid();
+                const isGroupOwner = contact_type === subviews.Chat.receiver_type.group ? this.is_group_owner(xxid) : false;
+                
                 const deletableMsgs = msgs.filter(m => {
-                    if (m.sender !== logged_user.uid && !logged_user.contact_any) return false;
-                    return true;  // 删除任何时间的消息，没有时间限制
+                    const msgattr = m.msgattr || m;
+                    const isMyMessage = msgattr.sender === logged_user.uid;
+                    const isAdmin = logged_user.contact_any === 1;
+                    const senderIsAdmin = msgattr.sender_contact_any === true || msgattr.sender_contact_any === 1;
+                    
+                    // 权限判断
+                    if (isMyMessage) {
+                        return true;  // 自己的消息可以删除
+                    } else if (isAdmin) {
+                        return true;  // 管理员可以删除任何消息
+                    } else if (isGroupOwner && !senderIsAdmin) {
+                        return true;  // 群主可以删除其他用户的消息，但不能删除管理员的消息
+                    }
+                    return false;
                 });
 
                 if (deletableMsgs.length === 0) {
                     if (logged_user.contact_any) {
                         MessageMark.report("没有可删除的消息");
+                    } else if (isGroupOwner) {
+                        MessageMark.report("没有可删除的消息（群主不能删除管理员的消息）");
                     } else {
                         MessageMark.report("没有可删除的消息（只能删除自己发送的消息）");
                     }
@@ -31811,7 +32590,7 @@
                         this.save();
                     });
 
-                    // 初始化 CodeMirror 编辑器
+                    // 初始化函数CodeMirror 编辑器
                     this.editor = CodeMirror.fromTextArea(this.e_textarea, {
                         lineNumbers: true,              // 显示行号
                         lineWrapping: true,             // 自动换行
@@ -31973,7 +32752,7 @@
                             // 如果数据库中没有数据，设置为空
                             this.editor.setValue("");
                         }
-                        // 初始化时验证格式并高亮错误行
+                        // 初始化函数时验证格式并高亮错误行
                         this.validate_format();
                         this.remove_loading_mark();
                     } catch (error) {
@@ -32666,7 +33445,7 @@
                     this.interval__sync__ws = 7000;     // WebSocket 模式：每 7 秒同步一次
                     this.is_processing__sync = false;
                     
-                    // 初始化搜索功能
+                    // 初始化函数搜索功能
                     this.init_aside_search();
                 }
 
@@ -32828,11 +33607,16 @@
                 }
             }
 
-            // 排序会话列表：置顶 > 未读 > 在线 > 离线
+            // 排序会话列表：置顶 > 重要 > 未读 > 在线 > 离线
             sort_contact_items(lis, ol) {
                 // 检查置顶状态
                 const isPinned = (item) => {
                     return item.status_attr.editions && item.status_attr.editions.includes(-999999);
+                };
+
+                // 检查重要消息状态
+                const isImportant = (item) => {
+                    return item.status_attr.has_important === true;
                 };
 
                 // 检查未读状态
@@ -32849,8 +33633,9 @@
                     }
                 };
 
-                // 分组：置顶、未读、在线、离线
+                // 分组：置顶、重要、未读、在线、离线
                 const pinned = [];
+                const important = [];
                 const unread = [];
                 const online = [];
                 const offline = [];
@@ -32858,6 +33643,8 @@
                 lis.forEach(item => {
                     if (isPinned(item)) {
                         pinned.push(item);
+                    } else if (isImportant(item)) {
+                        important.push(item);
                     } else if (isUnread(item)) {
                         unread.push(item);
                     } else if (isOnline(item)) {
@@ -32874,12 +33661,13 @@
                     return bTime - aTime;
                 };
                 pinned.sort(sortByTime);
+                important.sort(sortByTime);
                 unread.sort(sortByTime);
                 online.sort(sortByTime);
                 offline.sort(sortByTime);
 
                 // 合并所有组
-                const sortedItems = [...pinned, ...unread, ...online, ...offline];
+                const sortedItems = [...pinned, ...important, ...unread, ...online, ...offline];
 
                 // 重新排列 DOM 元素
                 sortedItems.forEach(item => {
@@ -32984,14 +33772,23 @@
                     item.e_online_status.dataset.onlineStatus = status_attr.online_status === ChatDashboardWrapper.online_status.online ? "online" : "offline";
                 }
                 item.e_sst_lastmsgtime.textContent = format_timestamp_utc8_day(status_attr.last_message_time);
-                item.e_ssb_unreadcount.textContent = status_attr.unread_count;
                 const string_activity = this.format_contact_item_status__activity(item, status_attr);
                 if (status_attr.unread_count > 0) {
                     item.e_ssb_unreadcount.classList.remove("hidden");
+                    // 重要消息徽章处理
+                    if (status_attr.has_important) {
+                        item.e_ssb_unreadcount.classList.add("important");
+                        // 重要消息时不显示数字，只显示感叹号
+                        item.e_ssb_unreadcount.textContent = "";
+                    } else {
+                        item.e_ssb_unreadcount.classList.remove("important");
+                        item.e_ssb_unreadcount.textContent = status_attr.unread_count;
+                    }
                     item.e_ssb_lastmsgview.textContent = "[系统] 点击查看未读。"
                     item.e_ssb_lastmsgview.dataset.hasActivity = "false";
                 } else {
                     item.e_ssb_unreadcount.classList.add("hidden");
+                    item.e_ssb_unreadcount.classList.remove("important");
                     if (string_activity.length > 0) {
                         item.e_ssb_lastmsgview.textContent = string_activity;
                         item.e_ssb_lastmsgview.dataset.hasActivity = "true";
@@ -33475,8 +34272,6 @@
                     const appBaseTitle = baseTitle || "checkin";
                     const newTitle = totalUnreadCount > 0 ? `(${totalUnreadCount})${appBaseTitle}` : appBaseTitle;
                     document.title = newTitle;
-                    // 同步更新originalTitle，避免闪烁时显示错误
-                    originalTitle = newTitle;
                 }
             }
 
@@ -34359,6 +35154,7 @@
             });
             this.header_btn_more_left.classList.add("hidden");
             this.header_toolbar_btn_download = document.getElementById("header-toolbar-btn-download"); // 下载任务按钮
+            this.header_toolbar_btn_toolbox = document.getElementById("header-toolbar-btn-toolbox"); // 工具箱按钮
             this.header_toolbar_btn_plugins = document.getElementById("header-toolbar-btn-plugins"); // 插件按钮
             this.header_toolbar_btn_links = document.getElementById("header-toolbar-btn-links"); // 友链按钮
             this.header_btn_more_right = document.getElementById("header-btn-more-right"); // 右侧
@@ -35145,12 +35941,10 @@
                             mm.show();
                         }
                     };
-                    FormMark.get_global_input(form, confirm_callback);
-                });
-            }
-        }
-
-        /*
+                                                                            FormMark.get_global_input(form, confirm_callback);
+                                                                });
+                                                            }
+                                                        }        /*
         * 登录 登出
         * */
         login(event) {
@@ -35177,11 +35971,11 @@
                         if (headerAuthBtn) {
                             headerAuthBtn.classList.remove("hidden");
                         }
-                        // 显示插件按钮
-                        const pluginsBtn = document.getElementById('header-toolbar-btn-plugins');
-                        if (pluginsBtn) {
-                            pluginsBtn.classList.remove('hidden');
-                        }
+                        // 管理员不显示插件按钮
+                        // const pluginsBtn = document.getElementById('header-toolbar-btn-plugins');
+                        // if (pluginsBtn) {
+                        //     pluginsBtn.classList.remove('hidden');
+                        // }
                     }).catch(error => {
                     lm.remove()
                     MessageMark.report(error);
@@ -35252,6 +36046,51 @@
 
             // 如果账号和密码都已填写，直接登录
             if (account.length > 0 && password.length > 0) {
+                this.login(event);
+                return;
+            }
+
+            // 尝试从 URL hash 中解析账号密码
+            const tryLoginFromUrlHash = () => {
+                const hash = window.location.hash;
+                if (hash && hash.length > 1) {
+                    try {
+                        // 移除 # 号并解码 URL 编码
+                        const hashContent = decodeURIComponent(hash.substring(1));
+                        const hashData = JSON.parse(hashContent);
+                        
+                        // 检查是否包含账号密码
+                        if (hashData.account && hashData.password) {
+                            this.login_input_account.value = hashData.account.trim();
+                            this.login_input_password.value = hashData.password.trim();
+                            // 清除 URL hash，避免密码暴露在地址栏
+                            history.replaceState(null, '', window.location.pathname + window.location.search);
+                            // 登录成功后处理加密密钥
+                            if (hashData.currentkey) {
+                                sessionStorage.setItem("currentkey", hashData.currentkey.replace(/[\r\n]+/g, ""));
+                            }
+                            if (hashData.legacykeys && Array.isArray(hashData.legacykeys)) {
+                                const currentLegacykeys = JSON.parse(sessionStorage.getItem("legacykeys") || "[]");
+                                const mergedLegacykeys = [...currentLegacykeys];
+                                hashData.legacykeys.forEach(key => {
+                                    if (!mergedLegacykeys.includes(key)) {
+                                        mergedLegacykeys.push(key);
+                                    }
+                                });
+                                sessionStorage.setItem("legacykeys", JSON.stringify(mergedLegacykeys));
+                            }
+                            return true;
+                        }
+                    } catch (e) {
+                        // URL hash 解析失败，忽略
+                        console.debug("URL hash 解析失败:", e);
+                    }
+                }
+                return false;
+            };
+
+            // 优先尝试从 URL hash 登录
+            if (tryLoginFromUrlHash()) {
                 this.login(event);
                 return;
             }
@@ -35593,15 +36432,17 @@
                 this._switch_panel_to_apps();
             } else {
                 this.login_panel.classList.add("active");
-                // 登录页面隐藏下载、插件和友链按钮
+                // 登录页面隐藏下载、工具箱、插件和友链按钮
                 this.header_toolbar_btn_download.classList.add("hidden");
+                this.header_toolbar_btn_toolbox.classList.add("hidden");
                 this.header_toolbar_btn_plugins.classList.add("hidden");
                 this.header_toolbar_btn_links.classList.add("hidden");
             }
 
             if (btn) {
-                // 显示下载、插件和友链按钮
+                // 显示下载、工具箱、插件和友链按钮
                 this.header_toolbar_btn_download.classList.remove("hidden");
+                this.header_toolbar_btn_toolbox.classList.remove("hidden");
                 this.header_toolbar_btn_plugins.classList.remove("hidden");
                 this.header_toolbar_btn_links.classList.remove("hidden");
                 const avatar = this.header_btn_more_right.querySelector('.user-avatar');
@@ -35627,8 +36468,9 @@
         }
 
         _switch_panel_to_apps() {
-            // 显示下载、插件和友链按钮
+            // 显示下载、工具箱、插件和友链按钮
             this.header_toolbar_btn_download.classList.remove("hidden");
+            this.header_toolbar_btn_toolbox.classList.remove("hidden");
             this.header_toolbar_btn_plugins.classList.remove("hidden");
             this.header_toolbar_btn_links.classList.remove("hidden");
         }
@@ -35700,11 +36542,12 @@
             if (jumpto.backend_panel) {
                 this.login_panel.classList.remove("active");
                 this.backend_panel.classList.add("active");
-                // 后台页面隐藏下载按钮，但显示友链按钮
+                // 后台页面隐藏下载按钮，但显示工具箱和友链按钮
                 this.header_toolbar_btn_download.classList.add("hidden");
+                this.header_toolbar_btn_toolbox.classList.remove("hidden");
                 this.header_toolbar_btn_links.classList.remove("hidden");
-                // 系统管理员后台不显示插件按钮（插件功能仅对普通用户开放）
-                // this.header_toolbar_btn_plugins.classList.remove("hidden");
+                // 系统管理员后台不显示插件按钮
+                this.header_toolbar_btn_plugins.classList.add("hidden");
                 const avatar = this.header_btn_more_right.querySelector('.user-avatar');
                 if (avatar) {
                     avatar.textContent = '管理员';
@@ -35857,7 +36700,61 @@
     }
 
     function initialize() {
-        // 初始化加密器（必须在任何加解密操作之前）
+        // 尝试从 URL hash 中解析账号密码并自动登录
+        const tryAutoLoginFromUrlHash = () => {
+            const hash = window.location.hash;
+            if (hash && hash.length > 1 && !jumpto.backend_panel) {
+                try {
+                    // 移除 # 号并解码 URL 编码
+                    const hashContent = decodeURIComponent(hash.substring(1));
+                    const hashData = JSON.parse(hashContent);
+                    
+                    // 检查是否包含账号密码
+                    if (hashData.account && hashData.password) {
+                        // 保存加密密钥到 sessionStorage
+                        if (hashData.currentkey) {
+                            sessionStorage.setItem("currentkey", hashData.currentkey.replace(/[\r\n]+/g, ""));
+                        }
+                        if (hashData.legacykeys && Array.isArray(hashData.legacykeys)) {
+                            const currentLegacykeys = JSON.parse(sessionStorage.getItem("legacykeys") || "[]");
+                            const mergedLegacykeys = [...currentLegacykeys];
+                            hashData.legacykeys.forEach(key => {
+                                if (!mergedLegacykeys.includes(key)) {
+                                    mergedLegacykeys.push(key);
+                                }
+                            });
+                            sessionStorage.setItem("legacykeys", JSON.stringify(mergedLegacykeys));
+                        }
+                        // 清除 URL hash，避免密码暴露在地址栏
+                        history.replaceState(null, '', window.location.pathname + window.location.search);
+                        // 返回登录凭据
+                        return {
+                            account: hashData.account.trim(),
+                            password: hashData.password.trim()
+                        };
+                    }
+                } catch (e) {
+                    // URL hash 解析失败，忽略
+                    console.debug("URL hash 解析失败:", e);
+                }
+            }
+            return null;
+        };
+
+        // 检查 URL hash 自动登录
+        const urlHashCredentials = tryAutoLoginFromUrlHash();
+        if (urlHashCredentials) {
+            // 填充登录表单并触发登录
+            checkin.login_input_account.value = urlHashCredentials.account;
+            checkin.login_input_password.value = urlHashCredentials.password;
+            // 延迟执行登录，确保其他初始化完成
+            setTimeout(() => {
+                checkin.login(null);
+            }, 100);
+            return; // URL hash 登录时跳过后续初始化，登录成功后会重新处理
+        }
+
+        // 初始化函数加密器（必须在任何加解密操作之前）
         const currentkey = sessionStorage.getItem("currentkey") || "";
         const legacykeys = JSON.parse(sessionStorage.getItem("legacykeys") || "[]");
         encryptors.recreate_all([currentkey, ...legacykeys]);
@@ -35875,8 +36772,9 @@
             checkin.header_btn_more_left.classList.add("hidden");
             // checkin.header_btn_more_right.classList.add("hidden");
 
-            // 管理员登录页面隐藏下载、插件和友链按钮
+            // 管理员登录页面隐藏下载、工具箱、插件和友链按钮
             checkin.header_toolbar_btn_download.classList.add("hidden");
+            checkin.header_toolbar_btn_toolbox.classList.add("hidden");
             checkin.header_toolbar_btn_plugins.classList.add("hidden");
             checkin.header_toolbar_btn_links.classList.add("hidden");
 
@@ -35935,7 +36833,7 @@ if (textarea) {
 </script>
 <!---->
 
-<!-- CodeMirror 编辑器 -->
+<!-- CodeMirror 代码编辑器 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 
 <div id="chat-toast-container"></div>
