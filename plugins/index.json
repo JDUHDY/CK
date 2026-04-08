@@ -1,5 +1,5 @@
 {
-  "base_url": "https://raw.githubusercontent.com/JDUHDY/CK/refs/heads/main/plugins/",
+  "base_url": "https://raw.githubusercontent.com/JDUHDY/CK/main/plugins/",
   "plugins": [
     {
       "id": "hello-world",
