@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1685,8 +1685,8 @@
     <style>
         .float-ball {
             position: fixed;
-            right: 32px;
-            bottom: 32px;
+            right: -29px; /* 默认隐藏到右侧，只露出一半 (58px / 2 = 29px) */
+            bottom: 400px;
             width: 58px;
             height: 58px;
             border-radius: 50%;
@@ -1699,12 +1699,13 @@
             cursor: pointer;
             z-index: 9;
             user-select: none;
-            transition: all 0.1s ease-in-out, opacity 0.1s ease;
+            transition: right 0.3s ease, background-color 0.1s ease, opacity 0.1s ease;
             font-size: 20px;
             border: transparent 6px solid;
         }
 
         .float-ball:hover {
+            right: 16px; /* 悬浮时展开，完全显示 */
             background-color: #85c1ff;
         }
 
@@ -1713,6 +1714,7 @@
         }
 
         .float-ball.drag-active {
+            right: 16px; /* 拖拽时也展开 */
             border: rgba(255, 255, 0, 0.6) 6px solid;
         }
 
@@ -2107,13 +2109,35 @@
 
         .chat-session-inputarea-othertypes {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             gap: 4px;
-            align-items: end;
+            align-items: stretch;
         }
 
         .chat-session-inputarea-othertypes button {
-            padding: 6px;
+            padding: 6px 10px;
+            font-size: 14px;
+        }
+
+        .chat-session-inputarea-othertypes-send {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-session-inputarea-othertypes-send:hover {
+            background: #2563eb;
+        }
+
+        .theme-dark .chat-session-inputarea-othertypes-send {
+            background: #2563eb;
+        }
+
+        .theme-dark .chat-session-inputarea-othertypes-send:hover {
+            background: #1d4ed8;
         }
 
         .chat-session-inputarea-textarea-warp {
@@ -4371,6 +4395,22 @@
             return mm;
         }
 
+        // 专门用于消息右键菜单的静态方法
+        static exec_for_message(emit_position, items, sent_by_me, call_after_close) {
+            let mm = new MenuMark(document.body, MessageMark.colors.blue, emit_position, call_after_close);
+            mm.fill();
+            for (const item of items) {
+                if (item.type === "button") {
+                    mm.add_button(item);
+                } else if (item.type === "section") {
+                    mm.add_section(item);
+                }
+            }
+            mm.show();
+            mm.move_to_for_message(sent_by_me);
+            return mm;
+        }
+
         move_to() {
             const menu = this.rect;
             const menuWidth = menu.offsetWidth;
@@ -4384,6 +4424,36 @@
             }
             if (y + menuHeight > viewportHeight) {
                 y = viewportHeight - menuHeight;
+            }
+            menu.style.left = `${x + window.scrollX}px`;
+            menu.style.top = `${y + window.scrollY}px`;
+        }
+
+        // 专门用于消息右键菜单的定位方法
+        move_to_for_message(sent_by_me) {
+            const menu = this.rect;
+            const menuWidth = menu.offsetWidth;
+            const menuHeight = menu.offsetHeight;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            let x = this.emit_position.x;
+            let y = this.emit_position.y;
+            
+            if (sent_by_me) {
+                // 自己的消息，菜单从右边向左展开
+                x = x - menuWidth;
+                if (x < 10) {
+                    x = 10;
+                }
+            } else {
+                // 对方的消息，菜单从左边向右展开
+                if (x + menuWidth > viewportWidth) {
+                    x = viewportWidth - menuWidth - 10;
+                }
+            }
+            
+            if (y + menuHeight > viewportHeight) {
+                y = viewportHeight - menuHeight - 10;
             }
             menu.style.left = `${x + window.scrollX}px`;
             menu.style.top = `${y + window.scrollY}px`;
@@ -8147,17 +8217,17 @@
     <button class="chat-session-msgflow-btn-scroll2end hidden" title="滚动到底部">∨</button>
 </div>
 
-<div class="chat-session-inputarea">
-    <div class="chat-session-inputarea-othertypes">
-        <button class="chat-session-inputarea-othertypes-image"><input type="file" class="hidden" accept="image/*">图片</button>
-        <button class="chat-session-inputarea-othertypes-file"><input type="file" class="hidden">文件</button>
-    </div>
-    <div class="chat-session-inputarea-textarea-warp">
-        <div class="chat-session-inputarea-tip-editing hidden"><span>编辑消息：</span><button>取消</button></div>
-        <textarea class="chat-session-inputarea-textarea" placeholder="输入消息..." spellcheck="false"></textarea>
-    </div>
-</div>
-
+                    <div class="chat-session-inputarea">
+                        <div class="chat-session-inputarea-textarea-warp">
+                            <div class="chat-session-inputarea-tip-editing hidden"><span>编辑消息：</span><button>取消</button></div>
+                            <textarea class="chat-session-inputarea-textarea" placeholder="输入消息..." spellcheck="false"></textarea>
+                        </div>
+                        <div class="chat-session-inputarea-othertypes">
+                            <button class="chat-session-inputarea-othertypes-send">发送</button>
+                            <button class="chat-session-inputarea-othertypes-image"><input type="file" class="hidden" accept="image/*">图片</button>
+                            <button class="chat-session-inputarea-othertypes-file"><input type="file" class="hidden">文件</button>
+                        </div>
+                    </div>
 </div>
 `;
                 this.container.insertAdjacentHTML("beforeend", html);
@@ -8206,7 +8276,7 @@
                         },
                         {type: "section", text: "",},
                         {
-                            type: "button", text: "清理消息", callback: event => {
+                            type: "button", text: "清理聊天消息", callback: event => {
                                 this.clear_msgs();
                             },
                         },
@@ -8368,6 +8438,14 @@
                     }
                 });
                 this.load_draft_text();
+
+                // 发送按钮
+                this.e_othertypes_send = this.container.querySelector(":scope button.chat-session-inputarea-othertypes-send");
+                this.e_othertypes_send.addEventListener("click", (event) => {
+                    this.send_msg_text();
+                    this.update_activity(dashboardwrappers.ChatDashboardWrapper.activity_type.none);
+                    this.e_inputarea_textarea.style.height = 'auto';
+                });
 
                 this.e_inputarea_tip_editing = this.container.querySelector(":scope .chat-session-inputarea-tip-editing");
                 this.e_inputarea_tip_editing__cancel_btn = this.e_inputarea_tip_editing.querySelector(":scope > button");
@@ -9150,6 +9228,13 @@
                         type: "custom", label: "",
                         add_element: (fm, row_custom) => {
                             row_custom.subs = [];
+                            
+                            // 添加全选/取消全选复选框
+                            let selectAllHtml = `<div class="fmic-item fmic-item-selectall" style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee;"><label style="font-weight: 600; color: #3b82f6;"><input type="checkbox" id="forward-select-all">全选 / 取消</label></div>`;
+                            row_custom.input_element.insertAdjacentHTML("beforeend", selectAllHtml);
+                            const selectAllCheckbox = row_custom.input_element.querySelector("#forward-select-all");
+                            
+                            // 联系人列表
                             for (const mainaction of this.panel.wrapper.contact_items()) {
                                 if (mainaction === this.li.bindmap) continue;
                                 let text;
@@ -9168,6 +9253,24 @@
                                     column,
                                     checkbox,
                                 })
+                            }
+                            
+                            // 全选/取消全选事件
+                            selectAllCheckbox.addEventListener("change", (e) => {
+                                const checked = e.target.checked;
+                                for (const sub of row_custom.subs) {
+                                    sub.checkbox.checked = checked;
+                                }
+                            });
+                            
+                            // 单个复选框变化时更新全选框状态
+                            for (const sub of row_custom.subs) {
+                                sub.checkbox.addEventListener("change", () => {
+                                    const allChecked = row_custom.subs.every(s => s.checkbox.checked);
+                                    const someChecked = row_custom.subs.some(s => s.checkbox.checked);
+                                    selectAllCheckbox.checked = allChecked;
+                                    selectAllCheckbox.indeterminate = someChecked && !allChecked;
+                                });
                             }
                         },
                         collect_data: (fm, row_custom) => {
@@ -9690,13 +9793,27 @@
                                 }
 
                                 this.e_container.classList.add("active");
-                                MenuMark.exec({x: rect.left, y: rect.top + rect.height,}, items, () => {
+                                // 菜单显示在消息下方，避开消息容器
+                                // 自己发送的消息（右侧对齐）：菜单从右边向左展开
+                                // 对方发送的消息（左侧对齐）：菜单从左边向右展开
+                                let menuX = rect.left;
+                                if (this.sent_by_me) {
+                                    // 自己的消息，菜单从右边向左展开
+                                    menuX = rect.right;
+                                }
+                                // y 位置在消息底部下方
+                                let menuY = rect.bottom;
+                                // 使用专门的消息菜单方法，不影响其他菜单
+                                MenuMark.exec_for_message({x: menuX, y: menuY,}, items, this.sent_by_me, () => {
                                     this.e_container.classList.remove("active");
                                 });
                             };
 
                             // 菜单
-                            this.e_container.addEventListener("contextmenu", (event) => showMenu(event));
+                            this.e_container.addEventListener("contextmenu", (event) => {
+                                event.preventDefault(); // 阻止浏览器默认右键菜单
+                                showMenu(event);
+                            });
                             if (_isMobileDevice) bindMenuForMobile(this.e_container, showMenu);
 
                         }
@@ -12419,6 +12536,13 @@
                 this.ws_callbacks = {};
                 this.ws_lasttime_connecting = 0;
 
+                // 【优化机制】请求计数和队列管理
+                this.ws_send_queue = [];      // 消息发送队列
+                this.ws_pending_count = 0;    // 当前等待响应的消息数量
+                this.ws_max_pending = 5;      // 最大等待响应数量
+                this.ws_action_count = 0;     // 当前连接已发送的请求次数
+                this.max_ws_requests = 100;   // 触发重连的安全阈值
+
             }
 
             leave() {
@@ -13120,6 +13244,10 @@
             ws_connect() {
                 this.ws_lasttime_connecting = Date.now();
                 this.ws_close();
+                
+                // 【优化机制】重置请求计数器
+                this.ws_action_count = 0;
+                
                 const url = join_path(checkin.subviews.chat.api_url(), "ws",);
                 if (url.protocol === 'https:') url.protocol = 'wss:';
                 else if (url.protocol === 'http:') url.protocol = 'ws:';
@@ -13162,18 +13290,45 @@
                         delete this.ws_callbacks[key];
                     }
                 }
+                // 清理请求队列
+                this.ws_send_queue = [];
+                this.ws_pending_count = 0;
                 this.ws_client = null;
             }
 
             ws_onerror(event) {
                 console.log("websocket 发生错误", event);
+                
+                // 改进错误处理：区分临时错误和永久错误
+                const isTemporaryError = event && (
+                    event.code === 1006 || // 异常关闭
+                    event.code === 1001 || // 远程端点关闭
+                    !event.code || // 某些浏览器可能不提供code
+                    event.code === 1005 // 无状态码（通常是连接未能建立）
+                );
+                
                 for (let key in this.ws_callbacks) {
                     if (this.ws_callbacks.hasOwnProperty(key)) {
                         const error = new Error(`Websocket连接异常关闭：${event.code}，${event.reason}，${event}`);
                         error.auto_retry = true;
+                        error.isTemporary = isTemporaryError; // 添加临时错误标记
                         this.ws_callbacks[key].onfetcherror(error);
                         delete this.ws_callbacks[key];
                     }
+                }
+                // 清理请求队列
+                this.ws_send_queue = [];
+                this.ws_pending_count = 0;
+                
+                // 如果是临时错误，尝试快速重连
+                if (isTemporaryError && this.ws_client) {
+                    console.log("[WebSocket] 检测到临时错误，准备快速重连...");
+                    // 短延迟后重连，避免频繁重连造成雪崩效应
+                    setTimeout(() => {
+                        if (!this.ws_client || this.ws_client.readyState !== WebSocket.OPEN) {
+                            this.ws_connect();
+                        }
+                    }, 500); // 500ms快速重连
                 }
             }
 
@@ -13182,9 +13337,44 @@
             }
 
             ws_send(json, callback) {
+                // 【优化机制】检查是否达到请求阈值，触发主动重连
+                this.ws_action_count++;
+                if (this.ws_action_count >= this.max_ws_requests) {
+                    console.log("⚡【优化机制】达到请求阈值，主动断开 WebSocket 以刷新 Cloudflare 免费额度...");
+                    this.ws_action_count = 0; // 重置计数器
+
+                    // 主动断开当前连接
+                    if (this.ws_client) {
+                        this.ws_close();
+                    }
+
+                    // 延迟 1.0 秒后重新连接并补发消息（减少等待时间）
+                    setTimeout(() => {
+                        console.log("⚡【优化机制】重连完成，补发消息...");
+                        this.ws_connect(); // 重新连接
+                        // 等待连接建立后再发送消息（减少检查间隔，提高响应速度）
+                        const checkInterval = setInterval(() => {
+                            if (this.ws_isopen()) {
+                                clearInterval(checkInterval);
+                                this.ws_send(json, callback); // 重新调用发送
+                            }
+                        }, 50); // 从100ms减少到50ms
+                    }, 1000); // 从1500ms减少到1000ms
+
+                    return; // 拦截本次直接发送
+                }
+
+                // 如果等待响应数超限，加入队列
+                if (this.ws_pending_count >= this.ws_max_pending) {
+                    console.log("[WebSocket] 请求队列已满，等待中...");
+                    this.ws_send_queue.push({ json, callback });
+                    return;
+                }
+                
                 json.counter = this.ws_counter;
                 this.ws_callbacks[json.counter.toString()] = callback;
                 this.ws_counter++;
+                this.ws_pending_count++;
                 // console.log("websocket 发送消息", json);
                 this.ws_client.send(JSON.stringify(json));
             }
@@ -13194,9 +13384,18 @@
                 if (Object.keys(this.ws_callbacks).includes(counter)) {
                     const callback = this.ws_callbacks[counter];
                     delete this.ws_callbacks[counter];
+                    this.ws_pending_count = Math.max(0, this.ws_pending_count - 1);
+
+                    // 处理队列中的下一个请求
+                    if (this.ws_send_queue.length > 0 && this.ws_pending_count < this.ws_max_pending) {
+                        const next = this.ws_send_queue.shift();
+                        this.ws_send(next.json, next.callback);
+                    }
+
                     if (json.error) {
                         const error = new Error(JSON.stringify(json));
-                        if (json.error.message.includes("Too many API requests by single worker invocation")) {
+                        if (json.error.message.includes("Too many API requests by single Worker invocation")) {
+                            console.log("[WebSocket] 检测到 API 请求限制错误，将自动重试");
                             this.ws_close();
                             error.auto_retry = true;
                         }
@@ -13273,7 +13472,7 @@
                 }
                 if ((jumpto.backend_panel && logged_admin) || (!jumpto.backend_panel && logged_user)) {
                     items.push(
-                        {type: "button", text: "登出", callback: this.logout.bind(this),},
+                        {type: "button", text: "登出用户", callback: this.logout.bind(this),},
                     );
                 }
                 MenuMark.exec({x: rect.left, y: rect.top + rect.height,}, items);
