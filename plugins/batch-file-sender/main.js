@@ -894,7 +894,7 @@ class BatchFileSenderPlugin {
         this.overlay.querySelector('#bfs-stat-active').textContent = `${uploadingUsers}`;
 
         const modeText = this.contactAny
-            ? '当前账号具有 contact_any 权限，可向可联系用户列表中的账号发送。'
+            ? '当前账号具有管理员权限，可向可联系用户列表中的账号发送。'
             : '当前账号仅可向已添加好友发送。';
         this.refs.contactMode.textContent = modeText;
     }
@@ -935,10 +935,8 @@ class BatchFileSenderPlugin {
                 <div class="bfs-panel-drop-mask">释放后开始识别</div>
                 <header class="bfs-head">
                     <div class="bfs-head-left">
-                        <div>
-                            <div class="bfs-title">批量发送文件</div>
-                            <div class="bfs-desc">选择总文件夹后自动识别用户名子文件夹，按用户批量发送文件。</div>
-                        </div>
+                        <div class="bfs-title">批量发送文件</div>
+                        <div class="bfs-desc">选择总文件夹后自动识别用户名子文件夹，按用户批量发送文件。</div>
                     </div>
                     <div class="bfs-actions">
                         <input id="bfs-folder-input" type="file" webkitdirectory directory hidden>
@@ -949,12 +947,7 @@ class BatchFileSenderPlugin {
                         <button class="bfs-btn bfs-btn-resume" id="bfs-resume-all-btn">全部继续</button>
                         <button class="bfs-btn bfs-btn-primary" id="bfs-send-all-btn">全部发送</button>
                     </div>
-                    <button class="bfs-close-icon" id="bfs-close-icon" title="关闭窗口">x</button>
                 </header>
-
-                <div class="bfs-drop-zone">
-                    将总文件夹拖拽到此面板，自动识别其下“用户名子文件夹”。
-                </div>
 
                 <div class="bfs-summary">
                     <div class="bfs-stat"><div class="bfs-stat-key">识别联系人</div><div class="bfs-stat-value" id="bfs-stat-users">0</div></div>
@@ -972,7 +965,7 @@ class BatchFileSenderPlugin {
                 </div>
 
                 <div class="bfs-rows" id="bfs-rows"></div>
-                <div class="bfs-empty" id="bfs-empty" style="display:none; margin: 10px 14px;">暂无待发送联系人，请导入总文件夹后识别。</div>
+                <div class="bfs-empty" id="bfs-empty" style="display:none; margin: 10px 14px;">暂无待发送联系人，将总文件夹导入/拖拽到此面板，自动识别目录下的联系人。</div>
 
                 <footer class="bfs-foot">
                     <span id="bfs-contact-mode">正在读取联系人权限...</span>
