@@ -141,10 +141,6 @@ class BatchFileSenderPlugin {
             this.closePanel();
         });
 
-        this.overlay.querySelector('#bfs-close-icon').addEventListener('click', () => {
-            this.closePanel();
-        });
-
         this.overlay.querySelector('#bfs-import-btn').addEventListener('click', () => {
             this.refs.folderInput.value = '';
             this.refs.folderInput.click();
