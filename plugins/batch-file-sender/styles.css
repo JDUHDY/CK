@@ -78,11 +78,12 @@
     position: relative;
     display: flex;
     justify-content: space-between;
+    gap: 12px;
     align-items: center;
     flex-wrap: wrap;
-    padding: 12px 14px 12px 14px;
+    padding: 12px 46px 12px 14px;
     border-bottom: 1px solid #e1e9f2;
-    margin-bottom: 0px;
+    background: #fbfdff;
 }
 
 .bfs-head-left {
@@ -142,6 +143,10 @@
     font-size: 12px;
     padding: 6px 10px;
     cursor: pointer;
+}
+
+.bfs-btn:hover {
+    border-color: #bccde0;
 }
 
 .bfs-btn-primary {
@@ -225,7 +230,7 @@
 .bfs-split {
     width: 1px;
     height: 20px;
-    background: #848484;
+    background: #dbe4ed;
 }
 
 .bfs-drop-zone {
@@ -291,9 +296,9 @@
 
 .bfs-user-card {
     position: relative;
-    border: 2px solid #b7b7b7;
+    border: 1px solid #dbe7f3;
     border-radius: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     background: #fff;
 }
 
@@ -342,7 +347,7 @@
 .bfs-tag {
     display: inline-flex;
     align-items: center;
-    border-radius: 5px;
+    border-radius: 999px;
     padding: 3px 9px;
     font-size: 12px;
     border: 1px solid;
@@ -537,7 +542,7 @@
     color: #6d7d90;
     text-align: center;
     padding: 28px 12px;
-    background: #e5f2ff;
+    background: #fbfdff;
 }
 
 .bfs-foot {
@@ -555,7 +560,6 @@
 
 .bfs-close {
     border-color: #d8e2ec;
-    background-color: #ffe4e4;
 }
 
 .theme-dark .bfs-panel {
@@ -760,7 +764,7 @@
     }
 
     .bfs-foot {
-        padding: 14px;
+        padding: 10px;
     }
 }
 
